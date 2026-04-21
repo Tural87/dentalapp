@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body{margin:40px;background:#111;font-family:sans-serif;color:#fff}
+  #wrap{max-width:700px;margin:0 auto}
+  p{text-align:center;color:#aaa;margin-top:10px;font-size:.85rem}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="simBox" style="
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    overflow:hidden;
+    border-radius:10px;
+    border:2px solid #3b82f6;
+    cursor:ew-resize;
+    user-select:none;
+    -webkit-user-select:none;
+  ">
+    <!-- SONRA (after) - arxa plan: qırmızı -->
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:#c0392b;display:flex;align-items:center;justify-content:center">
+      <span style="font-size:3rem;pointer-events:none">SONRA</span>
+    </div>
+    <!-- ƏVVƏL (before) - üst plan, clip-path ilə kəsilir: mavi -->
+    <div id="simBefore" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#2980b9;display:flex;align-items:center;justify-content:center;clip-path:inset(0 50% 0 0)">
+      <span style="font-size:3rem;pointer-events:none">ƏVVƏL</span>
+    </div>
+    <!-- Xətt və düymə -->
+    <div id="simHandle" style="position:absolute;top:0;bottom:0;left:50%;width:4px;background:#fff;transform:translateX(-50%);pointer-events:none">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.5);pointer-events:none">⇆</div>
+    </div>
+  </div>
+  <p>← Sürüşdürün → (sol = Sonra, sağ = Əvvəl)</p>
+  <div id="log" style="text-align:center;color:#3b82f6;font-size:.85rem;margin-top:6px">Hələ sürüşdürülməyib</div>
+</div>
+
+<script>
+(function(){
+  var box    = document.getElementById('simBox');
+  var before = document.getElementById('simBefore');
+  var handle = document.getElementById('simHandle');
+  var log    = document.getElementById('log');
+  var down   = false;
+
+  function setPos(x){
+    var r = box.getBoundingClientRect();
+    var p = Math.min(Math.max((x - r.left) / r.width, 0), 1);
+    var pct = (p * 100).toFixed(1);
+    before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+    handle.style.left = pct + '%';
+    log.textContent = 'Mövqe: ' + pct + '%';
+  }
+
+  box.addEventListener('mousedown', function(e){
+    down = true;
+    setPos(e.clientX);
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e){
+    if(down) setPos(e.clientX);
+  });
+  window.addEventListener('mouseup', function(){
+    down = false;
+  });
+  box.addEventListener('touchstart', function(e){
+    down = true;
+    setPos(e.touches[0].clientX);
+    e.preventDefault();
+  }, {passive:false});
+  window.addEventListener('touchmove', function(e){
+    if(down) setPos(e.touches[0].clientX);
+  }, {passive:true});
+  window.addEventListener('touchend', function(){
+    down = false;
+  });
+})();
+</script>
+</body>
+</html>
