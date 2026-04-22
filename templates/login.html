@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Giriş | DentalApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0b0f1a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#111827;border:1px solid #1f2d47;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center}
+.logo img{width:32px;height:32px;object-fit:contain}
+.logo-text{font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1{font-size:1.35rem;font-weight:800;color:#e8edf5;margin-bottom:6px;text-align:center}
+.sub{font-size:.85rem;color:#6b7fa3;text-align:center;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.72rem;font-weight:700;color:#6b7fa3;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.form-control{width:100%;padding:10px 13px;border-radius:9px;border:1px solid #1f2d47;font-family:inherit;font-size:.9rem;outline:none;transition:all .2s;background:#1a2235;color:#e8edf5}
+.form-control:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.btn{width:100%;padding:11px;border-radius:9px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;margin-top:8px;transition:all .2s;box-shadow:0 2px 12px rgba(59,130,246,.3)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.45)}
+.error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#ef4444;border-radius:9px;padding:10px 13px;font-size:.85rem;margin-bottom:16px}
+.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#22c55e;border-radius:9px;padding:10px 13px;font-size:.85rem;margin-bottom:16px}
+.forgot{text-align:right;margin-top:8px}
+.forgot a{font-size:.8rem;color:#6b7fa3;text-decoration:none}
+.forgot a:hover{color:#60a5fa}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <img src="/static/img/teeth/medical_14372414.png">
+    <span class="logo-text">DentalApp</span>
+  </div>
+  <h1>Xoş gəldiniz</h1>
+  <p class="sub">Davam etmək üçün daxil olun</p>
+
+  {% if reset_ok %}
+  <div class="success">Parolunuz uğurla yeniləndi. Yeni parolunuzla daxil olun.</div>
+  {% endif %}
+  {% if error %}
+  <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST">
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-control" type="email" name="email" placeholder="email@example.com" required autofocus>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Parol</label>
+      <input class="form-control" type="password" name="password" placeholder="••••••••" required>
+    </div>
+    <div class="forgot"><a href="/forgot-password">Parolu unutdum</a></div>
+    <button class="btn" type="submit">Daxil ol</button>
+  </form>
+</div>
+</body>
+</html>

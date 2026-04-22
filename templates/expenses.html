@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Xərclər | DentalApp{% endblock %}
+{% block topbar_title %}Xərclər{% endblock %}
+{% block topbar_sub %}Məhsul və xərc uçotu{% endblock %}
+{% block topbar_actions %}
+<button class="btn btn-secondary btn-sm" onclick="exportXls()">Excel İxrac</button>
+<button class="btn btn-primary btn-sm" onclick="openModal()">+ Xərc Əlavə Et</button>
+{% endblock %}
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:20px">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(239,68,68,.1);color:var(--red)"><i data-lucide="shopping-cart"></i></div>
+    <div class="stat-val" id="st-count">—</div><div class="stat-lbl">Ümumi qeyd</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(249,115,22,.1);color:var(--orange)"><i data-lucide="banknote"></i></div>
+    <div class="stat-val" id="st-total">—</div><div class="stat-lbl">Ümumi xərc (₼)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(168,85,247,.1);color:var(--purple)"><i data-lucide="calendar"></i></div>
+    <div class="stat-val" id="st-month">—</div><div class="stat-lbl">Bu ay (₼)</div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+  <input class="form-control" id="f-search" placeholder="Məhsul / Firma axtar..." style="max-width:220px" oninput="renderTable()">
+  <select class="form-control" id="f-cat" style="max-width:180px" onchange="renderTable()">
+    <option value="">Bütün kateqoriyalar</option>
+  </select>
+  <input class="form-control" id="f-from" type="date" style="max-width:150px" onchange="renderTable()">
+  <input class="form-control" id="f-to"   type="date" style="max-width:150px" onchange="renderTable()">
+</div>
+
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Məhsul</th><th>Firma</th><th>Kateqoriya</th><th>Tarix</th><th>Say</th><th>Qiymət</th><th>Cəm</th><th></th></tr></thead>
+      <tbody id="exp-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="expModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="modal-title">Xərc Əlavə Et</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Məhsul *</label>
+          <input class="form-control" id="e-product" placeholder="Məhsul adı"></div>
+        <div class="form-group"><label class="form-label">Firma</label>
+          <input class="form-control" id="e-company" placeholder="Firma adı"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Kateqoriya</label>
+          <input class="form-control" id="e-cat" list="cat-list" placeholder="Dərman, Avadanlıq...">
+          <datalist id="cat-list"></datalist></div>
+        <div class="form-group"><label class="form-label">Alınma Tarixi</label>
+          <input class="form-control" id="e-date" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Say</label>
+          <input class="form-control" id="e-qty" type="number" value="1" min="1"></div>
+        <div class="form-group"><label class="form-label">Qiymət (₼)</label>
+          <input class="form-control" id="e-price" type="number" step="0.01" placeholder="0.00"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveExpense()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let _all=[], _editId=null
+
+async function load(){
+  _all=await api('/api/expenses')
+  updateStats()
+  fillCategories()
+  renderTable()
+}
+
+function updateStats(){
+  const total=_all.reduce((s,e)=>s+e.total,0)
+  const now=new Date()
+  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`
+  const month=_all.filter(e=>e.purchase_date&&e.purchase_date.startsWith(monthStr)).reduce((s,e)=>s+e.total,0)
+  document.getElementById('st-count').textContent=_all.length
+  document.getElementById('st-total').textContent=total.toFixed(2)
+  document.getElementById('st-month').textContent=month.toFixed(2)
+}
+
+function fillCategories(){
+  const cats=[...new Set(_all.map(e=>e.category).filter(Boolean))]
+  const sel=document.getElementById('f-cat')
+  sel.innerHTML='<option value="">Bütün kateqoriyalar</option>'+cats.map(c=>`<option>${c}</option>`).join('')
+  const dl=document.getElementById('cat-list')
+  dl.innerHTML=cats.map(c=>`<option value="${c}">`).join('')
+}
+
+function renderTable(){
+  const q=document.getElementById('f-search').value.toLowerCase()
+  const cat=document.getElementById('f-cat').value
+  const from=document.getElementById('f-from').value
+  const to=document.getElementById('f-to').value
+  let rows=_all.filter(e=>{
+    if(q&&!e.product.toLowerCase().includes(q)&&!(e.company||'').toLowerCase().includes(q))return false
+    if(cat&&e.category!==cat)return false
+    if(from&&e.purchase_date&&e.purchase_date<from)return false
+    if(to&&e.purchase_date&&e.purchase_date>to)return false
+    return true
+  })
+  const tbody=document.getElementById('exp-tbody')
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-text">Qeyd tapılmadı</div></div></td></tr>';return}
+  tbody.innerHTML=rows.map((e,i)=>`<tr>
+    <td style="color:var(--mu);font-size:.8rem">${i+1}</td>
+    <td style="font-weight:600">${e.product}</td>
+    <td style="color:var(--mu)">${e.company||'—'}</td>
+    <td>${e.category?`<span class="badge badge-planned">${e.category}</span>`:'—'}</td>
+    <td style="color:var(--mu);font-size:.84rem">${e.purchase_date||'—'}</td>
+    <td style="text-align:center">${e.quantity}</td>
+    <td>${e.price.toFixed(2)} ₼</td>
+    <td style="font-weight:700;color:var(--B)">${e.total.toFixed(2)} ₼</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-secondary btn-sm" onclick="editExp(${e.id})">✎</button>
+      <button class="btn btn-danger btn-sm" onclick="delExp(${e.id})">✕</button>
+    </td>
+  </tr>`).join('')
+}
+
+function openModal(){ _editId=null; document.getElementById('modal-title').textContent='Xərc Əlavə Et'
+  ;['e-product','e-company','e-cat','e-price'].forEach(id=>document.getElementById(id).value='')
+  document.getElementById('e-qty').value=1
+  document.getElementById('e-date').value=new Date().toISOString().slice(0,10)
+  document.getElementById('expModal').style.display='flex' }
+function closeModal(){ document.getElementById('expModal').style.display='none' }
+
+function editExp(id){
+  const e=_all.find(x=>x.id===id); if(!e)return
+  _editId=id; document.getElementById('modal-title').textContent='Xərci Düzəlt'
+  document.getElementById('e-product').value=e.product||''
+  document.getElementById('e-company').value=e.company||''
+  document.getElementById('e-cat').value=e.category||''
+  document.getElementById('e-date').value=e.purchase_date||''
+  document.getElementById('e-qty').value=e.quantity||1
+  document.getElementById('e-price').value=e.price||0
+  document.getElementById('expModal').style.display='flex'
+}
+
+async function saveExpense(){
+  const d={product:document.getElementById('e-product').value.trim(),
+    company:document.getElementById('e-company').value.trim(),
+    category:document.getElementById('e-cat').value.trim(),
+    purchase_date:document.getElementById('e-date').value,
+    quantity:document.getElementById('e-qty').value,
+    price:document.getElementById('e-price').value}
+  if(!d.product){alert('Məhsul adı daxil edin');return}
+  try{
+    if(_editId) await api(`/api/expenses/${_editId}`,'PUT',d)
+    else await api('/api/expenses','POST',d)
+    closeModal(); await load()
+  }catch(e){alert(e.message)}
+}
+
+async function delExp(id){
+  if(!confirm('Bu xərci silmək istəyirsiniz?'))return
+  try{ await api(`/api/expenses/${id}`,'DELETE'); await load() }catch(e){alert(e.message)}
+}
+
+function exportXls(){ location.href='/api/expenses/export' }
+
+load()
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Pasiyentlər | DentalApp{% endblock %}
+{% block topbar_title %}Pasiyentlər{% endblock %}
+{% block topbar_sub %}<span id="pt-count"></span>{% endblock %}
+{% block topbar_actions %}<button class="btn btn-primary btn-sm" onclick="openModal()">+ Yeni Pasiyent</button>{% endblock %}
+{% block content %}
+<div style="margin-bottom:16px">
+  <div class="search-bar">
+    <input id="searchInput" placeholder="Ada görə axtar..." oninput="onSearch(this.value)">
+  </div>
+</div>
+
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Ad Soyad</th><th>Telefon</th><th>D.T.</th>
+          <th>Cins</th><th>Qeydiyyat</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="pt-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3>Yeni Pasiyent</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ad Soyad *</label>
+          <input class="form-control" id="np-name" placeholder="Tam ad"></div>
+        <div class="form-group"><label class="form-label">Telefon</label>
+          <input class="form-control" id="np-phone" placeholder="+994..."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Doğum tarixi</label>
+          <input class="form-control" id="np-dob" type="date"></div>
+        <div class="form-group"><label class="form-label">Cins</label>
+          <select class="form-control" id="np-gender">
+            <option value="">Seçin</option>
+            <option>Kişi</option><option>Qadın</option>
+          </select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Şikayət</label>
+        <textarea class="form-control" id="np-complaints" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Allergiyalar</label>
+        <input class="form-control" id="np-allergies"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="savePatient()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let _qt=null
+function onSearch(v){clearTimeout(_qt);_qt=setTimeout(()=>loadPatients(v),300)}
+
+async function loadPatients(q=''){
+  const list=await api(`/api/patients?q=${encodeURIComponent(q)}`)
+  document.getElementById('pt-count').textContent=`${list.length} pasiyent`
+  const tbody=document.getElementById('pt-tbody')
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Pasiyent tapılmadı</div></div></td></tr>`
+    return
+  }
+  tbody.innerHTML=list.map((p,i)=>`<tr>
+    <td style="color:var(--mu);font-size:.8rem">${i+1}</td>
+    <td><a href="/patients/${p.id}" style="font-weight:700;color:var(--B);text-decoration:none">${p.name}</a></td>
+    <td>${p.phone||'—'}</td>
+    <td>${p.dob||'—'}</td>
+    <td>${p.gender||'—'}</td>
+    <td style="font-size:.82rem;color:var(--mu)">${fmtDate(p.created_at)}</td>
+    <td><a href="/patients/${p.id}" class="btn btn-secondary btn-sm">Bax →</a></td>
+  </tr>`).join('')
+}
+
+function openModal(){document.getElementById('modal').style.display='flex'}
+function closeModal(){document.getElementById('modal').style.display='none'}
+async function savePatient(){
+  const name=document.getElementById('np-name').value.trim()
+  if(!name){alert('Ad daxil edin');return}
+  const p=await api('/api/patients','POST',{
+    name,phone:document.getElementById('np-phone').value,
+    dob:document.getElementById('np-dob').value,
+    gender:document.getElementById('np-gender').value,
+    complaints:document.getElementById('np-complaints').value,
+    allergies:document.getElementById('np-allergies').value
+  })
+  location.href=`/patients/${p.id}`
+}
+
+if(sessionStorage.getItem('openNewPatient')){sessionStorage.removeItem('openNewPatient');setTimeout(openModal,200)}
+loadPatients()
+</script>
+{% endblock %}

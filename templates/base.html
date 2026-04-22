@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}DentalApp{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/main.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="{% if session.role == 'admin' %}/admin{% else %}/{% endif %}">
+      <img src="/static/img/teeth/medical_14372414.png" style="width:28px;height:28px;object-fit:contain">
+      <span class="logo-text">DentalApp</span>
+    </a>
+  </div>
+  <nav class="sidebar-nav">
+    {% if session.role == 'admin' %}
+      <a href="/admin" class="nav-item" id="nl-doctors">
+        <i data-lucide="stethoscope" class="ni"></i><span>Həkimlər</span>
+      </a>
+      <a href="/expenses" class="nav-item" id="nl-expenses">
+        <i data-lucide="receipt" class="ni"></i><span>Xərclər</span>
+      </a>
+      <a href="/admin?tab=settings" class="nav-item" id="nl-settings">
+        <i data-lucide="settings-2" class="ni"></i><span>Parametrlər</span>
+      </a>
+    {% else %}
+      <a href="/" class="nav-item" id="nl-dash">
+        <i data-lucide="layout-dashboard" class="ni"></i><span>Dashboard</span>
+      </a>
+      <a href="/patients" class="nav-item" id="nl-patients">
+        <i data-lucide="users" class="ni"></i><span>Pasiyentlər</span>
+      </a>
+      <a href="/expenses" class="nav-item" id="nl-expenses">
+        <i data-lucide="receipt" class="ni"></i><span>Xərclər</span>
+      </a>
+      <a href="/admin" class="nav-item" id="nl-admin">
+        <i data-lucide="grid-2x2" class="ni"></i><span>Xidmətlər</span>
+      </a>
+    {% endif %}
+  </nav>
+  <div class="sidebar-bottom">
+    {% if session.role == 'admin' %}
+      <a href="/admin" class="new-patient-btn" id="btn-new-doctor">
+        <i data-lucide="user-plus" class="ni"></i><span>Yeni Həkim</span>
+      </a>
+    {% else %}
+      <a href="/patients" class="new-patient-btn" onclick="sessionStorage.setItem('openNewPatient','1');return true">
+        <i data-lucide="user-plus" class="ni"></i><span>Yeni Pasiyent</span>
+      </a>
+    {% endif %}
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">{% block topbar_title %}DentalApp{% endblock %}</div>
+      <div class="topbar-sub">{% block topbar_sub %}{% endblock %}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      {% block topbar_actions %}{% endblock %}
+      <div style="display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid var(--border)">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--BL);border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--B)">{{ session.user_name[0]|upper if session.user_name else 'U' }}</div>
+        <span style="font-size:.83rem;font-weight:600;color:var(--tx)">{{ session.user_name }}</span>
+        {% if session.role == 'admin' %}<span style="font-size:.68rem;background:var(--BL);color:var(--B);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 8px;font-weight:700">Admin</span>{% endif %}
+        <a href="/logout" style="display:flex;align-items:center;padding:5px 10px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--mu);text-decoration:none;font-size:.78rem;font-weight:600;transition:all .15s" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--mu)'">Çıxış</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+<script>
+(function(){
+  const p = location.pathname
+  const q = location.search
+  {% if session.role == 'admin' %}
+  if(p.startsWith('/admin') && !q.includes('tab=settings')) document.getElementById('nl-doctors').classList.add('active')
+  if(q.includes('tab=settings')) document.getElementById('nl-settings').classList.add('active')
+  if(p.startsWith('/expenses')) document.getElementById('nl-expenses').classList.add('active')
+  {% else %}
+  if(p==='/'||p==='/dashboard') document.getElementById('nl-dash').classList.add('active')
+  else if(p.startsWith('/patients')||p.startsWith('/plans')) document.getElementById('nl-patients').classList.add('active')
+  else if(p.startsWith('/expenses')) document.getElementById('nl-expenses').classList.add('active')
+  else if(p.startsWith('/admin')) document.getElementById('nl-admin').classList.add('active')
+  {% endif %}
+})()
+</script>
+{% if session.role == 'admin' %}
+<script>
+// "Yeni Həkim" düyməsi admin panelindəki modal-ı açsın
+document.getElementById('btn-new-doctor')&&document.getElementById('btn-new-doctor').addEventListener('click',function(e){
+  if(location.pathname==='/admin'){e.preventDefault();typeof openAddUser==='function'&&openAddUser()}
+})
+</script>
+{% endif %}
+</body>
+</html>

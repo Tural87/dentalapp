@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+{% block title %}{% if session.role == 'admin' %}Həkimlər{% else %}Xidmətlər{% endif %} | DentalApp{% endblock %}
+{% block topbar_title %}{% if session.role == 'admin' %}İdarəetmə Paneli{% else %}Xidmətlər & Profil{% endif %}{% endblock %}
+{% block topbar_sub %}{% if session.role == 'admin' %}Həkimlər, parametrlər{% else %}Xidmətlər, şablonlar, profilim{% endif %}{% endblock %}
+{% block content %}
+
+<div class="tabs">
+  {% if session.role == 'admin' %}
+  <button class="tab-btn active" id="tab-btn-users"    onclick="switchTab('users',this)">Həkimlər</button>
+  <button class="tab-btn"        id="tab-btn-settings" onclick="switchTab('settings',this)">Parametrlər</button>
+  <button class="tab-btn"        id="tab-btn-profile"  onclick="switchTab('profile',this)">Profilim</button>
+  {% else %}
+  <button class="tab-btn active" id="tab-btn-services" onclick="switchTab('services',this)">Xidmətlər</button>
+  <button class="tab-btn"        id="tab-btn-profile"  onclick="switchTab('profile',this)">Profilim</button>
+  {% endif %}
+</div>
+
+{% if session.role != 'admin' %}<!-- doctor-only panes -->{% endif %}
+<div class="tab-pane" id="tab-profile">
+  <div class="card" style="max-width:560px">
+    <div class="card-hd"><h3>Şəxsi Məlumatlar</h3></div>
+    <div class="card-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ad Soyad</label>
+          <input class="form-control" id="pr-name"></div>
+        <div class="form-group"><label class="form-label">WhatsApp / Telefon</label>
+          <input class="form-control" id="pr-phone" placeholder="+994..."></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label>
+        <input class="form-control" id="pr-email" type="email"></div>
+      <button class="btn btn-primary btn-sm" onclick="saveProfile()">Məlumatları Yenilə</button>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:560px;margin-top:16px">
+    <div class="card-hd"><h3>Parol Dəyişikliyi</h3></div>
+    <div class="card-bd">
+      <div class="form-group"><label class="form-label">Cari Parol</label>
+        <input class="form-control" id="pr-cur-pass" type="password" placeholder="••••••••"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Yeni Parol</label>
+          <input class="form-control" id="pr-new-pass" type="password" placeholder="Ən azı 6 simvol"></div>
+        <div class="form-group"><label class="form-label">Yeni Parolu Təkrar</label>
+          <input class="form-control" id="pr-new-pass2" type="password" placeholder="••••••••"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="savePassword()">Parolu Dəyiş</button>
+    </div>
+  </div>
+</div>
+<div class="tab-pane {% if session.role != 'admin' %}active{% endif %}" id="tab-services">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+    <!-- Service list -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:1rem;font-weight:800">Xidmətlər</h3>
+        <button class="btn btn-primary btn-sm" onclick="openAddService()">+ Xidmət</button>
+      </div>
+      <div id="service-list"></div>
+    </div>
+    <!-- Template detail -->
+    <div id="tmpl-panel" style="display:none">
+      <div class="card">
+        <div class="card-hd">
+          <h3 id="tmpl-title">Şablonlar</h3>
+          <button class="btn btn-primary btn-sm" onclick="openAddTmpl()">+ Şablon</button>
+        </div>
+        <div class="card-bd" id="tmpl-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if session.role == 'admin' %}
+<!-- USERS TAB -->
+<div class="tab-pane active" id="tab-users">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div>
+      <div class="page-title" style="font-size:1rem">İstifadəçilər</div>
+      <div class="page-sub">Həkimlər və adminlər</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openAddUser()">+ Həkim Əlavə Et</button>
+  </div>
+  <div class="card">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Həkim</th><th>Email</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead>
+        <tbody id="users-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS TAB -->
+<div class="tab-pane" id="tab-settings">
+  <div class="card" style="max-width:600px">
+    <div class="card-hd"><h3>Klinik Məlumatları</h3></div>
+    <div class="card-bd">
+      <div class="form-group"><label class="form-label">Klinik adı</label>
+        <input class="form-control" id="s-clinic" placeholder="DentalApp"></div>
+      <div class="form-group"><label class="form-label">Həkim adı</label>
+        <input class="form-control" id="s-doctor"></div>
+      <div class="form-group"><label class="form-label">Telefon</label>
+        <input class="form-control" id="s-phone"></div>
+      <div class="form-group"><label class="form-label">Ünvan</label>
+        <input class="form-control" id="s-addr"></div>
+      <button class="btn btn-primary" onclick="saveSettings()">Yadda saxla</button>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:600px;margin-top:20px">
+    <div class="card-hd"><h3>Email (SMTP) Ayarları</h3></div>
+    <div class="card-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">SMTP Host</label>
+          <input class="form-control" id="s-smtp-host" placeholder="smtp.gmail.com"></div>
+        <div class="form-group"><label class="form-label">Port</label>
+          <input class="form-control" id="s-smtp-port" placeholder="587" type="number"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">İstifadəçi (Email)</label>
+          <input class="form-control" id="s-smtp-user" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label">Parol / App Password</label>
+          <input class="form-control" id="s-smtp-pass" type="password" placeholder="••••••••"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Göndərici Ad (From)</label>
+        <input class="form-control" id="s-smtp-from" placeholder="DentalApp <your@email.com>"></div>
+      <button class="btn btn-primary" onclick="saveSettings()">SMTP Ayarlarını Saxla</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+<!-- Add Service Modal -->
+<div class="modal-overlay" id="svcModal" style="display:none" onclick="if(event.target===this)closeSvcModal()">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="svc-modal-title">Xidmət Əlavə Et</h3>
+      <button class="modal-close" onclick="closeSvcModal()">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Ad *</label>
+        <input class="form-control" id="sv-name" placeholder="Xidmət adı"></div>
+      <div class="form-group"><label class="form-label">İkon (Font Awesome sınıfı)</label>
+        <input class="form-control" id="sv-icon" placeholder="fa-tooth"></div>
+      <div class="form-group"><label class="form-label">Təsvir</label>
+        <textarea class="form-control" id="sv-desc" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeSvcModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveService()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Template Modal -->
+<div class="modal-overlay" id="tmplModal" style="display:none" onclick="if(event.target===this)closeTmplModal()">
+  <div class="modal">
+    <div class="modal-hd"><h3>Şablon Əlavə Et</h3>
+      <button class="modal-close" onclick="closeTmplModal()">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Ad *</label>
+        <input class="form-control" id="tm-name" placeholder="Şablon adı"></div>
+      <div class="form-group"><label class="form-label">Təsvir</label>
+        <textarea class="form-control" id="tm-desc" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeTmplModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveTmpl()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="userModal" style="display:none" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal">
+    <div class="modal-hd"><h3>Həkim Əlavə Et</h3>
+      <button class="modal-close" onclick="closeUserModal()">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Ad Soyad *</label>
+        <input class="form-control" id="u-name" placeholder="Dr. Əli Həsənov"></div>
+      <div class="form-group"><label class="form-label">Email *</label>
+        <input class="form-control" id="u-email" type="email" placeholder="doctor@email.com"></div>
+      <div class="form-group"><label class="form-label">WhatsApp nömrəsi</label>
+        <input class="form-control" id="u-phone" placeholder="+994501234567"></div>
+      <div class="form-group"><label class="form-label">Rol</label>
+        <select class="form-control" id="u-role">
+          <option value="doctor">Həkim</option>
+          <option value="admin">Admin</option>
+        </select></div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:.82rem;color:var(--mu);line-height:1.5">
+        Sistem müvəqqəti parol yaradacaq. Email konfiqurasiyası varsa həkimə göndəriləcək, yoxdursa sizə göstəriləcək. Həkim ilk girişdə parolu dəyişməlidir.
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeUserModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveUser()">Əlavə Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Result Modal -->
+<div class="modal-overlay" id="waModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3>Giriş Məlumatları</h3>
+      <button class="modal-close" onclick="document.getElementById('waModal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-bd">
+      <p style="font-size:.88rem;color:var(--mu);margin-bottom:16px">Həkim: <b style="color:var(--tx)" id="wa-name"></b></p>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:.75rem;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Giriş məlumatları</div>
+        <div style="font-size:.88rem;color:var(--mu)">Email: <span style="color:var(--tx);font-weight:600" id="wa-email"></span></div>
+        <div style="font-size:.88rem;color:var(--mu);margin-top:4px">Parol: <span style="color:var(--green);font-weight:800;font-size:1rem;letter-spacing:.05em" id="wa-pass"></span></div>
+      </div>
+      <a id="wa-link" href="#" target="_blank" class="btn btn-success" style="width:100%;justify-content:center;text-decoration:none;background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(34,197,94,.1));color:var(--green);border:1px solid rgba(34,197,94,.3)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp ilə göndər
+      </a>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('waModal').style.display='none'">Bağla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Step Modal -->
+<div class="modal-overlay" id="stepModal" style="display:none" onclick="if(event.target===this)document.getElementById('stepModal').style.display='none'">
+  <div class="modal">
+    <div class="modal-hd"><h3>Addım Əlavə Et</h3>
+      <button class="modal-close" onclick="document.getElementById('stepModal').style.display='none'">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sıra №</label>
+          <input class="form-control" id="sp-order" type="number" value="1" min="1"></div>
+        <div class="form-group"><label class="form-label">Müddət (gün)</label>
+          <input class="form-control" id="sp-days" type="number" value="7"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Başlıq *</label>
+          <input class="form-control" id="sp-title"></div>
+        <div class="form-group"><label class="form-label">Qiymət (₼)</label>
+          <input class="form-control" id="sp-price" type="number" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Təsvir</label>
+        <textarea class="form-control" id="sp-desc" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('stepModal').style.display='none'">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveTmplStep()">Əlavə et</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let _services=[],_activeSvcId=null,_activeTmplId=null,_editSvcId=null
+
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'))
+  if(btn) btn.classList.add('active')
+  else {
+    const b=document.getElementById('tab-btn-'+name)
+    if(b) b.classList.add('active')
+  }
+  const pane=document.getElementById('tab-'+name)
+  if(pane) pane.classList.add('active')
+  if(name==='services') loadServices()
+  else if(name==='settings') loadSettings()
+  else if(name==='users') loadUsers()
+  else if(name==='profile') loadProfile()
+}
+
+// URL ?tab= parametrini oxu
+;(function(){
+  const tab=new URLSearchParams(location.search).get('tab')
+  if(tab) switchTab(tab, null)
+})()
+
+async function loadProfile(){
+  const u=await api('/api/profile')
+  document.getElementById('pr-name').value=u.name||''
+  document.getElementById('pr-phone').value=u.phone||''
+  document.getElementById('pr-email').value=u.email||''
+}
+
+async function saveProfile(){
+  const res=await api('/api/profile','PUT',{
+    name:document.getElementById('pr-name').value.trim(),
+    phone:document.getElementById('pr-phone').value.trim(),
+    email:document.getElementById('pr-email').value.trim()
+  })
+  if(res.error){alert(res.error);return}
+  alert('Məlumatlar yeniləndi!')
+}
+
+async function savePassword(){
+  const p1=document.getElementById('pr-new-pass').value
+  const p2=document.getElementById('pr-new-pass2').value
+  if(p1!==p2){alert('Yeni parollar uyğun gəlmir');return}
+  const res=await api('/api/profile','PUT',{
+    current_password:document.getElementById('pr-cur-pass').value,
+    new_password:p1
+  })
+  if(res.error){alert(res.error);return}
+  document.getElementById('pr-cur-pass').value=''
+  document.getElementById('pr-new-pass').value=''
+  document.getElementById('pr-new-pass2').value=''
+  alert('Parol dəyişdirildi!')
+}
+
+async function loadServices(){
+  _services=await api('/api/services')
+  const el=document.getElementById('service-list')
+  if(!_services.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🏥</div><div class="empty-text">Xidmət yoxdur</div></div>`
+    return
+  }
+  el.innerHTML=_services.map(s=>`
+    <div class="card" style="margin-bottom:10px;cursor:pointer" onclick="selectService(${s.id})">
+      <div class="card-hd" style="background:${_activeSvcId===s.id?'var(--BL)':''}">
+        <div style="font-weight:700">${s.name}</div>
+        <div style="display:flex;gap:6px">
+          <span style="font-size:.78rem;color:var(--mu)">${s.templates.length} şablon</span>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delService(${s.id})">🗑️</button>
+        </div>
+      </div>
+    </div>
+  `).join('')
+}
+
+async function selectService(id){
+  _activeSvcId=id
+  await loadServices()
+  const svc=_services.find(s=>s.id===id)
+  if(!svc)return
+  document.getElementById('tmpl-panel').style.display='block'
+  document.getElementById('tmpl-title').textContent=`"${svc.name}" Şablonları`
+  renderTemplates(svc)
+}
+
+function renderTemplates(svc){
+  const el=document.getElementById('tmpl-list')
+  if(!svc.templates.length){
+    el.innerHTML='<div style="color:var(--mu);font-size:.88rem;text-align:center;padding:20px">Şablon yoxdur</div>'
+    return
+  }
+  el.innerHTML=svc.templates.map(t=>`
+    <div style="border:1px solid #e8eef5;border-radius:10px;margin-bottom:10px;overflow:hidden">
+      <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;background:var(--lt)">
+        <div>
+          <div style="font-weight:700;font-size:.92rem">${t.name}</div>
+          ${t.description?`<div style="font-size:.78rem;color:var(--mu)">${t.description}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="selectTmpl(${t.id})">Addımlar (${t.steps.length})</button>
+          <button class="btn btn-danger btn-sm" onclick="delTmpl(${t.id})">🗑️</button>
+        </div>
+      </div>
+      ${_activeTmplId===t.id?`
+        <div style="padding:12px 14px;border-top:1px solid #e8eef5">
+          ${t.steps.map(s=>`
+            <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f0f4f8">
+              <span style="background:var(--BL);color:var(--B);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0">${s.order+1}</span>
+              <div style="flex:1">
+                <div style="font-size:.88rem;font-weight:700">${s.title}</div>
+                ${s.description?`<div style="font-size:.76rem;color:var(--mu)">${s.description}</div>`:''}
+              </div>
+              <span style="font-size:.76rem;color:var(--mu)">${s.default_duration_days}g</span>
+              ${s.price?`<span style="font-size:.76rem;font-weight:700;color:var(--green)">${s.price.toFixed(2)} ₼</span>`:''}
+              <button class="btn btn-danger btn-sm" onclick="delTmplStep(${s.id})">✕</button>
+            </div>
+          `).join('')}
+          <button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="openAddTmplStep(${t.id})">+ Addım əlavə et</button>
+        </div>
+      `:''}
+    </div>
+  `).join('')
+}
+
+function selectTmpl(id){
+  _activeTmplId=_activeTmplId===id?null:id
+  const svc=_services.find(s=>s.id===_activeSvcId)
+  if(svc)renderTemplates(svc)
+}
+
+function openAddService(){
+  _editSvcId=null
+  document.getElementById('svc-modal-title').textContent='Xidmət Əlavə Et'
+  document.getElementById('sv-name').value=''
+  document.getElementById('sv-icon').value=''
+  document.getElementById('sv-desc').value=''
+  document.getElementById('svcModal').style.display='flex'
+}
+function closeSvcModal(){document.getElementById('svcModal').style.display='none'}
+
+async function saveService(){
+  const name=document.getElementById('sv-name').value.trim()
+  if(!name){alert('Ad daxil edin');return}
+  const data={name,icon:document.getElementById('sv-icon').value,description:document.getElementById('sv-desc').value}
+  await api('/api/services','POST',data)
+  closeSvcModal()
+  loadServices()
+}
+
+async function delService(id){
+  if(!confirm('Bu xidməti silmək istəyirsiniz?'))return
+  await api(`/api/services/${id}`,'DELETE')
+  if(_activeSvcId===id){_activeSvcId=null;document.getElementById('tmpl-panel').style.display='none'}
+  loadServices()
+}
+
+function openAddTmpl(){
+  document.getElementById('tm-name').value=''
+  document.getElementById('tm-desc').value=''
+  document.getElementById('tmplModal').style.display='flex'
+}
+function closeTmplModal(){document.getElementById('tmplModal').style.display='none'}
+
+async function saveTmpl(){
+  const name=document.getElementById('tm-name').value.trim()
+  if(!name){alert('Ad daxil edin');return}
+  try{
+    await api(`/api/services/${_activeSvcId}/templates`,'POST',{name,description:document.getElementById('tm-desc').value})
+    closeTmplModal()
+    await loadServices()
+    const svc=_services.find(s=>s.id===_activeSvcId)
+    if(svc)renderTemplates(svc)
+  }catch(e){alert('Xəta: '+e.message)}
+}
+
+async function delTmpl(id){
+  if(!confirm('Bu şablonu silmək istəyirsiniz?'))return
+  try{
+    await api(`/api/templates/${id}`,'DELETE')
+    await loadServices()
+    const svc=_services.find(s=>s.id===_activeSvcId)
+    if(svc)renderTemplates(svc)
+  }catch(e){alert('Xəta: '+e.message)}
+}
+
+let _addStepTmplId=null
+function openAddTmplStep(tmplId){
+  _addStepTmplId=tmplId
+  const svc=_services.find(s=>s.id===_activeSvcId)
+  const tmpl=svc&&svc.templates.find(t=>t.id===tmplId)
+  document.getElementById('sp-order').value=tmpl?tmpl.steps.length+1:1
+  document.getElementById('sp-days').value=7
+  document.getElementById('sp-title').value=''
+  document.getElementById('sp-desc').value=''
+  document.getElementById('sp-price').value=''
+  document.getElementById('stepModal').style.display='flex'
+}
+
+async function saveTmplStep(){
+  const title=document.getElementById('sp-title').value.trim()
+  if(!title){alert('Başlıq daxil edin');return}
+  try{
+    await api(`/api/templates/${_addStepTmplId}/steps`,'POST',{
+      order:(parseInt(document.getElementById('sp-order').value)||1)-1,
+      title,description:document.getElementById('sp-desc').value,
+      default_duration_days:parseInt(document.getElementById('sp-days').value)||7,
+      price:parseFloat(document.getElementById('sp-price').value)||0
+    })
+    document.getElementById('stepModal').style.display='none'
+    await loadServices()
+    const svc=_services.find(s=>s.id===_activeSvcId)
+    if(svc)renderTemplates(svc)
+  }catch(e){alert('Xəta: '+e.message)}
+}
+
+async function delTmplStep(id){
+  await api(`/api/template-steps/${id}`,'DELETE')
+  _services=await api('/api/services')
+  const svc=_services.find(s=>s.id===_activeSvcId)
+  if(svc)renderTemplates(svc)
+}
+
+async function loadSettings(){
+  const s=await api('/api/admin/settings')
+  document.getElementById('s-clinic').value=s.clinic_name||''
+  document.getElementById('s-doctor').value=s.doctor_name||''
+  document.getElementById('s-phone').value=s.phone||''
+  document.getElementById('s-addr').value=s.address||''
+  document.getElementById('s-smtp-host').value=s.smtp_host||''
+  document.getElementById('s-smtp-port').value=s.smtp_port||'587'
+  document.getElementById('s-smtp-user').value=s.smtp_user||''
+  document.getElementById('s-smtp-pass').value=s.smtp_pass||''
+  document.getElementById('s-smtp-from').value=s.smtp_from||''
+}
+
+async function saveSettings(){
+  await api('/api/admin/settings','PUT',{
+    clinic_name:document.getElementById('s-clinic').value,
+    doctor_name:document.getElementById('s-doctor').value,
+    phone:document.getElementById('s-phone').value,
+    address:document.getElementById('s-addr').value,
+    smtp_host:document.getElementById('s-smtp-host').value,
+    smtp_port:document.getElementById('s-smtp-port').value,
+    smtp_user:document.getElementById('s-smtp-user').value,
+    smtp_pass:document.getElementById('s-smtp-pass').value,
+    smtp_from:document.getElementById('s-smtp-from').value
+  })
+  alert('Yadda saxlandı!')
+}
+
+// ── Users ──────────────────────────────────────────────────────────────────
+async function loadUsers(){
+  const list=await api('/api/users')
+  const tbody=document.getElementById('users-tbody')
+  if(!list||!list.length){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><div class="empty-text">İstifadəçi yoxdur</div></div></td></tr>'
+    return
+  }
+  tbody.innerHTML=list.map(u=>`<tr style="${u.is_active?'':'opacity:.5'}" onclick="location.href='/admin/doctors/${u.id}'" style="cursor:pointer">
+    <td>
+      <div style="font-weight:700;color:var(--tx)">${u.name}</div>
+      ${u.must_change_password?'<span class="badge badge-pending" style="font-size:.63rem">Parol gözləyir</span>':''}
+    </td>
+    <td style="color:var(--mu);font-size:.84rem">${u.email}</td>
+    <td style="color:var(--mu);font-size:.84rem">${u.phone||'—'}</td>
+    <td><span class="badge ${u.is_active?'badge-completed':'badge-cancelled'}">${u.is_active?'Aktiv':'Deaktiv'}</span></td>
+    <td>
+      <a href="/admin/doctors/${u.id}" class="btn btn-secondary btn-sm" onclick="event.stopPropagation()">Profili Aç →</a>
+    </td>
+  </tr>`).join('')
+}
+
+function openAddUser(){
+  document.getElementById('u-name').value=''
+  document.getElementById('u-email').value=''
+  document.getElementById('u-phone').value=''
+  document.getElementById('u-role').value='doctor'
+  document.getElementById('userModal').style.display='flex'
+}
+function closeUserModal(){document.getElementById('userModal').style.display='none'}
+
+async function saveUser(){
+  const name=document.getElementById('u-name').value.trim()
+  const email=document.getElementById('u-email').value.trim()
+  if(!name||!email){alert('Ad və email tələb olunur');return}
+  const res=await api('/api/users','POST',{
+    name,email,phone:document.getElementById('u-phone').value.trim(),
+    role:document.getElementById('u-role').value
+  })
+  if(res.error){alert(res.error);return}
+  closeUserModal()
+  showPassResult(res)
+  loadUsers()
+}
+
+function showPassResult(res){
+  const msg=`Giriş məlumatları:\nEmail: ${res.email}\nMüvəqqəti parol: ${res.temp_pass}`
+  if(res.wa_link){
+    showWaModal(res.name, res.temp_pass, res.email, res.wa_link)
+  } else {
+    alert(msg+'\n\nHəkimə bu parolu bildirin. İlk girişdə dəyişdirəcək.')
+  }
+}
+
+function showWaModal(name,pass,email,waLink){
+  document.getElementById('wa-name').textContent=name
+  document.getElementById('wa-email').textContent=email
+  document.getElementById('wa-pass').textContent=pass
+  document.getElementById('wa-link').href=waLink
+  document.getElementById('waModal').style.display='flex'
+}
+
+async function toggleActive(id,current){
+  await api(`/api/users/${id}`,'PATCH',{is_active:!current})
+  loadUsers()
+}
+
+async function resetUserPass(id,name){
+  if(!confirm(`"${name}" istifadəçisinin parolu sıfırlansın? Yeni müvəqqəti parol yaradılacaq.`))return
+  const res=await api(`/api/users/${id}/reset-password`,'POST',{})
+  if(res.error){alert(res.error);return}
+  showPassResult(res)
+  loadUsers()
+}
+
+async function delUser(id,name){
+  if(!confirm(`"${name}" istifadəçisi tamamilə silinsin? Bu əməliyyat geri qaytarıla bilməz.`))return
+  await api(`/api/users/${id}`,'DELETE')
+  loadUsers()
+}
+
+loadProfile()
+loadServices()
+</script>
+{% endblock %}

@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% block title %}Pasiyent | DentalApp{% endblock %}
+{% block topbar_title %}<span id="pt-name">...</span>{% endblock %}
+{% block topbar_sub %}<span id="pt-meta"></span>{% endblock %}
+{% block topbar_actions %}
+<div style="display:flex;gap:8px">
+  <a href="/patients" class="btn btn-secondary btn-sm">← Geri</a>
+  <button class="btn btn-secondary btn-sm" onclick="openEdit()">✏️ Redaktə</button>
+  <button class="btn btn-danger btn-sm" onclick="delPt()">🗑️</button>
+</div>
+{% endblock %}
+{% block content %}
+
+<!-- TAB NAV -->
+<div style="display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px">
+  <button id="btn-info"  style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid var(--B);color:var(--B);margin-bottom:-1px"  onclick="tab('info')">📋 Məlumat</button>
+  <button id="btn-teeth" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('teeth')">🦷 Diş Xəritəsi</button>
+  <button id="btn-plans" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('plans')">📅 Müalicə Planları</button>
+  <button id="btn-media"    style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('media')">🖼️ Media</button>
+  <button id="btn-payments" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('payments')">💰 Ödənişlər</button>
+</div>
+
+<!-- PANES -->
+<div id="pn-info">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card"><div class="card-hd"><h3>Şəxsi Məlumatlar</h3></div>
+      <div class="card-bd"><table style="width:100%"><tbody id="info-tbl"></tbody></table></div></div>
+    <div class="card"><div class="card-hd"><h3>Tibbi Məlumat</h3></div>
+      <div class="card-bd" id="med-info"></div></div>
+  </div>
+</div>
+
+<div id="pn-teeth" style="display:none;position:relative;background:#0b1828;height:calc(100vh - 118px);overflow:hidden">
+  <div id="tcRoot" style="text-align:center;padding:20px;color:var(--mu);height:100%;overflow-y:auto">Yüklənir...</div>
+
+  <!-- Floating overlay panel — appears on top of chart without resizing it -->
+  <div id="tc-panel" style="display:none;position:absolute;top:16px;right:16px;width:230px;z-index:20;pointer-events:all">
+    <div class="card" style="box-shadow:0 4px 24px rgba(0,0,0,.6)">
+      <div class="card-hd" style="padding:11px 14px">
+        <div style="display:flex;align-items:center;gap:8px;flex:1">
+          <div id="tc-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:#60a5fa"></div>
+          <span id="tc-num" style="font-weight:800;font-size:.95rem;color:var(--tx)">—</span>
+        </div>
+        <button onclick="closeTcPanel()" style="background:none;border:none;cursor:pointer;color:var(--mu);font-size:1.1rem;line-height:1;padding:0">✕</button>
+      </div>
+      <div class="card-bd" style="padding:12px 14px">
+        <div class="form-label">Status</div>
+        <div id="tc-st" style="font-size:.88rem;font-weight:700;margin-bottom:12px;color:var(--tx)">—</div>
+        <div class="form-label">Qeyd</div>
+        <div id="tc-nt" style="font-size:.82rem;color:var(--mu);margin-bottom:14px;min-height:28px;line-height:1.5">—</div>
+        <button class="btn btn-primary btn-sm" style="width:100%" onclick="onTooth(window._tcSelNum)">✏️ Redaktə Et</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pn-plans" style="display:none">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="btn btn-primary" onclick="openPlan()">+ Yeni Plan</button>
+  </div>
+  <div id="plan-list"></div>
+</div>
+
+<div id="pn-media" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary btn-sm" onclick="mf('',this)">Hamısı</button>
+      <button class="btn btn-secondary btn-sm" onclick="mf('before',this)">Əvvəl</button>
+      <button class="btn btn-secondary btn-sm" onclick="mf('after',this)">Sonra</button>
+      <button class="btn btn-secondary btn-sm" onclick="mf('xray',this)">Rentgen</button>
+      <button class="btn btn-secondary btn-sm" onclick="mf('sim',this)">⇆ Simulyasiya</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select class="form-control" id="mtype" style="max-width:160px;font-size:.82rem">
+        <option value="other">Digər</option><option value="before">Əvvəl</option>
+        <option value="after">Sonra</option><option value="xray">Rentgen</option>
+      </select>
+      <label class="btn btn-primary" style="cursor:pointer;margin:0">📎 Yüklə
+        <input type="file" accept="image/*" style="display:none" onchange="upImg(this)">
+      </label>
+    </div>
+  </div>
+  <div class="media-grid" id="mgrid"></div>
+</div>
+
+<!-- TOOTH MODAL -->
+<div id="mTooth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="mToothTitle">Diş</h3><button class="modal-close" onclick="document.getElementById('mTooth').style.display='none'">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-control" id="tSt">
+          <option value="healthy">Sağlam</option><option value="caries">Karies</option>
+          <option value="treated">Müalicə edilmiş</option><option value="crown">Tac</option>
+          <option value="implant">İmplant</option><option value="root_canal">Kanal müalicəsi</option>
+          <option value="missing">Çatışmayan</option><option value="extraction">Çıxarılmış</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Qeyd</label>
+        <textarea class="form-control" id="tNote" rows="3"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('mTooth').style.display='none'">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveTooth()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="mEdit" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-hd"><h3>Redaktə Et</h3><button class="modal-close" onclick="document.getElementById('mEdit').style.display='none'">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ad *</label><input class="form-control" id="eName"></div>
+        <div class="form-group"><label class="form-label">Telefon</label><input class="form-control" id="ePhone"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">D.T.</label><input class="form-control" id="eDob" type="date"></div>
+        <div class="form-group"><label class="form-label">Cins</label>
+          <select class="form-control" id="eGender"><option value="">Seçin</option><option>Kişi</option><option>Qadın</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Qan qrupu</label><input class="form-control" id="eBlood"></div>
+      <div class="form-group"><label class="form-label">Şikayət</label><textarea class="form-control" id="eCompl" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Tibbi tarixçə</label><textarea class="form-control" id="eHist" rows="2"></textarea></div>
+      <div class="form-group"><label class="form-label">Allergiyalar</label><input class="form-control" id="eAllg"></div>
+      <div class="form-group"><label class="form-label">Qeydlər</label><textarea class="form-control" id="eNotes" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('mEdit').style.display='none'">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN MODAL -->
+<div id="mPlan" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="modal-hd"><h3>Yeni Plan</h3><button class="modal-close" onclick="document.getElementById('mPlan').style.display='none'">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Başlıq *</label><input class="form-control" id="pTitle"></div>
+      <div class="form-group"><label class="form-label">Xidmət</label>
+        <select class="form-control" id="pSvc" onchange="loadTmpls()"><option value="">Seçin</option></select></div>
+      <div class="form-group"><label class="form-label">Şablon</label>
+        <select class="form-control" id="pTmpl" onchange="onTmplChange()"><option value="">Yoxdur</option></select></div>
+      <div id="tmpl-preview" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:12px;font-size:.83rem">
+        <div style="color:var(--mu);margin-bottom:6px;font-weight:700">Şablon məlumatları:</div>
+        <div id="tmpl-steps-preview"></div>
+        <div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--mu);font-size:.82rem">Seçilən addımların dəyəri:</span>
+          <span style="font-weight:800;color:var(--green);font-size:.95rem" id="tmpl-cost-preview">0.00 ₼</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Müalicə dəyəri (₼)</label><input class="form-control" id="pCost" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Başlama</label><input class="form-control" id="pStart" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Bitmə</label><input class="form-control" id="pEnd" type="date"></div>
+        <div class="form-group"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Qeyd</label><textarea class="form-control" id="pNote" rows="2"></textarea></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('mPlan').style.display='none'">Ləğv et</button>
+      <button class="btn btn-primary" onclick="savePlan()">Yarat</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENTS PANE -->
+<div id="pn-payments" style="display:none">
+  <!-- Debt banner -->
+  <div id="debt-banner" style="display:none;margin-bottom:16px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:10px;padding:12px 16px;font-weight:700;font-size:.9rem"></div>
+  <!-- Summary -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+    <div class="stat-card"><div class="stat-val" id="py-cost">—</div><div class="stat-lbl">Müalicə dəyəri (₼)</div></div>
+    <div class="stat-card"><div class="stat-val" id="py-paid">—</div><div class="stat-lbl">Ödənilmiş (₼)</div></div>
+    <div class="stat-card"><div class="stat-val" id="py-debt" style="color:var(--red)">—</div><div class="stat-lbl">Borc (₼)</div></div>
+  </div>
+  <!-- Add payment -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-hd"><h3>Yeni Ödəniş</h3></div>
+    <div class="card-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Məbləğ (₼) *</label>
+          <input class="form-control" id="py-amount" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Tarix</label>
+          <input class="form-control" id="py-date" type="date"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Qeyd</label>
+        <input class="form-control" id="py-note" placeholder="İstəyə bağlı qeyd..."></div>
+      <button class="btn btn-primary btn-sm" onclick="addPayment()">Ödəniş Əlavə Et</button>
+    </div>
+  </div>
+  <!-- List -->
+  <div class="card">
+    <div class="card-hd"><h3>Ödəniş Tarixi</h3></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Tarix</th><th>Məbləğ</th><th>Qeyd</th><th></th></tr></thead>
+      <tbody id="py-tbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/tooth-chart.js"></script>
+<script>
+var PID={{ patient_id }};
+var _pt={},_th={},_svcs=[],_selT=null,_mf='';
+
+/* ── TABS ── */
+var TABS=['info','teeth','plans','media','payments'];
+function tab(name){
+  TABS.forEach(function(t){
+    var pn=document.getElementById('pn-'+t);
+    var bn=document.getElementById('btn-'+t);
+    if(pn) pn.style.display=(t===name?'block':'none');
+    if(bn){
+      bn.style.borderBottomColor=(t===name?'var(--B)':'transparent');
+      bn.style.color=(t===name?'var(--B)':'var(--mu)');
+    }
+  });
+  var wrap=document.querySelector('.wrap');
+  if(name==='teeth'){
+    if(wrap){wrap.style.padding='0';wrap.style.paddingBottom='0';}
+    if(window.closeTcPanel)closeTcPanel();
+    drawTeeth();
+  } else {
+    if(wrap) wrap.style.padding='';
+    if(name==='plans')    loadPlans();
+    if(name==='media')    loadMedia(_mf);
+    if(name==='payments') loadPayments();
+  }
+}
+
+/* ── INIT ── */
+async function init(){
+  _pt=await api('/api/patients/'+PID);
+  document.getElementById('pt-name').textContent=_pt.name;
+  document.getElementById('pt-meta').textContent=(_pt.phone||'')+(_pt.dob?' · D.T: '+_pt.dob:'')+(_pt.gender?' · '+_pt.gender:'');
+  renderInfo();
+  _svcs=await api('/api/services');
+  var sel=document.getElementById('pSvc');
+  _svcs.forEach(function(s){sel.innerHTML+='<option value="'+s.id+'">'+s.name+'</option>';});
+  loadTeeth();
+  loadPlans();
+  loadMedia('');
+}
+
+/* ── INFO ── */
+function renderInfo(){
+  var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['Doğum tarixi',_pt.dob||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
+  document.getElementById('info-tbl').innerHTML=rows.map(function(r){return '<tr><td style="color:var(--mu);font-size:.8rem;padding:6px 0;width:120px;font-weight:600">'+r[0]+'</td><td style="font-size:.88rem;padding:6px 0">'+r[1]+'</td></tr>';}).join('');
+  document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:.88rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:.88rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:.88rem">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:.88rem">'+(_pt.notes||'—')+'</div></div>';
+}
+
+/* ── TEETH ── */
+async function loadTeeth(){
+  _th=await api('/api/patients/'+PID+'/teeth');
+  window._tcTeeth=_th;
+  drawTeeth();
+}
+function drawTeeth(){
+  var root=document.getElementById('tcRoot');
+  if(!root)return;
+  root.innerHTML=buildChart(_th);
+}
+
+function onTooth(num){
+  _selT=num;
+  document.getElementById('mToothTitle').textContent='Diş '+num;
+  document.getElementById('tSt').value=(_th[num]||{}).status||'healthy';
+  document.getElementById('tNote').value=(_th[num]||{}).notes||'';
+  document.getElementById('mTooth').style.display='flex';
+}
+async function saveTooth(){
+  var st=document.getElementById('tSt').value;
+  var nt=document.getElementById('tNote').value;
+  await api('/api/patients/'+PID+'/teeth/'+_selT,'PUT',{status:st,notes:nt});
+  document.getElementById('mTooth').style.display='none';
+  loadTeeth();
+}
+
+/* ── PLANS ── */
+function slbl(s){return {planned:'Planlaşdırılmış',in_progress:'Davam edir',completed:'Tamamlandı',cancelled:'Ləğv edildi'}[s]||s;}
+async function loadPlans(){
+  var plans=await api('/api/patients/'+PID+'/plans');
+  var el=document.getElementById('plan-list');
+  if(!plans.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-text">Plan yoxdur</div></div>';return;}
+  el.innerHTML=plans.map(function(p){return '<div class="card" style="margin-bottom:12px"><div class="card-hd"><div><a href="/plans/'+p.id+'" style="font-weight:800;color:var(--B);text-decoration:none">'+p.title+'</a><div style="font-size:.8rem;color:var(--mu);margin-top:2px">'+(p.start_date||'')+(p.end_date?' → '+p.end_date:'')+'</div></div><div style="display:flex;gap:8px;align-items:center"><span class="badge badge-'+p.status+'">'+slbl(p.status)+'</span><a href="/plans/'+p.id+'" class="btn btn-secondary btn-sm">Aç →</a><button class="btn btn-danger btn-sm" onclick="delPlan('+p.id+')">🗑️</button></div></div></div>';}).join('');
+}
+async function delPlan(id){if(!confirm('Silmək istəyirsiniz?'))return;await api('/api/plans/'+id,'DELETE');loadPlans();}
+function loadTmpls(){
+  var sid=parseInt(document.getElementById('pSvc').value);
+  var sel=document.getElementById('pTmpl');
+  sel.innerHTML='<option value="">Yoxdur</option>';
+  var svc=_svcs.find(function(s){return s.id===sid;});
+  if(svc)svc.templates.forEach(function(t){sel.innerHTML+='<option value="'+t.id+'">'+t.name+'</option>';});
+  onTmplChange();
+}
+function onTmplChange(){
+  var sid=parseInt(document.getElementById('pSvc').value);
+  var tid=parseInt(document.getElementById('pTmpl').value);
+  var prev=document.getElementById('tmpl-preview');
+  if(!tid){prev.style.display='none';document.getElementById('pCost').value='';return;}
+  var svc=_svcs.find(function(s){return s.id===sid;});
+  var tmpl=svc&&svc.templates.find(function(t){return t.id===tid;});
+  if(!tmpl||!tmpl.steps.length){prev.style.display='none';return;}
+  if(!document.getElementById('pTitle').value)document.getElementById('pTitle').value=tmpl.name;
+  document.getElementById('tmpl-steps-preview').innerHTML=
+    '<div style="display:flex;gap:8px;margin-bottom:8px">'
+    +'<button type="button" class="btn btn-secondary btn-sm" onclick="selectAllSteps(true)">Hamısını seç</button>'
+    +'<button type="button" class="btn btn-secondary btn-sm" onclick="selectAllSteps(false)">Ləğv et</button>'
+    +'</div>'
+    +tmpl.steps.map(function(s,i){
+      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer">'
+        +'<input type="checkbox" class="step-chk" data-price="'+(s.price||0)+'" value="'+s.id+'" checked '
+        +'style="width:15px;height:15px;accent-color:var(--B);cursor:pointer" onchange="recalcCost()">'
+        +'<span style="flex:1;font-size:.85rem">'+(i+1)+'. '+s.title+'</span>'
+        +(s.price?'<span style="color:var(--green);font-weight:700;font-size:.82rem">'+s.price.toFixed(2)+' ₼</span>':'')
+        +'</label>';
+    }).join('');
+  prev.style.display='block';
+  recalcCost();
+}
+function selectAllSteps(val){
+  document.querySelectorAll('.step-chk').forEach(function(c){c.checked=val;});
+  recalcCost();
+}
+function recalcCost(){
+  var total=0;
+  document.querySelectorAll('.step-chk:checked').forEach(function(c){total+=parseFloat(c.dataset.price)||0;});
+  document.getElementById('pCost').value=total>0?total.toFixed(2):'';
+  document.getElementById('tmpl-cost-preview').textContent=total.toFixed(2)+' ₼';
+}
+function openPlan(){document.getElementById('pStart').value=new Date().toISOString().split('T')[0];document.getElementById('mPlan').style.display='flex';}
+async function savePlan(){
+  var title=document.getElementById('pTitle').value.trim();
+  if(!title){alert('Başlıq daxil edin');return;}
+  var sid=document.getElementById('pSvc').value;var tid=document.getElementById('pTmpl').value;
+  var cost=parseFloat(document.getElementById('pCost').value)||0;
+  var selSteps=[].slice.call(document.querySelectorAll('.step-chk:checked')).map(function(c){return parseInt(c.value);});
+  var plan=await api('/api/patients/'+PID+'/plans','POST',{title:title,service_id:sid?parseInt(sid):null,template_id:tid?parseInt(tid):null,selected_step_ids:selSteps.length?selSteps:null,cost:cost,start_date:document.getElementById('pStart').value,end_date:document.getElementById('pEnd').value,notes:document.getElementById('pNote').value});
+  document.getElementById('mPlan').style.display='none';location.href='/plans/'+plan.id;
+}
+
+/* ── MEDIA ── */
+function mf(type,btn){_mf=type;loadMedia(type);}
+async function loadMedia(type){
+  var grid=document.getElementById('mgrid');
+  if(type==='sim'){
+    var before=await api('/api/patients/'+PID+'/media?type=before');
+    var after =await api('/api/patients/'+PID+'/media?type=after');
+    if(!before.length||!after.length){
+      grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><div class="empty-text">'+(before.length?'Sonra şəkli':'Əvvəl şəkli')+' yoxdur</div></div>';
+      return;
+    }
+    var bUrl=before[0].url, aUrl=after[0].url;
+    grid.innerHTML=
+      '<div style="grid-column:1/-1">'
+        +'<div id="simBox" style="position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:ew-resize;-webkit-user-select:none;user-select:none">'
+          +'<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:url(\''+aUrl+'\') center/cover no-repeat"></div>'
+          +'<div id="simB" style="position:absolute;top:0;left:0;right:0;bottom:0;background:url(\''+bUrl+'\') center/cover no-repeat;clip-path:inset(0 50% 0 0)"></div>'
+          +'<div id="simH" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,.6)">'
+            +'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;pointer-events:none">⇆</div>'
+          +'</div>'
+          +'<div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.65);color:#fff;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Əvvəl</div>'
+          +'<div style="position:absolute;top:10px;right:12px;background:rgba(34,197,94,.8);color:#fff;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Sonra</div>'
+          +'<div id="simPct" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:99px;pointer-events:none">50%</div>'
+        +'</div>'
+        +'<div style="text-align:center;font-size:.76rem;color:var(--mu);margin-top:8px">← Sürüşdürün →</div>'
+      +'</div>';
+
+    _simSetup();
+    return;
+  }
+  var url='/api/patients/'+PID+'/media'+(type?'?type='+type:'');
+  var media=await api(url);
+  if(!media.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><div class="empty-text">Şəkil yoxdur</div></div>';return;}
+  grid.innerHTML=media.map(function(m){return '<div class="media-thumb" onclick="vImg(\''+m.url+'\')"><img src="'+m.url+'" alt=""><span class="media-type-tag">'+m.type+'</span><button class="media-del" onclick="event.stopPropagation();delImg('+m.id+')">✕</button></div>';}).join('');
+}
+
+function simSlide(v){}
+function initSim(){}
+// cropFit=true: mərkəzdən kəs (cover), false: tam sığdır (contain)
+function resizeImage(file,targetW,targetH,quality,cropFit){
+  return new Promise(function(resolve){
+    var img=new Image();
+    var url=URL.createObjectURL(file);
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      var sw=img.naturalWidth, sh=img.naturalHeight;
+      var canvas=document.createElement('canvas');
+      canvas.width=targetW; canvas.height=targetH;
+      var ctx=canvas.getContext('2d');
+      ctx.imageSmoothingEnabled=true;
+      ctx.imageSmoothingQuality='high';
+      if(cropFit){
+        // Cover: mərkəzdən kəs
+        var scale=Math.max(targetW/sw, targetH/sh);
+        var nw=sw*scale, nh=sh*scale;
+        var ox=(targetW-nw)/2, oy=(targetH-nh)/2;
+        ctx.drawImage(img, ox, oy, nw, nh);
+      } else {
+        // Contain: tam sığdır, ətrafı qara
+        ctx.fillStyle='#0b0f1a';
+        ctx.fillRect(0,0,targetW,targetH);
+        var scale=Math.min(targetW/sw, targetH/sh);
+        var nw=sw*scale, nh=sh*scale;
+        ctx.drawImage(img,(targetW-nw)/2,(targetH-nh)/2,nw,nh);
+      }
+      canvas.toBlob(function(blob){resolve(new File([blob],file.name,{type:'image/jpeg'}));},
+        'image/jpeg', quality||0.92);
+    };
+    img.src=url;
+  });
+}
+async function upImg(input){
+  var file=input.files[0];if(!file)return;
+  var type=document.getElementById('mtype').value;
+  var isSim=(type==='before'||type==='after');
+  // before/after: 1280×720 mərkəzdən kəs; digər: 1600×1200 tam sığdır
+  var processed=isSim
+    ? await resizeImage(file,1280,720,0.93,true)
+    : await resizeImage(file,1600,1200,0.92,false);
+  var fd=new FormData();
+  fd.append('file',processed);
+  fd.append('patient_id',PID);
+  fd.append('type',document.getElementById('mtype').value);
+  await fetch('/api/media/upload',{method:'POST',body:fd});
+  input.value='';loadMedia(_mf);
+}
+async function delImg(id){if(!confirm('Şəkli silmək istəyirsiniz?'))return;await api('/api/media/'+id,'DELETE');loadMedia(_mf);}
+function vImg(url){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';o.innerHTML='<img src="'+url+'" style="max-width:92vw;max-height:92vh;border-radius:12px">';o.onclick=function(){o.remove();};document.body.appendChild(o);}
+
+/* ── EDIT ── */
+function openEdit(){document.getElementById('eName').value=_pt.name||'';document.getElementById('ePhone').value=_pt.phone||'';document.getElementById('eDob').value=_pt.dob||'';document.getElementById('eGender').value=_pt.gender||'';document.getElementById('eBlood').value=_pt.blood_type||'';document.getElementById('eCompl').value=_pt.complaints||'';document.getElementById('eHist').value=_pt.medical_history||'';document.getElementById('eAllg').value=_pt.allergies||'';document.getElementById('eNotes').value=_pt.notes||'';document.getElementById('mEdit').style.display='flex';}
+async function saveEdit(){var name=document.getElementById('eName').value.trim();if(!name){alert('Ad daxil edin');return;}_pt=await api('/api/patients/'+PID,'PUT',{name:name,phone:document.getElementById('ePhone').value,dob:document.getElementById('eDob').value,gender:document.getElementById('eGender').value,blood_type:document.getElementById('eBlood').value,complaints:document.getElementById('eCompl').value,medical_history:document.getElementById('eHist').value,allergies:document.getElementById('eAllg').value,notes:document.getElementById('eNotes').value});document.getElementById('mEdit').style.display='none';document.getElementById('pt-name').textContent=_pt.name;renderInfo();}
+async function delPt(){if(!confirm('"'+_pt.name+'" pasiyentini silmək istəyirsiniz?'))return;await api('/api/patients/'+PID,'DELETE');location.href='/patients';}
+
+init();
+
+/* ── PAYMENTS ── */
+async function loadPayments(){
+  var r=await api('/api/patients/'+PID+'/payments');
+  document.getElementById('py-cost').textContent=r.total_cost.toFixed(2)+' ₼';
+  document.getElementById('py-paid').textContent=r.total_paid.toFixed(2)+' ₼';
+  document.getElementById('py-debt').textContent=r.debt.toFixed(2)+' ₼';
+  var banner=document.getElementById('debt-banner');
+  if(r.debt>0){banner.style.display='block';banner.textContent='⚠ Bu pasiyentin '+r.debt.toFixed(2)+' ₼ borcu var!';}
+  else banner.style.display='none';
+  var tbody=document.getElementById('py-tbody');
+  if(!r.payments.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--mu);padding:20px">Ödəniş yoxdur</td></tr>';return;}
+  tbody.innerHTML=r.payments.map(function(p){return '<tr><td style="font-size:.84rem;color:var(--mu)">'+
+    (p.date||'—')+'</td><td style="font-weight:700;color:var(--green)">'+p.amount.toFixed(2)+' ₼</td>'+
+    '<td style="color:var(--mu);font-size:.84rem">'+(p.notes||'—')+'</td>'+
+    '<td><button class="btn btn-danger btn-sm" onclick="delPayment('+p.id+')">✕</button></td></tr>';}).join('');
+}
+
+async function addPayment(){
+  var amount=parseFloat(document.getElementById('py-amount').value);
+  if(!amount||amount<=0){alert('Məbləği daxil edin');return;}
+  await api('/api/patients/'+PID+'/payments','POST',{
+    amount:amount,date:document.getElementById('py-date').value,
+    notes:document.getElementById('py-note').value});
+  document.getElementById('py-amount').value='';
+  document.getElementById('py-note').value='';
+  loadPayments();
+}
+
+async function delPayment(id){
+  if(!confirm('Bu ödənişi silmək istəyirsiniz?'))return;
+  await api('/api/payments/'+id,'DELETE');
+  loadPayments();
+}
+</script>
+{% endblock %}

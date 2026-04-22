@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | DentalApp{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+{% block topbar_sub %}Xoş gəldiniz{% endblock %}
+{% block topbar_actions %}{% if session.role != 'admin' %}<button class="btn btn-primary btn-sm" onclick="openNewPatientModal()">+ Yeni Pasiyent</button>{% endif %}{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(59,130,246,.12);color:var(--B)"><i data-lucide="users"></i></div>
+    <div class="stat-val" id="st-total">—</div>
+    <div class="stat-lbl">Ümumi Pasiyent</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(34,197,94,.12);color:var(--green)"><i data-lucide="calendar-plus"></i></div>
+    <div class="stat-val" id="st-today">—</div>
+    <div class="stat-lbl">Bu gün qeydiyyat</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(249,115,22,.12);color:var(--orange)"><i data-lucide="activity"></i></div>
+    <div class="stat-val" id="st-active">—</div>
+    <div class="stat-lbl">Aktiv müalicə</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start">
+  <div class="card">
+    <div class="card-hd">
+      <h3>Son Pasiyentlər</h3>
+      <a href="/patients" class="btn btn-secondary btn-sm">Hamısı →</a>
+    </div>
+    <div class="card-bd" style="padding:0">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ad</th><th>Telefon</th><th>Qeydiyyat</th><th></th></tr></thead>
+          <tbody id="recent-tbody"><tr><td colspan="4" style="text-align:center;color:#9e9e9e;padding:24px">Yüklənir...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><h3>Aktiv Müalicə Xronologiyası</h3></div>
+    <div class="card-bd" style="max-height:420px;overflow-y:auto;padding:12px">
+      <div id="dash-timeline"><div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Aktiv müalicə yoxdur</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- New Patient Modal -->
+<div class="modal-overlay" id="newPatientModal" style="display:none" onclick="if(event.target===this)closeNewPatient()">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3>Yeni Pasiyent</h3>
+      <button class="modal-close" onclick="closeNewPatient()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ad Soyad *</label>
+          <input class="form-control" id="np-name" placeholder="Tam ad">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefon</label>
+          <input class="form-control" id="np-phone" placeholder="+994...">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Doğum tarixi</label>
+          <input class="form-control" id="np-dob" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cins</label>
+          <select class="form-control" id="np-gender">
+            <option value="">Seçin</option>
+            <option>Kişi</option><option>Qadın</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Şikayət</label>
+        <textarea class="form-control" id="np-complaints" rows="2" placeholder="Əsas şikayət..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Allergiyalar</label>
+        <input class="form-control" id="np-allergies" placeholder="Allergiyalar...">
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeNewPatient()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveNewPatient()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDash(){
+  const [stats,patients]=await Promise.all([
+    api('/api/stats'),
+    api('/api/patients?q=')
+  ])
+  document.getElementById('st-total').textContent=stats.total_patients
+  document.getElementById('st-today').textContent=stats.today_patients
+  document.getElementById('st-active').textContent=stats.active_plans
+
+  const tbody=document.getElementById('recent-tbody')
+  const recent=patients.slice(0,10)
+  if(!recent.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:#9e9e9e;padding:24px">Pasiyent yoxdur</td></tr>';return}
+  tbody.innerHTML=recent.map(p=>`<tr>
+    <td><a href="/patients/${p.id}" style="font-weight:700;color:var(--B);text-decoration:none">${p.name}</a></td>
+    <td style="color:var(--mu)">${p.phone||'—'}</td>
+    <td style="color:var(--mu);font-size:.82rem">${fmtDate(p.created_at)}</td>
+    <td><a href="/patients/${p.id}" class="btn btn-secondary btn-sm">Bax →</a></td>
+  </tr>`).join('')
+
+  // Active treatment timeline grouped by patient
+  const tlEl=document.getElementById('dash-timeline')
+  const active=await api('/api/dashboard/active-timeline')
+  if(active.length){
+    tlEl.innerHTML=active.map(g=>`
+      <div style="margin-bottom:16px">
+        <a href="/patients/${g.patient.id}" style="font-size:.82rem;font-weight:700;color:var(--B);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:8px">
+          <span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block"></span>${g.patient.name}
+        </a>
+        <div class="timeline">
+          ${g.events.map(e=>`
+            <div class="tl-item">
+              <div class="tl-dot ${e.event_type==='plan_created'?'orange':e.event_type==='created'?'green':''}"></div>
+              <div class="tl-body">
+                <div class="tl-desc">${e.description}</div>
+                <div class="tl-date">${fmtDate(e.created_at)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')
+  } else {
+    tlEl.innerHTML='<div class="empty"><div class="empty-text">Aktiv müalicə yoxdur</div></div>'
+  }
+}
+
+function openNewPatientModal(){document.getElementById('newPatientModal').style.display='flex'}
+function closeNewPatient(){document.getElementById('newPatientModal').style.display='none'}
+
+async function saveNewPatient(){
+  const name=document.getElementById('np-name').value.trim()
+  if(!name){alert('Ad daxil edin');return}
+  const p=await api('/api/patients','POST',{
+    name,phone:document.getElementById('np-phone').value,
+    dob:document.getElementById('np-dob').value,
+    gender:document.getElementById('np-gender').value,
+    complaints:document.getElementById('np-complaints').value,
+    allergies:document.getElementById('np-allergies').value
+  })
+  closeNewPatient()
+  location.href=`/patients/${p.id}`
+}
+
+if(sessionStorage.getItem('openNewPatient')){sessionStorage.removeItem('openNewPatient');setTimeout(openNewPatientModal,300)}
+loadDash().then(()=>{if(window.lucide)lucide.createIcons()})
+</script>
+{% endblock %}

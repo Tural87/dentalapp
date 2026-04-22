@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% block title %}Müalicə Planı | DentalApp{% endblock %}
+{% block topbar_title %}<span id="plan-title">Yüklənir...</span>{% endblock %}
+{% block topbar_sub %}<span id="plan-meta"></span>{% endblock %}
+{% block topbar_actions %}
+  <div style="display:flex;gap:8px;align-items:center">
+    <a id="back-link" href="/patients" class="btn btn-secondary btn-sm">← Geri</a>
+    <select class="form-control" id="status-sel" style="max-width:190px;font-size:.82rem;padding:6px 10px" onchange="updateStatus()">
+      <option value="planned">Planlaşdırılmış</option>
+      <option value="in_progress">Davam edir</option>
+      <option value="completed">Tamamlandı</option>
+      <option value="cancelled">Ləğv edildi</option>
+    </select>
+    <button class="btn btn-primary btn-sm" onclick="openAddStep()">+ Addım</button>
+  </div>
+{% endblock %}
+{% block content %}
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start">
+  <!-- Steps -->
+  <div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><h3>Müalicə Addımları</h3><span id="step-counter" style="font-size:.82rem;color:var(--mu)"></span></div>
+      <div class="card-bd">
+        <div id="steps-list"></div>
+      </div>
+    </div>
+
+    <!-- Simulation -->
+    <div class="card" id="sim-card" style="display:none">
+      <div class="card-hd"><h3>🔬 Simulyasiya (Əvvəl / Sonra)</h3>
+        <button class="btn btn-secondary btn-sm" onclick="loadSim()">Yenilə</button>
+      </div>
+      <div class="card-bd">
+        <div class="sim-wrap" id="sim-wrap">
+          <img id="sim-before" src="" alt="Əvvəl">
+          <div class="sim-after" id="sim-after-div">
+            <img id="sim-after" src="" alt="Sonra">
+          </div>
+          <div class="sim-handle" id="sim-handle"></div>
+        </div>
+        <div class="sim-labels"><span>Əvvəl</span><span>Sonra</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><h3>Plan Məlumatları</h3></div>
+      <div class="card-bd" id="plan-info"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h3>📎 Müalicəyə Aid Media</h3>
+        <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+          Yüklə
+          <input type="file" accept="image/*" style="display:none" onchange="uploadMedia(this)">
+        </label>
+      </div>
+      <div class="card-bd">
+        <div style="margin-bottom:10px;display:flex;gap:6px">
+          <select class="form-control" id="media-type-sel" style="font-size:.82rem">
+            <option value="other">Digər</option>
+            <option value="before">Əvvəl</option>
+            <option value="after">Sonra</option>
+            <option value="xray">Rentgen</option>
+          </select>
+        </div>
+        <div class="media-grid" id="media-grid" style="grid-template-columns:repeat(auto-fill,minmax(90px,1fr))"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Step Modal -->
+<div class="modal-overlay" id="stepModal" style="display:none" onclick="if(event.target===this)closeStepModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="step-modal-title">Addım Əlavə Et</h3>
+      <button class="modal-close" onclick="closeStepModal()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-label">Başlıq *</label>
+        <input class="form-control" id="st-title" placeholder="Addım adı"></div>
+      <div class="form-group"><label class="form-label">Təsvir</label>
+        <textarea class="form-control" id="st-desc" rows="2"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Tarix</label>
+          <input class="form-control" id="st-date" type="date"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-control" id="st-status">
+            <option value="pending">Gözləyir</option>
+            <option value="in_progress">Davam edir</option>
+            <option value="done">Tamamlandı</option>
+            <option value="skipped">Keçildi</option>
+          </select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Qeyd</label>
+        <input class="form-control" id="st-notes"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeStepModal()">Ləğv et</button>
+      <button class="btn btn-primary" id="step-save-btn" onclick="saveStep()">Əlavə et</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/simulation.js"></script>
+<script>
+const PLAN_ID={{ plan_id }}
+let _plan={},_editStepId=null
+
+async function init(){
+  _plan=await api(`/api/plans/${PLAN_ID}`)
+  document.getElementById('plan-title').textContent=_plan.title
+  document.getElementById('plan-meta').textContent=`Pasiyent #${_plan.patient_id} · Yaradılıb: ${fmtDate(_plan.created_at)}`
+  document.getElementById('back-link').href=`/patients/${_plan.patient_id}`
+  document.getElementById('status-sel').value=_plan.status
+  renderPlanInfo()
+  renderSteps()
+  loadMedia()
+  loadSim()
+}
+
+function renderPlanInfo(){
+  document.getElementById('plan-info').innerHTML=`
+    <table style="width:100%">
+      <tbody>
+        <tr><td style="color:var(--mu);font-size:.82rem;padding:5px 0;width:100px;font-weight:600">Başlama</td><td style="font-size:.88rem">${_plan.start_date||'—'}</td></tr>
+        <tr><td style="color:var(--mu);font-size:.82rem;padding:5px 0;font-weight:600">Bitmə</td><td style="font-size:.88rem">${_plan.end_date||'—'}</td></tr>
+        <tr><td style="color:var(--mu);font-size:.82rem;padding:5px 0;font-weight:600">Status</td><td><span class="badge badge-${_plan.status}">${statusLabel(_plan.status)}</span></td></tr>
+        <tr><td style="color:var(--mu);font-size:.82rem;padding:5px 0;font-weight:600">Qeyd</td><td style="font-size:.88rem">${_plan.notes||'—'}</td></tr>
+      </tbody>
+    </table>
+  `
+}
+
+function statusLabel(s){
+  return {planned:'Planlaşdırılmış',in_progress:'Davam edir',completed:'Tamamlandı',cancelled:'Ləğv edildi',pending:'Gözləyir',done:'Tamamlandı',skipped:'Keçildi'}[s]||s
+}
+
+function renderSteps(){
+  const steps=_plan.steps||[]
+  document.getElementById('step-counter').textContent=`${steps.filter(s=>s.status==='done').length}/${steps.length} tamamlandı`
+  const el=document.getElementById('steps-list')
+  if(!steps.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Addım yoxdur</div></div>`
+    return
+  }
+  el.innerHTML=steps.map((s,i)=>`
+    <div class="step-item">
+      <div class="step-num ${s.status==='done'?'style="background:#e8f5e9;color:var(--green)"':''}">${i+1}</div>
+      <div class="step-body">
+        <div class="step-title">${s.title}</div>
+        ${s.description?`<div class="step-desc">${s.description}</div>`:''}
+        <div class="step-meta">
+          <span class="badge badge-${s.status}">${statusLabel(s.status)}</span>
+          ${s.scheduled_date?`<span style="font-size:.76rem;color:var(--mu)">📅 ${s.scheduled_date}</span>`:''}
+          ${s.notes?`<span style="font-size:.76rem;color:var(--mu)">💬 ${s.notes}</span>`:''}
+        </div>
+      </div>
+      <div class="step-actions">
+        ${s.status!=='done'?`<button class="btn btn-success btn-sm" onclick="markDone(${s.id})">✓</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="openEditStep(${JSON.stringify(s).replace(/"/g,'&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delStep(${s.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+async function updateStatus(){
+  const s=document.getElementById('status-sel').value
+  await api(`/api/plans/${PLAN_ID}`,'PUT',{status:s})
+  _plan.status=s
+  renderPlanInfo()
+}
+
+function openAddStep(){
+  _editStepId=null
+  document.getElementById('step-modal-title').textContent='Addım Əlavə Et'
+  document.getElementById('step-save-btn').textContent='Əlavə et'
+  document.getElementById('st-title').value=''
+  document.getElementById('st-desc').value=''
+  document.getElementById('st-date').value=''
+  document.getElementById('st-status').value='pending'
+  document.getElementById('st-notes').value=''
+  document.getElementById('stepModal').style.display='flex'
+}
+
+function openEditStep(s){
+  _editStepId=s.id
+  document.getElementById('step-modal-title').textContent='Addımı Redaktə Et'
+  document.getElementById('step-save-btn').textContent='Yadda saxla'
+  document.getElementById('st-title').value=s.title||''
+  document.getElementById('st-desc').value=s.description||''
+  document.getElementById('st-date').value=s.scheduled_date||''
+  document.getElementById('st-status').value=s.status||'pending'
+  document.getElementById('st-notes').value=s.notes||''
+  document.getElementById('stepModal').style.display='flex'
+}
+
+function closeStepModal(){document.getElementById('stepModal').style.display='none'}
+
+async function saveStep(){
+  const title=document.getElementById('st-title').value.trim()
+  if(!title){alert('Başlıq daxil edin');return}
+  const data={title,description:document.getElementById('st-desc').value,
+    scheduled_date:document.getElementById('st-date').value,
+    status:document.getElementById('st-status').value,
+    notes:document.getElementById('st-notes').value}
+  if(_editStepId){
+    await api(`/api/steps/${_editStepId}`,'PUT',data)
+  } else {
+    data.order=(_plan.steps||[]).length
+    await api(`/api/plans/${PLAN_ID}/steps`,'POST',data)
+  }
+  closeStepModal()
+  _plan=await api(`/api/plans/${PLAN_ID}`)
+  renderSteps()
+}
+
+async function markDone(id){
+  await api(`/api/steps/${id}`,'PUT',{status:'done'})
+  _plan=await api(`/api/plans/${PLAN_ID}`)
+  document.getElementById('status-sel').value=_plan.status
+  renderSteps()
+  renderPlanInfo()
+}
+
+async function delStep(id){
+  if(!confirm('Bu addımı silmək istəyirsiniz?'))return
+  await api(`/api/steps/${id}`,'DELETE')
+  _plan=await api(`/api/plans/${PLAN_ID}`)
+  renderSteps()
+}
+
+async function loadMedia(){
+  const media=await api(`/api/patients/${_plan.patient_id}/media`)
+  const grid=document.getElementById('media-grid')
+  if(!media.length){grid.innerHTML='<div style="font-size:.82rem;color:var(--mu)">Şəkil yoxdur</div>';return}
+  grid.innerHTML=media.map(m=>`
+    <div class="media-thumb" onclick="viewImg('${m.url}')">
+      <img src="${m.url}" alt="${m.caption||''}">
+      <span class="media-type-tag">${m.type}</span>
+      <button class="media-del" onclick="event.stopPropagation();delMedia(${m.id})">✕</button>
+    </div>
+  `).join('')
+  // show sim if before+after exist
+  const hasBefore=media.find(m=>m.type==='before')
+  const hasAfter=media.find(m=>m.type==='after')
+  if(hasBefore&&hasAfter){
+    document.getElementById('sim-card').style.display='block'
+    document.getElementById('sim-before').src=hasBefore.url
+    document.getElementById('sim-after').src=hasAfter.url
+    initSim()
+  }
+}
+
+async function uploadMedia(input){
+  const file=input.files[0];if(!file)return
+  const fd=new FormData()
+  fd.append('file',file)
+  fd.append('patient_id',_plan.patient_id)
+  fd.append('type',document.getElementById('media-type-sel').value)
+  await fetch('/api/media/upload',{method:'POST',body:fd})
+  input.value=''
+  loadMedia()
+}
+
+async function delMedia(id){
+  if(!confirm('Şəkli silmək istəyirsiniz?'))return
+  await api(`/api/media/${id}`,'DELETE')
+  loadMedia()
+}
+
+async function loadSim(){
+  if(!_plan.patient_id)return
+  const media=await api(`/api/patients/${_plan.patient_id}/media`)
+  const before=media.find(m=>m.type==='before')
+  const after=media.find(m=>m.type==='after')
+  if(before&&after){
+    document.getElementById('sim-card').style.display='block'
+    document.getElementById('sim-before').src=before.url
+    document.getElementById('sim-after').src=after.url
+    initSim()
+  }
+}
+
+function viewImg(url){
+  const ov=document.createElement('div')
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out'
+  ov.innerHTML=`<img src="${url}" style="max-width:92vw;max-height:92vh;border-radius:12px">`
+  ov.onclick=()=>ov.remove()
+  document.body.appendChild(ov)
+}
+
+init()
+</script>
+{% endblock %}
