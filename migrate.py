@@ -17,12 +17,26 @@ if not os.path.exists(DB_PATH):
 
 MIGRATIONS = [
     # Admin/Superadmin extension
+    ("users", "clinic_id", "INTEGER"),
     ("users", "commission_percent", "REAL DEFAULT 0"),
+    ("users", "must_change_password", "INTEGER DEFAULT 0"),
+    ("users", "reset_token", "VARCHAR(200)"),
+    ("users", "reset_token_expiry", "DATETIME"),
+    ("users", "phone", "VARCHAR(30)"),
     ("treatment_plans", "doctor_id", "INTEGER"),
+    ("treatment_plans", "template_id", "INTEGER"),
+    ("treatment_plans", "notes", "TEXT"),
     # Doctor/Patient extension
     ("patients", "fin_code", "VARCHAR(20)"),
     ("patients", "family_member_id", "INTEGER"),
     ("patients", "family_relation", "VARCHAR(50)"),
+    # Clinic
+    ("clinics", "slug", "VARCHAR(100)"),
+    ("clinics", "email", "VARCHAR(200)"),
+    ("clinics", "phone", "VARCHAR(50)"),
+    ("clinics", "address", "VARCHAR(300)"),
+    ("clinics", "plan", "VARCHAR(20) DEFAULT 'free'"),
+    ("clinics", "is_active", "INTEGER DEFAULT 1"),
 ]
 
 conn = sqlite3.connect(DB_PATH)
