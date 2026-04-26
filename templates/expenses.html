@@ -110,8 +110,8 @@ function fillCategories(){
 function renderTable(){
   const q=document.getElementById('f-search').value.toLowerCase()
   const cat=document.getElementById('f-cat').value
-  const from=document.getElementById('f-from').value
-  const to=document.getElementById('f-to').value
+  const from=dmyToIso(document.getElementById('f-from').value)
+  const to=dmyToIso(document.getElementById('f-to').value)
   let rows=_all.filter(e=>{
     if(q&&!e.product.toLowerCase().includes(q)&&!(e.company||'').toLowerCase().includes(q))return false
     if(cat&&e.category!==cat)return false
@@ -140,7 +140,7 @@ function renderTable(){
 function openModal(){ _editId=null; document.getElementById('modal-title').textContent='Xərc Əlavə Et'
   ;['e-product','e-company','e-cat','e-price'].forEach(id=>document.getElementById(id).value='')
   document.getElementById('e-qty').value=1
-  document.getElementById('e-date').value=new Date().toISOString().slice(0,10)
+  document.getElementById('e-date').value=isoToDmy(new Date().toISOString().slice(0,10))
   document.getElementById('expModal').style.display='flex' }
 function closeModal(){ document.getElementById('expModal').style.display='none' }
 
@@ -150,7 +150,7 @@ function editExp(id){
   document.getElementById('e-product').value=e.product||''
   document.getElementById('e-company').value=e.company||''
   document.getElementById('e-cat').value=e.category||''
-  document.getElementById('e-date').value=e.purchase_date||''
+  document.getElementById('e-date').value=isoToDmy(e.purchase_date||'')
   document.getElementById('e-qty').value=e.quantity||1
   document.getElementById('e-price').value=e.price||0
   document.getElementById('expModal').style.display='flex'
@@ -160,7 +160,7 @@ async function saveExpense(){
   const d={product:document.getElementById('e-product').value.trim(),
     company:document.getElementById('e-company').value.trim(),
     category:document.getElementById('e-cat').value.trim(),
-    purchase_date:document.getElementById('e-date').value,
+    purchase_date:getDateVal('e-date'),
     quantity:document.getElementById('e-qty').value,
     price:document.getElementById('e-price').value}
   if(!d.product){alert('Məhsul adı daxil edin');return}

@@ -986,7 +986,7 @@ async function loadAdmDashboard(){
 
 // ── APPOINTMENTS ─────────────────────────────────────────────────────────────
 let _apEditId=null
-function _isoDate(d){return new Date(d).toISOString().slice(0,10)}
+function _isoDate(d){return isoToDmy(new Date(d).toISOString().slice(0,10))}
 function apToday(){
   const t=_isoDate(new Date())
   document.getElementById('ap-date-from').value=t
@@ -1002,8 +1002,8 @@ function apShift(days){
   loadAppointments()
 }
 async function loadAppointments(){
-  const f=document.getElementById('ap-date-from').value
-  const t=document.getElementById('ap-date-to').value
+  const f=dmyToIso(document.getElementById('ap-date-from').value)
+  const t=dmyToIso(document.getElementById('ap-date-to').value)
   let url='/api/appointments'
   const q=[];if(f)q.push('from='+f);if(t)q.push('to='+t)
   if(q.length)url+='?'+q.join('&')
@@ -1065,7 +1065,7 @@ async function editAp(id){
   document.getElementById('ap-patient').value=a.patient_id||''
   document.getElementById('ap-patient-name').value=a.patient_name||''
   document.getElementById('ap-patient-phone').value=a.patient_phone||''
-  document.getElementById('ap-date').value=a.appointment_date||''
+  document.getElementById('ap-date').value=isoToDmy(a.appointment_date||'')
   document.getElementById('ap-time').value=a.appointment_time||''
   document.getElementById('ap-duration').value=a.duration_minutes||30
   document.getElementById('ap-notes').value=a.notes||''
@@ -1078,7 +1078,7 @@ async function saveAp(){
     doctor_id:document.getElementById('ap-doctor').value||null,
     patient_name:document.getElementById('ap-patient-name').value.trim(),
     patient_phone:document.getElementById('ap-patient-phone').value.trim(),
-    appointment_date:document.getElementById('ap-date').value,
+    appointment_date:getDateVal('ap-date'),
     appointment_time:document.getElementById('ap-time').value,
     duration_minutes:parseInt(document.getElementById('ap-duration').value)||30,
     notes:document.getElementById('ap-notes').value.trim()

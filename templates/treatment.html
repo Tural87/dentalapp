@@ -191,7 +191,7 @@ function openEditStep(s){
   document.getElementById('step-save-btn').textContent='Yadda saxla'
   document.getElementById('st-title').value=s.title||''
   document.getElementById('st-desc').value=s.description||''
-  document.getElementById('st-date').value=s.scheduled_date||''
+  document.getElementById('st-date').value=isoToDmy(s.scheduled_date||'')
   document.getElementById('st-status').value=s.status||'pending'
   document.getElementById('st-notes').value=s.notes||''
   document.getElementById('stepModal').style.display='flex'
@@ -203,7 +203,7 @@ async function saveStep(){
   const title=document.getElementById('st-title').value.trim()
   if(!title){alert('Başlıq daxil edin');return}
   const data={title,description:document.getElementById('st-desc').value,
-    scheduled_date:document.getElementById('st-date').value,
+    scheduled_date:getDateVal('st-date'),
     status:document.getElementById('st-status').value,
     notes:document.getElementById('st-notes').value}
   if(_editStepId){

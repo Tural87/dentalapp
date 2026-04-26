@@ -170,13 +170,11 @@ function closeNewPatient(){document.getElementById('newPatientModal').style.disp
 async function saveNewPatient(){
   const name=document.getElementById('np-name').value.trim()
   if(!name){alert('Ad daxil edin');return}
-  const dobEl=document.getElementById('np-dob')
-  const dob=dobEl._flatpickr?dobEl._flatpickr.selectedDates[0]?dobEl._flatpickr.formatDate(dobEl._flatpickr.selectedDates[0],'Y-m-d'):'':dobEl.value
   try{
     const p=await api('/api/patients','POST',{
       name,
       phone:document.getElementById('np-phone').value,
-      dob,
+      dob:getDateVal('np-dob'),
       gender:document.getElementById('np-gender').value,
       blood_type:document.getElementById('np-blood').value,
       complaints:document.getElementById('np-complaints').value,
