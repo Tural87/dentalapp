@@ -824,7 +824,15 @@ document.body.insertAdjacentHTML('beforeend', `
   💬<span id="float-chat-badge"></span>
 </button>
 <div id="float-chat-box">
-  <div class="fc-hd"><span>🦷 Dəstək</span><button class="fc-close" onclick="toggleChat()">✕</button></div>
+  <div class="fc-hd"><span>🦷 Dəstək</span><div style="display:flex;gap:6px"><button class="btn btn-secondary btn-sm" onclick="fcToggleTicket()" title="Bilet aç">🎫</button><button class="fc-close" onclick="toggleChat()">✕</button></div></div>
+  <div id="fc-ticket-form" style="display:none;padding:10px;border-bottom:1px solid var(--border);display:none">
+    <input id="fc-tk-subject" class="form-control" placeholder="Mövzu" style="margin-bottom:6px;font-size:.82rem">
+    <textarea id="fc-tk-body" class="form-control" placeholder="Təfərrüat..." rows="3" style="font-size:.82rem;resize:none"></textarea>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <select id="fc-tk-priority" class="form-control" style="font-size:.8rem"><option value="normal">Normal</option><option value="high">Təcili</option><option value="low">Aşağı</option></select>
+      <button class="btn btn-primary btn-sm" onclick="fcSubmitTicket()">Göndər</button>
+    </div>
+  </div>
   <div class="fc-msgs" id="fc-msgs"></div>
   <div class="fc-input">
     <input id="fc-text" placeholder="Mesaj yazın..." onkeydown="if(event.key==='Enter')fcSend()">
@@ -867,6 +875,22 @@ async function fcFetchMsgs(){
   document.getElementById('float-chat-badge').style.display = 'none'
 }
 
+function fcToggleTicket(){
+  const f = document.getElementById('fc-ticket-form')
+  f.style.display = f.style.display === 'none' ? 'block' : 'none'
+}
+async function fcSubmitTicket(){
+  const subject = document.getElementById('fc-tk-subject').value.trim()
+  if(!subject) return alert('Mövzu daxil edin')
+  const r = await fetch('/api/tickets',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({subject, body:document.getElementById('fc-tk-body').value, priority:document.getElementById('fc-tk-priority').value})})
+  if(r.ok){
+    document.getElementById('fc-tk-subject').value=''
+    document.getElementById('fc-tk-body').value=''
+    document.getElementById('fc-ticket-form').style.display='none'
+    alert('Bilet göndərildi!')
+  }
+}
 async function fcSend(){
   const t = document.getElementById('fc-text').value.trim()
   if(!t || !_CLINIC_ID) return
