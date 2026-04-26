@@ -290,7 +290,7 @@ function tab(name){
 async function init(){
   _pt=await api('/api/patients/'+PID);
   document.getElementById('pt-name').textContent=_pt.name;
-  document.getElementById('pt-meta').textContent=(_pt.phone||'')+(_pt.dob?' · D.T: '+_pt.dob:'')+(_pt.gender?' · '+_pt.gender:'');
+  document.getElementById('pt-meta').textContent=(_pt.phone||'')+(_pt.dob?' · D.T: '+fmtDate(_pt.dob):'')+(_pt.gender?' · '+_pt.gender:'');
   renderInfo();
   _svcs=await api('/api/services');
   var sel=document.getElementById('pSvc');
@@ -314,7 +314,7 @@ function renderInfo(){
     document.getElementById('alert-content').innerHTML=warnings.join('<br>');
     banner.style.display='flex';
   }else{banner.style.display='none';}
-  var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['FİN',_pt.fin_code||'—'],['Doğum tarixi',_pt.dob||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
+  var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['FİN',_pt.fin_code||'—'],['Doğum tarixi',fmtDate(_pt.dob)||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
   document.getElementById('info-tbl').innerHTML=rows.map(function(r){return '<tr><td style="color:var(--mu);font-size:.8rem;padding:6px 0;width:120px;font-weight:600">'+r[0]+'</td><td style="font-size:.88rem;padding:6px 0">'+r[1]+'</td></tr>';}).join('');
   document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:.88rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:.88rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:.88rem;'+(_pt.allergies?'color:#ef4444;font-weight:700':'')+'">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:.88rem">'+(_pt.notes||'—')+'</div></div>';
 }
@@ -352,7 +352,7 @@ async function loadPlans(){
   var plans=await api('/api/patients/'+PID+'/plans');
   var el=document.getElementById('plan-list');
   if(!plans.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-text">Plan yoxdur</div></div>';return;}
-  el.innerHTML=plans.map(function(p){return '<div class="card" style="margin-bottom:12px"><div class="card-hd"><div><a href="/plans/'+p.id+'" style="font-weight:800;color:var(--B);text-decoration:none">'+p.title+'</a><div style="font-size:.8rem;color:var(--mu);margin-top:2px">'+(p.start_date||'')+(p.end_date?' → '+p.end_date:'')+'</div></div><div style="display:flex;gap:8px;align-items:center"><span class="badge badge-'+p.status+'">'+slbl(p.status)+'</span><a href="/plans/'+p.id+'" class="btn btn-secondary btn-sm">Aç →</a><button class="btn btn-danger btn-sm" onclick="delPlan('+p.id+')">🗑️</button></div></div></div>';}).join('');
+  el.innerHTML=plans.map(function(p){return '<div class="card" style="margin-bottom:12px"><div class="card-hd"><div><a href="/plans/'+p.id+'" style="font-weight:800;color:var(--B);text-decoration:none">'+p.title+'</a><div style="font-size:.8rem;color:var(--mu);margin-top:2px">'+(p.start_date?fmtDate(p.start_date):'')+(p.end_date?' → '+fmtDate(p.end_date):'')+'</div></div><div style="display:flex;gap:8px;align-items:center"><span class="badge badge-'+p.status+'">'+slbl(p.status)+'</span><a href="/plans/'+p.id+'" class="btn btn-secondary btn-sm">Aç →</a><button class="btn btn-danger btn-sm" onclick="delPlan('+p.id+')">🗑️</button></div></div></div>';}).join('');
 }
 async function delPlan(id){if(!confirm('Silmək istəyirsiniz?'))return;await api('/api/plans/'+id,'DELETE');loadPlans();}
 function loadTmpls(){

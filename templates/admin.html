@@ -279,10 +279,15 @@
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:.82rem;color:var(--mu);line-height:1.5">
         Sistem müvəqqəti parol yaradacaq. Email konfiqurasiyası varsa həkimə göndəriləcək, yoxdursa sizə göstəriləcək. Həkim ilk girişdə parolu dəyişməlidir.
       </div>
+      <div id="user-pass-result" style="display:none;background:var(--bg3);border:1px solid #22c55e;border-radius:8px;padding:12px;margin-top:10px">
+        <div style="font-size:.72rem;color:var(--mu);margin-bottom:4px">Müvəqqəti parol:</div>
+        <div id="user-pass-val" style="font-size:1rem;font-weight:800;color:#22c55e;letter-spacing:.05em"></div>
+        <div id="user-email-val" style="font-size:.78rem;color:var(--mu);margin-top:4px"></div>
+      </div>
     </div>
     <div class="modal-ft">
       <button class="btn btn-secondary" onclick="closeUserModal()">Ləğv et</button>
-      <button class="btn btn-primary" onclick="saveUser()">Əlavə Et</button>
+      <button class="btn btn-primary" id="user-save-btn" onclick="saveUser()">Əlavə Et</button>
     </div>
   </div>
 </div>
@@ -759,7 +764,11 @@ function openAddUser(){
   document.getElementById('u-role').value='doctor'
   document.getElementById('userModal').style.display='flex'
 }
-function closeUserModal(){document.getElementById('userModal').style.display='none'}
+function closeUserModal(){
+  document.getElementById('userModal').style.display='none'
+  document.getElementById('user-pass-result').style.display='none'
+  document.getElementById('user-save-btn').style.display='inline-flex'
+}
 
 async function saveUser(){
   const name=document.getElementById('u-name').value.trim()
@@ -776,11 +785,14 @@ async function saveUser(){
 }
 
 function showPassResult(res){
-  const msg=`Giriş məlumatları:\nEmail: ${res.email}\nMüvəqqəti parol: ${res.temp_pass}`
   if(res.wa_link){
     showWaModal(res.name, res.temp_pass, res.email, res.wa_link)
   } else {
-    alert(msg+'\n\nHəkimə bu parolu bildirin. İlk girişdə dəyişdirəcək.')
+    document.getElementById('user-pass-val').textContent = res.temp_pass
+    document.getElementById('user-email-val').textContent = 'Email: ' + res.email
+    document.getElementById('user-pass-result').style.display = 'block'
+    document.getElementById('user-save-btn').style.display = 'none'
+    document.getElementById('userModal').style.display = 'flex'
   }
 }
 
