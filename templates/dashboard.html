@@ -86,13 +86,25 @@
           </select>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Qan qrupu</label>
+          <select class="form-control" id="np-blood">
+            <option value="">Seçin</option>
+            <option>A(II)+</option><option>A(II)-</option>
+            <option>B(III)+</option><option>B(III)-</option>
+            <option>AB(IV)+</option><option>AB(IV)-</option>
+            <option>0(I)+</option><option>0(I)-</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">FİN</label>
+          <input class="form-control" id="np-fin" placeholder="ABCDE12">
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">Şikayət</label>
         <textarea class="form-control" id="np-complaints" rows="2" placeholder="Əsas şikayət..."></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">FİN</label>
-        <input class="form-control" id="np-fin" placeholder="ABCDE12">
       </div>
       <div class="form-group">
         <label class="form-label">Allergiyalar</label>
@@ -158,16 +170,21 @@ function closeNewPatient(){document.getElementById('newPatientModal').style.disp
 async function saveNewPatient(){
   const name=document.getElementById('np-name').value.trim()
   if(!name){alert('Ad daxil edin');return}
-  const p=await api('/api/patients','POST',{
-    name,phone:document.getElementById('np-phone').value,
-    dob:document.getElementById('np-dob').value,
-    gender:document.getElementById('np-gender').value,
-    complaints:document.getElementById('np-complaints').value,
-    allergies:document.getElementById('np-allergies').value,
-    fin_code:document.getElementById('np-fin').value
-  })
-  closeNewPatient()
-  location.href=`/patients/${p.id}`
+  const dobEl=document.getElementById('np-dob')
+  const dob=dobEl._flatpickr?dobEl._flatpickr.selectedDates[0]?dobEl._flatpickr.formatDate(dobEl._flatpickr.selectedDates[0],'Y-m-d'):'':dobEl.value
+  try{
+    const p=await api('/api/patients','POST',{
+      name,
+      phone:document.getElementById('np-phone').value,
+      dob,
+      gender:document.getElementById('np-gender').value,
+      blood_type:document.getElementById('np-blood').value,
+      complaints:document.getElementById('np-complaints').value,
+      allergies:document.getElementById('np-allergies').value
+    })
+    closeNewPatient()
+    location.href=`/patients/${p.id}`
+  }catch(e){alert(e.message||'Xəta baş verdi')}
 }
 
 if(sessionStorage.getItem('openNewPatient')){sessionStorage.removeItem('openNewPatient');setTimeout(openNewPatientModal,300)}
