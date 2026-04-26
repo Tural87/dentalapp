@@ -1,0 +1,134 @@
+/* DentalApp Theme - Dizayn fixləri (4 və 5 raporundan) */
+
+/* ─── ŞRİFT ÖLÇÜLƏRİ (artırıldı) ───────────────────────────────────────────── */
+:root{
+  --fs-xs:.78rem;    /* idi: .68-.72 */
+  --fs-sm:.86rem;    /* idi: .74-.77 */
+  --fs-base:.92rem;  /* idi: .82-.85 */
+  --fs-md:1rem;      /* idi: .88-.95 */
+  --fs-lg:1.15rem;
+}
+body{font-size:var(--fs-base) !important}
+table th{font-size:var(--fs-xs) !important}
+table td{font-size:var(--fs-sm) !important}
+.btn{font-size:var(--fs-base) !important}
+.btn-sm{font-size:var(--fs-sm) !important}
+.form-label{font-size:var(--fs-xs) !important}
+.tab-btn{font-size:var(--fs-base) !important}
+.card-hd h3{font-size:var(--fs-md) !important}
+.stat-lbl{font-size:var(--fs-xs) !important}
+.topbar-title{font-size:var(--fs-md) !important}
+.topbar-sub{font-size:var(--fs-sm) !important}
+.nav-item{font-size:var(--fs-base) !important}
+.badge{font-size:var(--fs-xs) !important}
+
+/* iOS auto-zoom önlə (input min 16px olmalıdır) */
+input,select,textarea,.form-control{font-size:16px !important}
+@media(min-width:768px){
+  input.form-control,select.form-control,textarea.form-control{font-size:var(--fs-base) !important}
+}
+
+/* ─── LIGHT MODE ──────────────────────────────────────────────────────────── */
+body.light{
+  --bg:#f8fafc !important;--bg2:#ffffff !important;
+  --bg3:#f1f5f9 !important;--bg4:#e2e8f0 !important;
+  --tx:#0f172a !important;--mu:#64748b !important;
+  --border:#e2e8f0 !important;
+  --BL:rgba(59,130,246,.08) !important;
+}
+body.light .sidebar{background:linear-gradient(180deg,#f1f5f9 0%,#e2e8f0 100%) !important}
+body.light .topbar{background:rgba(255,255,255,.9) !important}
+body.light table tr:hover td{background:#f8fafc !important}
+body.light .modal{background:#ffffff !important}
+body.light .modal-overlay{background:rgba(15,23,42,.4) !important}
+
+/* Theme toggle button */
+.theme-toggle{
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--mu);cursor:pointer;font-size:16px;
+  transition:all .15s;font-family:inherit
+}
+.theme-toggle:hover{color:var(--tx);border-color:rgba(107,127,163,.4)}
+
+/* ─── MOBILE RESPONSIVE ────────────────────────────────────────────────────── */
+.mobile-toggle{
+  display:none;position:fixed;top:12px;left:12px;z-index:101;
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  width:40px;height:40px;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;color:var(--tx)
+}
+
+@media(max-width:768px){
+  .mobile-toggle{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0 !important}
+  .topbar{padding-left:60px !important}
+  .wrap{padding:16px !important}
+  .topbar{padding-right:12px !important}
+  .form-row{grid-template-columns:1fr !important}
+  .stats-grid,.stats{grid-template-columns:repeat(2,1fr) !important;gap:8px !important}
+  .stat-card,.stat{padding:14px !important}
+  .stat-val{font-size:1.4rem !important}
+  /* dashboard 2 sütunu mobiledə tək sütun */
+  [style*="grid-template-columns:2fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr"]{
+    grid-template-columns:1fr !important
+  }
+  .modal{max-width:calc(100vw - 24px) !important;margin:12px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap !important}
+  .tab-btn{white-space:nowrap}
+  table{font-size:var(--fs-xs) !important}
+  th,td{padding:8px 10px !important}
+  .topbar-title{font-size:var(--fs-base) !important}
+  .topbar-sub{display:none}
+}
+
+/* ─── TOAST BİLDİRİŞ (alert əvəzinə) ──────────────────────────────────────── */
+#toast-container{
+  position:fixed;top:20px;right:20px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none
+}
+.toast{
+  pointer-events:all;
+  min-width:240px;max-width:380px;padding:12px 16px;
+  border-radius:10px;font-size:var(--fs-base);font-weight:600;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+  animation:toastIn .25s ease-out;
+  border:1px solid;
+  display:flex;align-items:center;gap:10px
+}
+.toast.success{background:rgba(34,197,94,.15);color:#22c55e;border-color:rgba(34,197,94,.3)}
+.toast.error  {background:rgba(239,68,68,.15);color:#ef4444;border-color:rgba(239,68,68,.3)}
+.toast.info   {background:rgba(59,130,246,.15);color:#3b82f6;border-color:rgba(59,130,246,.3)}
+.toast.warning{background:rgba(249,115,22,.15);color:#f97316;border-color:rgba(249,115,22,.3)}
+body.light .toast{background:#fff !important;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+.toast.out{animation:toastOut .2s ease-in forwards}
+@media(max-width:768px){
+  #toast-container{top:auto;bottom:20px;left:12px;right:12px}
+  .toast{min-width:0}
+}
+
+/* ─── LOADING SKELETON ─────────────────────────────────────────────────────── */
+.skeleton{
+  background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);
+  background-size:200% 100%;
+  animation:skel 1.4s infinite;
+  border-radius:6px;display:inline-block
+}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-row{height:12px;margin:8px 0}
+.skeleton-text{height:16px;width:60%}
+.skeleton-circle{width:32px;height:32px;border-radius:50%}
+
+/* ─── KEYBOARD SHORTCUT HINT ───────────────────────────────────────────────── */
+.kbd{
+  display:inline-block;padding:1px 6px;border-radius:4px;
+  background:var(--bg3);border:1px solid var(--border);
+  font-family:'SF Mono','Monaco',monospace;font-size:.72rem;
+  color:var(--mu)
+}

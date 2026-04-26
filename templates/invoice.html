@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Qəbz — {{ patient.name }}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;color:#1a2235;background:#fff;padding:30px}
+.wrap{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1a2235;padding-bottom:18px;margin-bottom:24px}
+.head h1{font-size:1.5rem;font-weight:800;color:#1a2235}
+.head .sub{font-size:.85rem;color:#6b7fa3;margin-top:4px}
+.head .right{text-align:right;font-size:.85rem;color:#6b7fa3}
+.head .right strong{color:#1a2235;font-size:1.1rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:22px}
+.box h3{font-size:.72rem;font-weight:700;color:#6b7fa3;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.box .v{font-size:1rem;font-weight:600}
+.box .v small{display:block;font-size:.82rem;color:#6b7fa3;font-weight:400;margin-top:2px}
+table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:.88rem}
+th{text-align:left;background:#f1f5f9;padding:10px 12px;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:#475569;border-bottom:2px solid #cbd5e1}
+td{padding:9px 12px;border-bottom:1px solid #e2e8f0}
+tr:last-child td{border-bottom:none}
+.section-title{font-size:.95rem;font-weight:700;margin:24px 0 10px;color:#1a2235}
+.totals{margin-left:auto;width:300px;margin-top:14px}
+.totals .row-t{display:flex;justify-content:space-between;padding:7px 0;font-size:.92rem}
+.totals .row-t.grand{border-top:2px solid #1a2235;padding-top:10px;margin-top:6px;font-size:1.05rem;font-weight:800}
+.totals .debt{color:#dc2626;font-weight:700}
+.totals .paid{color:#059669}
+.foot{margin-top:40px;text-align:center;font-size:.78rem;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:14px}
+.print-btn{position:fixed;top:18px;right:18px;background:#3b82f6;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(59,130,246,.3)}
+@media print{.print-btn{display:none}body{padding:18px}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Çap et / PDF</button>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1>{{ clinic.name if clinic else 'DentalApp' }}</h1>
+      <div class="sub">
+        {% if clinic and clinic.address %}{{ clinic.address }}<br>{% endif %}
+        {% if clinic and clinic.phone %}Tel: {{ clinic.phone }}{% endif %}
+        {% if clinic and clinic.email %} • {{ clinic.email }}{% endif %}
+      </div>
+    </div>
+    <div class="right">
+      <strong>QƏBZ</strong><br>
+      Tarix: {{ today }}<br>
+      № {{ patient.id }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="box">
+      <h3>Pasiyent</h3>
+      <div class="v">{{ patient.name }}<small>{{ patient.phone or '—' }}</small></div>
+    </div>
+    <div class="box">
+      <h3>Müraciət tarixi</h3>
+      <div class="v">{% if patient.created_at %}{{ patient.created_at.strftime('%d.%m.%Y') }}{% else %}—{% endif %}</div>
+    </div>
+  </div>
+
+  <div class="section-title">Müalicə Planları</div>
+  <table>
+    <thead><tr><th>#</th><th>Plan</th><th>Status</th><th>Başlama</th><th style="text-align:right">Dəyər (₼)</th></tr></thead>
+    <tbody>
+      {% for p in plans %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ p.title }}</td>
+        <td>{{ p.status }}</td>
+        <td>{{ p.start_date or '—' }}</td>
+        <td style="text-align:right;font-weight:700">{{ '%.2f'|format(p.cost or 0) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:18px">Plan yoxdur</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section-title">Ödənişlər</div>
+  <table>
+    <thead><tr><th>#</th><th>Tarix</th><th>Qeyd</th><th style="text-align:right">Məbləğ (₼)</th></tr></thead>
+    <tbody>
+      {% for pay in payments %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ pay.date or '—' }}</td>
+        <td>{{ pay.notes or '—' }}</td>
+        <td style="text-align:right;font-weight:700;color:#059669">{{ '%.2f'|format(pay.amount or 0) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:18px">Ödəniş yoxdur</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div class="row-t"><span>Plan dəyəri:</span><span>{{ '%.2f'|format(plan_total) }} ₼</span></div>
+    <div class="row-t paid"><span>Ödənilmiş:</span><span>{{ '%.2f'|format(paid) }} ₼</span></div>
+    <div class="row-t grand {% if debt > 0 %}debt{% endif %}">
+      <span>{% if debt > 0 %}Qalıq borc:{% else %}Tam ödənildi{% endif %}</span>
+      <span>{{ '%.2f'|format(debt if debt > 0 else 0) }} ₼</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    Bu qəbz {{ today }} tarixində avtomatik yaradılıb. {{ clinic.name if clinic else 'DentalApp' }}
+  </div>
+</div>
+</body>
+</html>

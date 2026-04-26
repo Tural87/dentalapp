@@ -6,18 +6,49 @@
 <title>{% block title %}DentalApp{% endblock %}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/main.css">
+<link rel="stylesheet" href="/static/css/theme.css">
 {% block head %}{% endblock %}
 </head>
 <body>
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <a href="{% if session.role == 'admin' %}/admin{% else %}/{% endif %}">
+    <a href="{% if session.role == 'admin' or session.role == 'superadmin' %}/admin{% else %}/{% endif %}">
       <img src="/static/img/teeth/medical_14372414.png" style="width:28px;height:28px;object-fit:contain">
       <span class="logo-text">DentalApp</span>
     </a>
   </div>
   <nav class="sidebar-nav">
     {% if session.role == 'admin' %}
+      <a href="/admin?tab=dashboard" class="nav-item" id="nl-adm-dashboard">
+        <i data-lucide="layout-dashboard" class="ni"></i><span>Dashboard</span>
+      </a>
+      <a href="/admin?tab=users" class="nav-item" id="nl-adm-users">
+        <i data-lucide="stethoscope" class="ni"></i><span>Həkimlər</span>
+      </a>
+      <a href="/admin?tab=appointments" class="nav-item" id="nl-adm-appointments">
+        <i data-lucide="calendar-days" class="ni"></i><span>Randevular</span>
+      </a>
+      <a href="/admin?tab=debtors" class="nav-item" id="nl-adm-debtors">
+        <i data-lucide="alert-circle" class="ni"></i><span>Borclular</span>
+        <span id="sb-dbt-badge" style="display:none;background:#ef4444;color:#fff;border-radius:100px;padding:1px 7px;font-size:.65rem;margin-left:auto">0</span>
+      </a>
+      <a href="/admin?tab=inventory" class="nav-item" id="nl-adm-inventory">
+        <i data-lucide="package" class="ni"></i><span>Anbar</span>
+        <span id="sb-inv-badge" style="display:none;background:#f97316;color:#fff;border-radius:100px;padding:1px 7px;font-size:.65rem;margin-left:auto">0</span>
+      </a>
+      <a href="/expenses" class="nav-item" id="nl-expenses">
+        <i data-lucide="receipt" class="ni"></i><span>Xərclər</span>
+      </a>
+      <a href="/admin?tab=logs" class="nav-item" id="nl-adm-logs">
+        <i data-lucide="scroll-text" class="ni"></i><span>Loglar</span>
+      </a>
+      <a href="/admin?tab=settings" class="nav-item" id="nl-adm-settings">
+        <i data-lucide="settings-2" class="ni"></i><span>Parametrlər</span>
+      </a>
+      <a href="/admin?tab=profile" class="nav-item" id="nl-adm-profile">
+        <i data-lucide="user-round" class="ni"></i><span>Profilim</span>
+      </a>
+    {% elif session.role == 'superadmin' %}
       <a href="/admin" class="nav-item" id="nl-doctors">
         <i data-lucide="stethoscope" class="ni"></i><span>Həkimlər</span>
       </a>
@@ -37,8 +68,11 @@
       <a href="/expenses" class="nav-item" id="nl-expenses">
         <i data-lucide="receipt" class="ni"></i><span>Xərclər</span>
       </a>
-      <a href="/admin" class="nav-item" id="nl-admin">
+      <a href="/services" class="nav-item" id="nl-services">
         <i data-lucide="grid-2x2" class="ni"></i><span>Xidmətlər</span>
+      </a>
+      <a href="/profile" class="nav-item" id="nl-profile">
+        <i data-lucide="user-round" class="ni"></i><span>Profilim</span>
       </a>
     {% endif %}
   </nav>
@@ -75,6 +109,7 @@
   </div>
 </div>
 <script src="/static/js/app.js"></script>
+<script src="/static/js/theme.js"></script>
 {% block scripts %}{% endblock %}
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>lucide.createIcons();</script>
@@ -83,6 +118,24 @@
   const p = location.pathname
   const q = location.search
   {% if session.role == 'admin' %}
+  // Admin sidebar - URL'dəki tab parametrinə görə active
+  const tabMap = {
+    'dashboard':'nl-adm-dashboard','users':'nl-adm-users','appointments':'nl-adm-appointments',
+    'debtors':'nl-adm-debtors','inventory':'nl-adm-inventory','logs':'nl-adm-logs',
+    'settings':'nl-adm-settings','profile':'nl-adm-profile'
+  }
+  let tabName = null
+  if(q.includes('tab=')){
+    const m = q.match(/tab=([a-z]+)/)
+    if(m) tabName = m[1]
+  }
+  if(p.startsWith('/expenses')) document.getElementById('nl-expenses').classList.add('active')
+  else if(p.startsWith('/admin')){
+    const id = tabMap[tabName] || 'nl-adm-dashboard'
+    const el = document.getElementById(id)
+    if(el) el.classList.add('active')
+  }
+  {% elif session.role == 'superadmin' %}
   if(p.startsWith('/admin') && !q.includes('tab=settings')) document.getElementById('nl-doctors').classList.add('active')
   if(q.includes('tab=settings')) document.getElementById('nl-settings').classList.add('active')
   if(p.startsWith('/expenses')) document.getElementById('nl-expenses').classList.add('active')
@@ -90,7 +143,8 @@
   if(p==='/'||p==='/dashboard') document.getElementById('nl-dash').classList.add('active')
   else if(p.startsWith('/patients')||p.startsWith('/plans')) document.getElementById('nl-patients').classList.add('active')
   else if(p.startsWith('/expenses')) document.getElementById('nl-expenses').classList.add('active')
-  else if(p.startsWith('/admin')) document.getElementById('nl-admin').classList.add('active')
+  else if(p.startsWith('/profile')) document.getElementById('nl-profile').classList.add('active')
+  else if(p.startsWith('/services')) document.getElementById('nl-services').classList.add('active')
   {% endif %}
 })()
 </script>

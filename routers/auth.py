@@ -63,12 +63,31 @@ def login():
         try:
             user = s.query(models.User).filter_by(email=email, is_active=True).first()
             if user and check_password_hash(user.password_hash, password):
+                try:
+                    from security import record_login_attempt
+                    record_login_attempt(True)
+                except Exception: pass
                 session['user_id'] = user.id
                 session['user_name'] = user.name
                 session['role'] = user.role
+                session['clinic_id'] = user.clinic_id
                 session['must_change_password'] = user.must_change_password
+                # LOG
+                log = models.ActivityLog(clinic_id=user.clinic_id, user_id=user.id,
+                    action='login', detail=f'{user.name} ({user.role}) daxil oldu',
+                    ip=request.remote_addr)
+                s.add(log); s.commit()
+                if user.role == 'superadmin':
+                    return redirect('/superadmin')
                 return redirect('/change-password' if user.must_change_password else '/')
             error = 'Email və ya parol yanlışdır'
+            try:
+                from security import record_login_attempt
+                record_login_attempt(False)
+            except Exception: pass
+            # failed login log
+            s.add(models.ActivityLog(action='error', detail=f'Uğursuz giriş: {email}', ip=request.remote_addr))
+            s.commit()
         finally:
             s.close()
     return render_template('login.html', error=error, reset_ok=reset_ok)
@@ -76,6 +95,14 @@ def login():
 
 @auth.route('/logout')
 def logout():
+    s = SessionLocal()
+    try:
+        log = models.ActivityLog(clinic_id=session.get('clinic_id'), user_id=session.get('user_id'),
+            action='logout', detail=f"{session.get('user_name','')} çıxış etdi",
+            ip=request.remote_addr)
+        s.add(log); s.commit()
+    except: pass
+    finally: s.close()
     session.clear()
     return redirect('/login')
 
@@ -163,7 +190,7 @@ def change_password():
                            forced=session.get('must_change_password', False))
 
 
-# ── Profile (own user) ────────────────────────────────────────────────────────
+# ── Profile ───────────────────────────────────────────────────────────────────
 
 @auth.route('/api/profile', methods=['GET'])
 def get_profile():
@@ -185,19 +212,14 @@ def update_profile():
     s = SessionLocal()
     try:
         user = s.query(models.User).get(session['user_id'])
-        if not user:
-            return jsonify({'error': 'Tapılmadı'}), 404
-        if d.get('name'):
-            user.name = d['name'].strip()
-        if d.get('phone') is not None:
-            user.phone = d['phone'].strip() or None
+        if not user: return jsonify({'error': 'Tapılmadı'}), 404
+        if d.get('name'): user.name = d['name'].strip()
+        if d.get('phone') is not None: user.phone = d['phone'].strip() or None
         if d.get('email'):
             existing = s.query(models.User).filter(
                 models.User.email == d['email'].strip().lower(),
-                models.User.id != user.id
-            ).first()
-            if existing:
-                return jsonify({'error': 'Bu email artıq istifadə olunur'}), 400
+                models.User.id != user.id).first()
+            if existing: return jsonify({'error': 'Bu email artıq istifadə olunur'}), 400
             user.email = d['email'].strip().lower()
         if d.get('new_password'):
             if len(d['new_password']) < 6:
@@ -212,10 +234,10 @@ def update_profile():
         s.close()
 
 
-# ── User Management API (admin only) ──────────────────────────────────────────
+# ── User Management (admin only) ──────────────────────────────────────────────
 
 def _admin_only():
-    if session.get('role') != 'admin':
+    if session.get('role') not in ('admin', 'superadmin'):
         return jsonify({'error': 'İcazə yoxdur'}), 403
 
 
@@ -225,7 +247,9 @@ def list_users():
     if e: return e
     s = SessionLocal()
     try:
-        return jsonify([u.to_dict() for u in s.query(models.User).filter_by(role='doctor').order_by(models.User.created_at).all()])
+        return jsonify([u.to_dict() for u in
+                        s.query(models.User).filter_by(clinic_id=session.get('clinic_id'), role='doctor')
+                         .order_by(models.User.created_at).all()])
     finally:
         s.close()
 
@@ -241,15 +265,29 @@ def create_user():
     try:
         if s.query(models.User).filter_by(email=d['email'].strip().lower()).first():
             return jsonify({'error': 'Bu email artıq mövcuddur'}), 400
+        # Plan limitini yoxla
+        cid = session.get('clinic_id')
+        clinic = s.query(models.Clinic).get(cid) if cid else None
+        if clinic:
+            cfg = s.query(models.PlanConfig).filter_by(plan_name=clinic.plan or 'free').first()
+            if cfg:
+                role = d.get('role', 'doctor')
+                if role == 'doctor' and cfg.max_doctors:
+                    cnt = s.query(models.User).filter_by(clinic_id=cid, role='doctor', is_active=True).count()
+                    if cnt >= cfg.max_doctors:
+                        return jsonify({'error': f"'{clinic.plan}' planında həkim limiti ({cfg.max_doctors}) doludur"}), 403
+                if role == 'admin' and cfg.max_admins:
+                    cnt = s.query(models.User).filter_by(clinic_id=cid, role='admin', is_active=True).count()
+                    if cnt >= cfg.max_admins:
+                        return jsonify({'error': f"'{clinic.plan}' planında admin limiti ({cfg.max_admins}) doludur"}), 403
         temp = _gen_password()
         user = models.User(
-            name=d['name'].strip(),
-            email=d['email'].strip().lower(),
+            clinic_id=session.get('clinic_id'),
+            name=d['name'].strip(), email=d['email'].strip().lower(),
             phone=d.get('phone', '').strip() or None,
             password_hash=generate_password_hash(temp),
             role=d.get('role', 'doctor'),
-            must_change_password=True,
-            is_active=True
+            must_change_password=True, is_active=True
         )
         s.add(user); s.commit(); s.refresh(user)
         res = user.to_dict()
@@ -268,9 +306,8 @@ def get_user(uid):
     if e: return e
     s = SessionLocal()
     try:
-        user = s.query(models.User).get(uid)
-        if not user:
-            return jsonify({'error': 'Tapılmadı'}), 404
+        user = s.query(models.User).filter_by(id=uid, clinic_id=session.get('clinic_id')).first()
+        if not user: return jsonify({'error': 'Tapılmadı'}), 404
         return jsonify(user.to_dict())
     finally:
         s.close()
@@ -283,20 +320,17 @@ def update_user(uid):
     d = request.json or {}
     s = SessionLocal()
     try:
-        user = s.query(models.User).get(uid)
-        if not user:
-            return jsonify({'error': 'Tapılmadı'}), 404
-        if 'name'      in d and d['name']:      user.name  = d['name'].strip()
-        if 'phone'     in d:                    user.phone = d['phone'].strip() or None
-        if 'role'      in d:                    user.role  = d['role']
-        if 'is_active' in d:                    user.is_active = bool(d['is_active'])
-        if 'email'     in d and d['email']:
+        user = s.query(models.User).filter_by(id=uid, clinic_id=session.get('clinic_id')).first()
+        if not user: return jsonify({'error': 'Tapılmadı'}), 404
+        if 'name' in d and d['name']: user.name = d['name'].strip()
+        if 'phone' in d: user.phone = d['phone'].strip() or None
+        if 'role' in d: user.role = d['role']
+        if 'is_active' in d: user.is_active = bool(d['is_active'])
+        if 'email' in d and d['email']:
             taken = s.query(models.User).filter(
                 models.User.email == d['email'].strip().lower(),
-                models.User.id    != uid
-            ).first()
-            if taken:
-                return jsonify({'error': 'Bu email artıq istifadə olunur'}), 400
+                models.User.id != uid).first()
+            if taken: return jsonify({'error': 'Bu email artıq istifadə olunur'}), 400
             user.email = d['email'].strip().lower()
         s.commit()
         return jsonify(user.to_dict())
@@ -310,9 +344,8 @@ def reset_user_password(uid):
     if e: return e
     s = SessionLocal()
     try:
-        user = s.query(models.User).get(uid)
-        if not user:
-            return jsonify({'error': 'Tapılmadı'}), 404
+        user = s.query(models.User).filter_by(id=uid, clinic_id=session.get('clinic_id')).first()
+        if not user: return jsonify({'error': 'Tapılmadı'}), 404
         temp = _gen_password()
         user.password_hash = generate_password_hash(temp)
         user.must_change_password = True
@@ -334,11 +367,9 @@ def delete_user(uid):
         return jsonify({'error': 'Özünüzü silə bilməzsiniz'}), 400
     s = SessionLocal()
     try:
-        user = s.query(models.User).get(uid)
-        if not user:
-            return jsonify({'error': 'Tapılmadı'}), 404
-        s.delete(user)
-        s.commit()
+        user = s.query(models.User).filter_by(id=uid, clinic_id=session.get('clinic_id')).first()
+        if not user: return jsonify({'error': 'Tapılmadı'}), 404
+        s.delete(user); s.commit()
         return jsonify({'ok': True})
     finally:
         s.close()

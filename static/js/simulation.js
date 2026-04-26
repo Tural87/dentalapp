@@ -1,30 +1,26 @@
 function initSim(){
   const wrap=document.getElementById('sim-wrap')
-  const afterDiv=document.getElementById('sim-after-div')
   const handle=document.getElementById('sim-handle')
-  if(!wrap||!afterDiv||!handle)return
-
-  let dragging=false
-  let pct=50
+  const afterImg=document.getElementById('sim-after')
+  if(!wrap||!handle||!afterImg)return
 
   function setPos(p){
-    pct=Math.max(5,Math.min(95,p))
-    afterDiv.style.width=pct+'%'
-    handle.style.left=pct+'%'
+    p=Math.max(2,Math.min(98,p))
+    afterImg.style.clipPath=`inset(0 ${100-p}% 0 0)`
+    handle.style.left=p+'%'
   }
 
   setPos(50)
 
-  function onMove(clientX){
-    const rect=wrap.getBoundingClientRect()
-    setPos((clientX-rect.left)/rect.width*100)
+  function getPos(clientX){
+    return (clientX-wrap.getBoundingClientRect().left)/wrap.getBoundingClientRect().width*100
   }
 
-  handle.addEventListener('mousedown',e=>{dragging=true;e.preventDefault()})
-  window.addEventListener('mousemove',e=>{if(dragging)onMove(e.clientX)})
-  window.addEventListener('mouseup',()=>{dragging=false})
-
-  handle.addEventListener('touchstart',e=>{dragging=true;e.preventDefault()},{passive:false})
-  window.addEventListener('touchmove',e=>{if(dragging)onMove(e.touches[0].clientX)},{passive:false})
-  window.addEventListener('touchend',()=>{dragging=false})
+  let drag=false
+  wrap.addEventListener('mousedown',e=>{drag=true;setPos(getPos(e.clientX));e.preventDefault()})
+  window.addEventListener('mousemove',e=>{if(drag)setPos(getPos(e.clientX))})
+  window.addEventListener('mouseup',()=>{drag=false})
+  wrap.addEventListener('touchstart',e=>{drag=true;setPos(getPos(e.touches[0].clientX));e.preventDefault()},{passive:false})
+  window.addEventListener('touchmove',e=>{if(drag)setPos(getPos(e.touches[0].clientX))},{passive:false})
+  window.addEventListener('touchend',()=>{drag=false})
 }

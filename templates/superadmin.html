@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Superadmin | DentalApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/theme.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0b0f1a;color:#e8edf5;display:flex;min-height:100vh}
+/* SIDEBAR */
+.sidebar{width:220px;background:#0d1320;border-right:1px solid #1f2d47;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid #1f2d47;font-size:.95rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav{flex:1;padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.84rem;font-weight:600;color:#6b7fa3;border:none;background:none;width:100%;text-align:left;transition:all .15s;position:relative}
+.nav-item:hover{background:#1a2235;color:#e8edf5}
+.nav-item.active{background:rgba(59,130,246,.12);color:#60a5fa}
+.nav-badge{position:absolute;right:10px;background:#ef4444;color:#fff;border-radius:100px;font-size:.6rem;font-weight:800;padding:1px 6px}
+.sidebar-bottom{padding:12px 8px;border-top:1px solid #1f2d47}
+.logout-btn{width:100%;padding:8px 12px;border-radius:8px;background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.15);font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit}
+/* MAIN */
+.main{margin-left:220px;flex:1;min-width:0;padding:24px 28px 60px}
+/* CARDS */
+.card{background:#111827;border:1px solid #1f2d47;border-radius:12px;overflow:hidden;margin-bottom:20px}
+.card-hd{padding:13px 16px;border-bottom:1px solid #1f2d47;display:flex;align-items:center;justify-content:space-between}
+.card-hd h3{font-size:.88rem;font-weight:700}
+.card-bd{padding:16px}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#111827;border:1px solid #1f2d47;border-radius:10px;padding:14px}
+.stat-val{font-size:1.5rem;font-weight:800;color:#60a5fa}
+.stat-lbl{font-size:.75rem;color:#6b7fa3;margin-top:2px}
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.68rem;font-weight:700;color:#6b7fa3;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:1px solid #1f2d47}
+td{padding:9px 12px;border-bottom:1px solid rgba(31,45,71,.5);font-size:.83rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.68rem;font-weight:700}
+.badge-active{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.badge-inactive{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+.badge-free{background:rgba(107,127,163,.12);color:#6b7fa3;border:1px solid rgba(107,127,163,.2)}
+.badge-basic{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.badge-pro{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.2)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff}
+.btn-secondary{background:#1a2235;color:#9bb3d4;border:1px solid #1f2d47}
+.btn-danger{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+.btn-success{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.btn-sm{padding:3px 8px;font-size:.74rem}
+/* FORMS */
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:.68rem;font-weight:700;color:#6b7fa3;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.form-control{width:100%;padding:8px 11px;border-radius:8px;border:1px solid #1f2d47;font-family:inherit;font-size:.85rem;outline:none;background:#0f1623;color:#e8edf5;transition:border-color .2s}
+.form-control:focus{border-color:#3b82f6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:#111827;border:1px solid #1f2d47;border-radius:14px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-hd{padding:14px 18px;border-bottom:1px solid #1f2d47;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#111827}
+.modal-hd h3{font-size:.92rem;font-weight:700}
+.modal-bd{padding:18px}
+.modal-ft{padding:12px 18px;border-top:1px solid #1f2d47;display:flex;gap:8px;justify-content:flex-end}
+.result-box{background:#0f1623;border:1px solid #22c55e;border-radius:8px;padding:12px;margin-top:10px}
+.result-box .pass{font-size:1rem;font-weight:800;color:#22c55e;letter-spacing:.05em}
+/* PANES */
+.pane{display:none}.pane.active{display:block}
+/* FLOATING CHAT */
+#fc-btn{position:fixed;bottom:24px;right:24px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;cursor:pointer;font-size:1.3rem;box-shadow:0 4px 18px rgba(59,130,246,.5);z-index:900;display:flex;align-items:center;justify-content:center}
+#fc-badge{position:absolute;top:-2px;right:-2px;background:#ef4444;color:#fff;border-radius:100px;font-size:.58rem;font-weight:800;padding:1px 5px;display:none}
+#fc-box{position:fixed;bottom:82px;right:24px;width:360px;height:460px;background:#111827;border:1px solid #1f2d47;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6);z-index:901;display:none;flex-direction:column;overflow:hidden}
+#fc-box.open{display:flex}
+.fc-hd{padding:11px 14px;border-bottom:1px solid #1f2d47;display:flex;align-items:center;justify-content:space-between;background:#0d1320}
+.fc-list{width:120px;border-right:1px solid #1f2d47;overflow-y:auto;flex-shrink:0}
+.fc-list-item{padding:9px 10px;font-size:.78rem;font-weight:600;cursor:pointer;border-bottom:1px solid rgba(31,45,71,.4);transition:background .15s}
+.fc-list-item:hover,.fc-list-item.active{background:#1a2235;color:#60a5fa}
+.fc-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.fc-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
+.fc-inp{display:flex;gap:6px;padding:8px;border-top:1px solid #1f2d47}
+.fc-inp input{flex:1;padding:6px 10px;border-radius:7px;border:1px solid #1f2d47;background:#0f1623;color:#e8edf5;font-family:inherit;font-size:.82rem;outline:none}
+.fc-inp input:focus{border-color:#3b82f6}
+/* LOGS */
+.log-login{color:#22c55e}.log-logout{color:#6b7fa3}.log-error{color:#ef4444}.log-password_reset{color:#f97316}
+/* MONITORING */
+.monitor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.monitor-item{background:#111827;border:1px solid #1f2d47;border-radius:10px;padding:14px}
+.monitor-label{font-size:.75rem;color:#6b7fa3;margin-bottom:6px;font-weight:600}
+.monitor-bar{height:8px;background:#1a2235;border-radius:100px;overflow:hidden;margin-bottom:6px}
+.monitor-fill{height:100%;border-radius:100px;transition:width .5s}
+.monitor-val{font-size:.82rem;font-weight:700}
+/* DASHBOARD GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">🦷 DentalApp</div>
+  <nav class="nav">
+    <button class="nav-item active" onclick="showPane('dashboard',this)">📊 Dashboard</button>
+    <button class="nav-item" onclick="showPane('clinics',this)">🏥 Klinikalar</button>
+    <button class="nav-item" onclick="showPane('plans',this)">📋 Planlar</button>
+    <button class="nav-item" onclick="showPane('billing',this)">💳 Abunələr <span id="nav-overdue-badge" class="nav-badge" style="display:none">0</span></button>
+    <button class="nav-item" onclick="showPane('activity',this)">📈 Aktivlik</button>
+    <button class="nav-item" onclick="showPane('tickets',this)">🆘 Dəstək <span id="nav-tickets-badge" class="nav-badge" style="display:none">0</span></button>
+    <button class="nav-item" onclick="showPane('search',this)">🔍 Qlobal Axtarış</button>
+    <button class="nav-item" onclick="showPane('expenses',this)">💰 Xərclər</button>
+    <button class="nav-item" onclick="showPane('logs',this)">📋 Loglar</button>
+    <button class="nav-item" onclick="showPane('smtp',this)">⚙️ SMTP</button>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="logout-btn" onclick="location.href='/logout'">Çıxış</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div class="pane active" id="pane-dashboard">
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="st-total">—</div><div class="stat-lbl">Klinika</div></div>
+      <div class="stat"><div class="stat-val" id="st-active">—</div><div class="stat-lbl">Online</div></div>
+      <div class="stat"><div class="stat-val" id="st-doctors">—</div><div class="stat-lbl">Həkim</div></div>
+      <div class="stat"><div class="stat-val" id="st-free">—</div><div class="stat-lbl">Free plan</div></div>
+    </div>
+
+    <!-- Server monitoring -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><h3>🖥️ Server Vəziyyəti</h3><button class="btn btn-secondary btn-sm" onclick="loadMonitor()">Yenilə</button></div>
+      <div class="card-bd">
+        <div class="monitor-grid" id="monitor-grid">
+          <div style="color:#6b7fa3;font-size:.82rem">Yüklənir...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing summary -->
+    <div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="stat" style="border-color:rgba(34,197,94,.25)"><div class="stat-val" id="bs-mrr" style="color:#22c55e">—</div><div class="stat-lbl">Aylıq gəlir (MRR)</div></div>
+      <div class="stat" style="border-color:rgba(239,68,68,.25)"><div class="stat-val" id="bs-overdue-cnt" style="color:#ef4444">—</div><div class="stat-lbl">Borclu klinika</div></div>
+      <div class="stat" style="border-color:rgba(239,68,68,.25)"><div class="stat-val" id="bs-overdue-amt" style="color:#ef4444">—</div><div class="stat-lbl">Ümumi borc (₼)</div></div>
+      <div class="stat"><div class="stat-val" id="bs-active">—</div><div class="stat-lbl">Aktiv klinika</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-hd"><h3>🔴 Borclu Klinikalar</h3>
+        <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[2])">Hamısı →</button>
+      </div>
+      <div style="overflow-x:auto;max-height:280px">
+        <table>
+          <thead><tr><th>Klinika</th><th>Plan</th><th>Aylıq</th><th>Növbəti ödəniş</th><th>Gecikmə</th><th>Borc</th><th></th></tr></thead>
+          <tbody id="dash-overdue-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Son loglar -->
+      <div class="card">
+        <div class="card-hd"><h3>📋 Son Aktivliklər</h3></div>
+        <div style="overflow-y:auto;max-height:300px">
+          <table>
+            <thead><tr><th>Tarix</th><th>Klinika</th><th>Əməliyyat</th><th>Detal</th></tr></thead>
+            <tbody id="dash-log-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Klinika xülasəsi -->
+      <div class="card">
+        <div class="card-hd"><h3>🏥 Klinikalar</h3></div>
+        <div style="overflow-y:auto;max-height:300px">
+          <table>
+            <thead><tr><th>Ad</th><th>Plan</th><th>Admin</th><th>Həkim</th><th>Status</th></tr></thead>
+            <tbody id="dash-clinic-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="pane" id="pane-plans">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800">Plan Konfiqurasiyaları</h2>
+        <div style="font-size:.78rem;color:#6b7fa3;margin-top:2px">Hər plan üçün limit və qiymətləri tənzimləyin. Dəyişikliklər yeni qoşulan klinikalara və mövcud abunəliklərə tətbiq olunur.</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="loadPlans()">Yenilə</button>
+    </div>
+    <div id="plans-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px"></div>
+  </div>
+
+  <!-- BILLING / SUBSCRIPTIONS -->
+  <div class="pane" id="pane-billing">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Abunələr & Borclar</h2>
+      <div style="display:flex;gap:8px">
+        <select class="form-control" id="bill-filter" style="max-width:170px;font-size:.8rem;padding:5px 8px" onchange="renderBilling()">
+          <option value="all">Hamısı</option>
+          <option value="overdue">Yalnız borclular</option>
+          <option value="active">Yalnız aktiv</option>
+          <option value="suspended">Bloklanmış</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="loadBilling()">Yenilə</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Klinika</th><th>Plan</th><th>Aylıq (₼)</th><th>Son ödəniş</th><th>Növbəti</th><th>Gecikmə</th><th>Borc (₼)</th><th>Status</th><th></th></tr></thead>
+          <tbody id="bill-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="pane" id="pane-activity">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Klinika Aktivlik Səviyyəsi <span style="font-weight:500;color:#6b7fa3;font-size:.8rem">(son 30 gün)</span></h2>
+      <button class="btn btn-secondary btn-sm" onclick="loadActivity()">Yenilə</button>
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat"><div class="stat-val" id="act-high" style="color:#22c55e">—</div><div class="stat-lbl">Yüksək (20+)</div></div>
+      <div class="stat"><div class="stat-val" id="act-medium" style="color:#3b82f6">—</div><div class="stat-lbl">Orta (6-20)</div></div>
+      <div class="stat"><div class="stat-val" id="act-low" style="color:#f97316">—</div><div class="stat-lbl">Aşağı (1-5)</div></div>
+      <div class="stat"><div class="stat-val" id="act-dead" style="color:#ef4444">—</div><div class="stat-lbl">Ölü (0)</div></div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Klinika</th><th>Plan</th><th>Status</th><th>Ümumi pasiyent</th><th>Son 30 gün yeni</th><th>Son giriş</th><th>Səviyyə</th></tr></thead>
+        <tbody id="act-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TICKETS -->
+  <div class="pane" id="pane-tickets">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Dəstək Biletləri</h2>
+      <div style="display:flex;gap:8px">
+        <select class="form-control" id="tk-filter" style="max-width:160px;font-size:.8rem;padding:5px 8px" onchange="renderTickets()">
+          <option value="open">Açıq</option>
+          <option value="all">Hamısı</option>
+          <option value="closed">Bağlı</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="loadTickets()">Yenilə</button>
+      </div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Tarix</th><th>Klinika</th><th>Mövzu</th><th>Prioritet</th><th>Status</th><th></th></tr></thead>
+        <tbody id="tk-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GLOBAL SEARCH -->
+  <div class="pane" id="pane-search">
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">Qlobal Axtarış</h2>
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-bd">
+        <input class="form-control" id="gs-input" placeholder="Ad / telefon / email / klinika adı..." oninput="onGlobalSearch(this.value)" autofocus>
+        <div style="font-size:.74rem;color:#6b7fa3;margin-top:6px">Bütün klinikalar üzrə pasiyent, həkim və klinika axtarışı</div>
+      </div>
+    </div>
+    <div id="gs-results"></div>
+  </div>
+
+  <!-- CLINICS -->
+  <div class="pane" id="pane-clinics">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Klinikalar</h2>
+      <button class="btn btn-primary btn-sm" onclick="openAdd()">+ Yeni Klinika</button>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Klinika</th><th>Plan</th><th>Admin</th><th>Həkim</th><th>Status</th><th>Tarix</th><th></th></tr></thead>
+          <tbody id="clinic-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="pane" id="pane-expenses">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Mənim Xərclər</h2>
+      <button class="btn btn-primary btn-sm" onclick="openExpModal()">+ Xərc Əlavə Et</button>
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><div class="stat-val" id="exp-count">—</div><div class="stat-lbl">Ümumi qeyd</div></div>
+      <div class="stat"><div class="stat-val" id="exp-total">—</div><div class="stat-lbl">Ümumi (₼)</div></div>
+      <div class="stat"><div class="stat-val" id="exp-month">—</div><div class="stat-lbl">Bu ay (₼)</div></div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Məhsul</th><th>Firma</th><th>Kateqoriya</th><th>Tarix</th><th>Say</th><th>Qiymət</th><th>Cəm</th><th></th></tr></thead>
+        <tbody id="exp-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="pane" id="pane-logs">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:1.1rem;font-weight:800">Aktivlik Logu</h2>
+      <div style="display:flex;gap:8px">
+        <select class="form-control" id="log-clinic-filter" style="max-width:180px;font-size:.8rem;padding:5px 8px" onchange="loadLogs()">
+          <option value="">Bütün klinikalar</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="loadLogs()">Yenilə</button>
+      </div>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Tarix</th><th>Klinika</th><th>Əməliyyat</th><th>Detal</th><th>IP</th></tr></thead>
+        <tbody id="log-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SMTP -->
+  <div class="pane" id="pane-smtp">
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">SMTP Ayarları</h2>
+    <div class="card" style="max-width:500px">
+      <div class="card-bd">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Host</label><input class="form-control" id="smtp-host" placeholder="smtp.gmail.com"></div>
+          <div class="form-group"><label class="form-label">Port</label><input class="form-control" id="smtp-port" placeholder="587"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="smtp-user" type="email"></div>
+        <div class="form-group"><label class="form-label">Parol</label><input class="form-control" id="smtp-pass" type="password"></div>
+        <div class="form-group"><label class="form-label">Göndərən Ad</label><input class="form-control" id="smtp-from" placeholder="DentalApp"></div>
+        <div id="smtp-msg" style="display:none;padding:9px 12px;border-radius:8px;font-size:.83rem;margin-bottom:12px"></div>
+        <button class="btn btn-primary" onclick="saveSmtp()">Yadda Saxla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CHAT -->
+<button id="fc-btn" onclick="toggleFC()">💬<span id="fc-badge"></span></button>
+<div id="fc-box">
+  <div class="fc-hd">
+    <span style="font-size:.85rem;font-weight:700">💬 Klinikalar ilə Mesajlaşma</span>
+    <button onclick="toggleFC()" style="background:none;border:none;color:#6b7fa3;cursor:pointer;font-size:1rem">✕</button>
+  </div>
+  <div style="display:flex;flex:1;overflow:hidden">
+    <div class="fc-list" id="fc-list"></div>
+    <div class="fc-right">
+      <div class="fc-msgs" id="fc-msgs"><div style="color:#6b7fa3;font-size:.8rem;margin:auto;text-align:center">Klinika seçin</div></div>
+      <div class="fc-inp" id="fc-inp" style="display:none">
+        <label style="cursor:pointer;padding:5px 7px;background:#1a2235;border:1px solid #1f2d47;border-radius:6px;font-size:.8rem;color:#9bb3d4;display:flex;align-items:center" title="Fayl göndər">
+          📎<input type="file" id="fc-file" style="display:none" onchange="fcSendFile()">
+        </label>
+        <input id="fc-text" placeholder="Mesaj..." onkeydown="if(event.key==='Enter')fcSend()">
+        <button class="btn btn-primary btn-sm" onclick="fcSend()">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Clinic Modal -->
+<div class="modal-overlay" id="addModal" style="display:none" onclick="if(event.target===this)closeAdd()">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="modal-title">Yeni Klinika</h3><button onclick="closeAdd()" style="background:none;border:none;color:#6b7fa3;font-size:1.1rem;cursor:pointer">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Klinika Adı *</label><input class="form-control" id="c-name"></div>
+        <div class="form-group"><label class="form-label">Slug</label><input class="form-control" id="c-slug"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="c-email" type="email"></div>
+        <div class="form-group"><label class="form-label">Telefon</label><input class="form-control" id="c-phone"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Ünvan</label><input class="form-control" id="c-address"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Plan</label>
+          <select class="form-control" id="c-plan"><option value="free">Free</option><option value="basic">Basic</option><option value="pro">Pro</option></select></div>
+      </div>
+      <hr style="border-color:#1f2d47;margin:12px 0">
+      <div id="admin-fields">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Admin Adı</label><input class="form-control" id="c-admin-name"></div>
+          <div class="form-group"><label class="form-label">Admin Email *</label><input class="form-control" id="c-admin-email" type="email"></div>
+        </div>
+      </div>
+      <div id="reset-pass-section" style="display:none">
+        <button class="btn btn-secondary" onclick="resetAdminPass()" style="width:100%">🔑 Admin Parolunu Sıfırla</button>
+        <div id="reset-result" style="display:none;margin-top:10px" class="result-box">
+          <div style="font-size:.72rem;color:#6b7fa3;margin-bottom:4px">Müvəqqəti parol:</div>
+          <div class="pass" id="reset-pass-val"></div>
+        </div>
+      </div>
+      <div id="create-result" style="display:none;margin-top:10px" class="result-box">
+        <div style="font-size:.72rem;color:#6b7fa3;margin-bottom:4px">Admin müvəqqəti parolu:</div>
+        <div class="pass" id="result-pass"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeAdd()">Bağla</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveClinic()">Yarat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="modal-overlay" id="expModal" style="display:none" onclick="if(event.target===this)closeExpModal()">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="exp-modal-title">Xərc Əlavə Et</h3><button onclick="closeExpModal()" style="background:none;border:none;color:#6b7fa3;font-size:1.1rem;cursor:pointer">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Məhsul *</label><input class="form-control" id="e-product"></div>
+        <div class="form-group"><label class="form-label">Firma</label><input class="form-control" id="e-company"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Kateqoriya</label><input class="form-control" id="e-cat" list="ecat-list"><datalist id="ecat-list"></datalist></div>
+        <div class="form-group"><label class="form-label">Tarix</label><input class="form-control" id="e-date" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Say</label><input class="form-control" id="e-qty" type="number" value="1" min="1"></div>
+        <div class="form-group"><label class="form-label">Qiymət (₼)</label><input class="form-control" id="e-price" type="number" step="0.01"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeExpModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveExpense()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let _clinics=[],_editId=null,_fcClinic=null,_fcInterval=null,_expenses=[],_expEditId=null
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showPane(name,el){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
+  document.getElementById('pane-'+name).classList.add('active')
+  if(el) el.classList.add('active')
+  if(name==='logs') loadLogs()
+  if(name==='smtp') loadSmtp()
+  if(name==='expenses') loadExpenses()
+  if(name==='billing') loadBilling()
+  if(name==='plans') loadPlans()
+  if(name==='activity') loadActivity()
+  if(name==='tickets') loadTickets()
+  if(name==='search') document.getElementById('gs-input').focus()
+}
+
+function fmtDate(d){if(!d)return'—';var x=new Date(d);if(isNaN(x))return'—';return ('0'+x.getDate()).slice(-2)+'.'+('0'+(x.getMonth()+1)).slice(-2)+'.'+x.getFullYear()}
+function fmtDateTime(d){if(!d)return'—';var x=new Date(d);if(isNaN(x))return'—';return ('0'+x.getDate()).slice(-2)+'.'+('0'+(x.getMonth()+1)).slice(-2)+'.'+x.getFullYear()+' '+('0'+x.getHours()).slice(-2)+':'+('0'+x.getMinutes()).slice(-2)}
+
+// ── CLINICS ───────────────────────────────────────────────────────────────────
+async function load(){
+  const res=await fetch('/api/superadmin/clinics')
+  _clinics=await res.json()
+  document.getElementById('st-total').textContent=_clinics.length
+  document.getElementById('st-active').textContent=_clinics.filter(c=>c.is_online).length
+  document.getElementById('st-doctors').textContent=_clinics.reduce((s,c)=>s+(c.user_count||0),0)
+  document.getElementById('st-free').textContent=_clinics.filter(c=>c.plan==='free').length
+
+  const sel=document.getElementById('log-clinic-filter')
+  sel.innerHTML='<option value="">Bütün klinikalar</option>'+_clinics.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')
+
+  // clinic table
+  const tbody=document.getElementById('clinic-tbody')
+  tbody.innerHTML=_clinics.length?_clinics.map((c,i)=>`<tr>
+    <td style="color:#6b7fa3">${i+1}</td>
+    <td><div style="font-weight:700">${c.name}</div><div style="font-size:.72rem;color:#6b7fa3">${c.slug}</div></td>
+    <td><span class="badge badge-${c.plan}">${c.plan.toUpperCase()}</span></td>
+    <td style="text-align:center">${c.admin_count||0}</td>
+    <td style="text-align:center">${c.doctor_count||0}</td>
+    <td><span class="badge ${c.is_online?'badge-active':'badge-inactive'}">${c.is_online?'Online':'Offline'}</span></td>
+    <td style="font-size:.76rem;color:#6b7fa3">${fmtDate(c.created_at)}</td>
+    <td><div style="display:flex;gap:4px">
+      <button class="btn btn-secondary btn-sm" onclick="openEdit(${c.id})">✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteClinic(${c.id},'${c.name.replace(/'/g,"\\'")}')">Sil</button>
+    </div></td>
+  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:20px;color:#6b7fa3">Klinika yoxdur</td></tr>'
+
+  // dash clinic summary
+  document.getElementById('dash-clinic-tbody').innerHTML=_clinics.map(c=>`<tr>
+    <td style="font-weight:600">${c.name}</td>
+    <td><span class="badge badge-${c.plan}">${c.plan.toUpperCase()}</span></td>
+    <td style="text-align:center">${c.admin_count||0}</td>
+    <td style="text-align:center">${c.doctor_count||0}</td>
+    <td><span class="badge ${c.is_online?'badge-active':'badge-inactive'}">${c.is_online?'Online':'Offline'}</span></td>
+  </tr>`).join('')
+
+  // fc list
+  document.getElementById('fc-list').innerHTML=_clinics.map(c=>`
+    <div class="fc-list-item ${_fcClinic===c.id?'active':''}" onclick="fcOpen(${c.id})">${c.name}</div>`).join('')
+
+  loadMonitor()
+  loadDashLogs()
+}
+
+// ── MONITORING ────────────────────────────────────────────────────────────────
+async function loadMonitor(){
+  try{
+    const res=await fetch('/api/superadmin/monitor')
+    const d=await res.json()
+    const clr=v=>v>80?'#ef4444':v>60?'#f97316':'#22c55e'
+    const bar=(v,c)=>`<div class="monitor-bar"><div class="monitor-fill" style="width:${v}%;background:${c}"></div></div>`
+    const diskHtml=d.disks.map(dk=>`
+      <div class="monitor-item">
+        <div class="monitor-label">💾 ${dk.device} (${dk.mount})</div>
+        ${bar(dk.percent,clr(dk.percent))}
+        <div class="monitor-val" style="color:${clr(dk.percent)}">${dk.percent}% — ${dk.used}/${dk.total} GB (${dk.free} GB boş)</div>
+      </div>`).join('')
+    document.getElementById('monitor-grid').innerHTML=`
+      <div class="monitor-item">
+        <div class="monitor-label">🖥️ CPU — ${d.cpu_cores} core / ${d.cpu_threads} thread${d.cpu_freq?' @ '+d.cpu_freq+' GHz':''}</div>
+        ${bar(d.cpu,clr(d.cpu))}
+        <div class="monitor-val" style="color:${clr(d.cpu)}">${d.cpu}%</div>
+      </div>
+      <div class="monitor-item">
+        <div class="monitor-label">🧠 RAM — ${d.ram_total} GB</div>
+        ${bar(d.ram,clr(d.ram))}
+        <div class="monitor-val" style="color:${clr(d.ram)}">${d.ram}% — İstifadə: ${d.ram_used} GB / Boş: ${d.ram_available} GB</div>
+      </div>
+      ${diskHtml}`
+  }catch{
+    document.getElementById('monitor-grid').innerHTML='<div style="color:#6b7fa3;font-size:.82rem">psutil quraşdırılmayıb: pip install psutil</div>'
+  }
+}
+
+// ── DASH LOGS ─────────────────────────────────────────────────────────────────
+async function loadDashLogs(){
+  const res=await fetch('/api/superadmin/logs')
+  const logs=await res.json()
+  const cm=Object.fromEntries(_clinics.map(c=>[c.id,c.name]))
+  document.getElementById('dash-log-tbody').innerHTML=logs.slice(0,20).map(l=>`<tr>
+    <td style="font-size:.75rem;color:#6b7fa3;white-space:nowrap">${fmtDateTime(l.created_at)}</td>
+    <td style="font-size:.78rem">${cm[l.clinic_id]||'—'}</td>
+    <td><span class="log-${l.action}" style="font-weight:700;font-size:.76rem">${l.action}</span></td>
+    <td style="font-size:.76rem;color:#9bb3d4;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.detail||'—'}</td>
+  </tr>`).join('')
+}
+
+// ── CLINIC CRUD ───────────────────────────────────────────────────────────────
+function openAdd(){
+  _editId=null
+  document.getElementById('modal-title').textContent='Yeni Klinika'
+  document.getElementById('modal-save-btn').textContent='Yarat'
+  document.getElementById('modal-save-btn').style.display='inline-flex'
+  document.getElementById('admin-fields').style.display='block'
+  document.getElementById('reset-pass-section').style.display='none'
+  document.getElementById('create-result').style.display='none'
+  ;['c-name','c-slug','c-email','c-phone','c-address','c-admin-name','c-admin-email'].forEach(id=>document.getElementById(id).value='')
+  document.getElementById('c-plan').value='free'
+  document.getElementById('c-name').oninput=function(){
+    document.getElementById('c-slug').value=this.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
+  }
+  document.getElementById('addModal').style.display='flex'
+}
+
+function openEdit(id){
+  const c=_clinics.find(x=>x.id===id);if(!c)return
+  _editId=id
+  document.getElementById('modal-title').textContent='Klinika Düzəlt'
+  document.getElementById('modal-save-btn').textContent='Yadda Saxla'
+  document.getElementById('modal-save-btn').style.display='inline-flex'
+  document.getElementById('admin-fields').style.display='none'
+  document.getElementById('reset-pass-section').style.display='block'
+  document.getElementById('reset-result').style.display='none'
+  document.getElementById('create-result').style.display='none'
+  document.getElementById('c-name').value=c.name||''
+  document.getElementById('c-slug').value=c.slug||''
+  document.getElementById('c-email').value=c.email||''
+  document.getElementById('c-phone').value=c.phone||''
+  document.getElementById('c-address').value=c.address||''
+  document.getElementById('c-plan').value=c.plan||'free'
+  document.getElementById('addModal').style.display='flex'
+}
+
+function closeAdd(){document.getElementById('addModal').style.display='none';load()}
+
+async function saveClinic(){
+  const name=document.getElementById('c-name').value.trim()
+  if(!name){alert('Klinika adı tələb olunur');return}
+  if(_editId){
+    await fetch(`/api/superadmin/clinics/${_editId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,slug:document.getElementById('c-slug').value.trim()||undefined,
+        email:document.getElementById('c-email').value.trim(),phone:document.getElementById('c-phone').value.trim(),
+        address:document.getElementById('c-address').value.trim(),plan:document.getElementById('c-plan').value})})
+    closeAdd()
+  } else {
+    const email=document.getElementById('c-admin-email').value.trim()
+    if(!email){alert('Admin email tələb olunur');return}
+    const res=await fetch('/api/superadmin/clinics',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,slug:document.getElementById('c-slug').value.trim()||undefined,
+        email:document.getElementById('c-email').value.trim(),phone:document.getElementById('c-phone').value.trim(),
+        address:document.getElementById('c-address').value.trim(),plan:document.getElementById('c-plan').value,
+        admin_name:document.getElementById('c-admin-name').value.trim(),admin_email:email})})
+    const d=await res.json()
+    if(d.error){alert(d.error);return}
+    document.getElementById('result-pass').textContent=d.admin_temp_pass
+    document.getElementById('create-result').style.display='block'
+    document.getElementById('modal-save-btn').style.display='none'
+    load()
+  }
+}
+
+async function resetAdminPass(){
+  const res=await fetch(`/api/superadmin/clinics/${_editId}/reset-admin-password`,{method:'POST'})
+  const d=await res.json()
+  if(d.error){alert(d.error);return}
+  document.getElementById('reset-pass-val').textContent=d.temp_pass
+  document.getElementById('reset-result').style.display='block'
+}
+
+async function deleteClinic(id,name){
+  if(!confirm(`"${name}" silinsin? Bütün məlumatlar silinəcək!`))return
+  await fetch(`/api/superadmin/clinics/${id}`,{method:'DELETE'})
+  load()
+}
+
+// ── FLOATING CHAT ─────────────────────────────────────────────────────────────
+let _fcOpen=false
+
+function toggleFC(){
+  _fcOpen=!_fcOpen
+  document.getElementById('fc-box').classList.toggle('open',_fcOpen)
+  if(_fcOpen && _fcClinic) fcFetch()
+}
+
+function fcOpen(cid){
+  _fcClinic=cid
+  document.getElementById('fc-inp').style.display='flex'
+  document.querySelectorAll('.fc-list-item').forEach(el=>el.classList.remove('active'))
+  event.target.classList.add('active')
+  clearInterval(_fcInterval)
+  fcFetch()
+  _fcInterval=setInterval(fcFetch,4000)
+}
+
+function renderChatMsg(text){
+  if(text.startsWith('[IMG:')){
+    const parts=text.slice(5,-1).split('|')
+    const fname=parts[0],mime=parts[1],b64=parts[2]
+    return `<img src="data:${mime};base64,${b64}" style="max-width:100%;border-radius:6px;cursor:pointer" onclick="this.requestFullscreen?this.requestFullscreen():window.open(this.src)">`
+  }
+  if(text.startsWith('[FILE:')){
+    const parts=text.slice(6,-1).split('|')
+    const fname=parts[0],mime=parts[1],b64=parts[2]
+    const url=`data:${mime};base64,${b64}`
+    return `<a href="${url}" download="${fname}" style="color:#60a5fa;font-size:.8rem;text-decoration:none">📎 ${fname}</a>`
+  }
+  return text
+}
+
+async function fcFetch(){
+  if(!_fcClinic)return
+  const res=await fetch(`/api/chat/${_fcClinic}/messages`)
+  const msgs=await res.json()
+  const el=document.getElementById('fc-msgs')
+  if(!msgs.length){el.innerHTML='<div style="color:#6b7fa3;font-size:.8rem;margin:auto;text-align:center">Mesaj yoxdur</div>';return}
+  el.innerHTML=msgs.map(m=>`
+    <div style="max-width:85%;padding:7px 10px;border-radius:9px;font-size:.8rem;line-height:1.4;
+      ${m.sender_role==='superadmin'
+        ?'align-self:flex-end;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.2);border-radius:9px 3px 9px 9px'
+        :'align-self:flex-start;background:#1a2235;border:1px solid #1f2d47;border-radius:3px 9px 9px 9px'}">
+      <div style="font-size:.66rem;color:#6b7fa3;margin-bottom:2px">${m.sender_name}</div>
+      <div>${renderChatMsg(m.text)}</div>
+      <div style="font-size:.64rem;color:#6b7fa3;margin-top:2px">${new Date(m.created_at).toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`).join('')
+  el.scrollTop=el.scrollHeight
+  document.getElementById('fc-badge').style.display='none'
+}
+
+async function fcSend(){
+  const t=document.getElementById('fc-text').value.trim()
+  if(!t||!_fcClinic)return
+  await fetch(`/api/chat/${_fcClinic}/messages`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})})
+  document.getElementById('fc-text').value=''
+  fcFetch()
+}
+
+async function fcSendFile(){
+  const file=document.getElementById('fc-file').files[0]
+  if(!file||!_fcClinic)return
+  const fd=new FormData()
+  fd.append('file',file)
+  fd.append('clinic_id',_fcClinic)
+  const res=await fetch('/api/chat/upload',{method:'POST',body:fd})
+  const d=await res.json()
+  if(d.error){alert(d.error);return}
+  document.getElementById('fc-file').value=''
+  fcFetch()
+}
+
+// unread check
+async function checkUnread(){
+  const res=await fetch('/api/chat/unread')
+  const d=await res.json()
+  const ids=d.clinic_ids||[]
+  const b=document.getElementById('fc-badge')
+  if(ids.length){b.textContent=ids.length;b.style.display='block'}else b.style.display='none'
+}
+
+// ── LOGS ──────────────────────────────────────────────────────────────────────
+async function loadLogs(){
+  const cid=document.getElementById('log-clinic-filter').value
+  const res=await fetch(`/api/superadmin/logs${cid?'?clinic_id='+cid:''}`)
+  const logs=await res.json()
+  const cm=Object.fromEntries(_clinics.map(c=>[c.id,c.name]))
+  const tbody=document.getElementById('log-tbody')
+  tbody.innerHTML=logs.length?logs.map(l=>`<tr>
+    <td style="font-size:.76rem;color:#6b7fa3;white-space:nowrap">${fmtDateTime(l.created_at)}</td>
+    <td style="font-size:.8rem">${cm[l.clinic_id]||'—'}</td>
+    <td><span class="log-${l.action}" style="font-weight:700;font-size:.78rem">${l.action}</span></td>
+    <td style="font-size:.78rem;color:#9bb3d4;max-width:260px;word-break:break-word">${l.detail||'—'}</td>
+    <td style="font-size:.76rem;color:#6b7fa3">${l.ip||'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:#6b7fa3">Log yoxdur</td></tr>'
+}
+
+// ── SMTP ──────────────────────────────────────────────────────────────────────
+async function loadSmtp(){
+  const d=await(await fetch('/api/superadmin/smtp')).json()
+  document.getElementById('smtp-host').value=d.smtp_host||''
+  document.getElementById('smtp-port').value=d.smtp_port||'587'
+  document.getElementById('smtp-user').value=d.smtp_user||''
+  document.getElementById('smtp-pass').value=d.smtp_pass||''
+  document.getElementById('smtp-from').value=d.smtp_from||''
+}
+
+async function saveSmtp(){
+  const res=await fetch('/api/superadmin/smtp',{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({smtp_host:document.getElementById('smtp-host').value.trim(),
+      smtp_port:document.getElementById('smtp-port').value.trim(),
+      smtp_user:document.getElementById('smtp-user').value.trim(),
+      smtp_pass:document.getElementById('smtp-pass').value,
+      smtp_from:document.getElementById('smtp-from').value.trim()})})
+  const d=await res.json()
+  const msg=document.getElementById('smtp-msg')
+  msg.style.cssText=d.ok
+    ?'display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#22c55e;border-radius:8px;padding:9px 12px;font-size:.83rem'
+    :'display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:8px;padding:9px 12px;font-size:.83rem'
+  msg.textContent=d.ok?'Yadda saxlandı!':d.error||'Xəta'
+  setTimeout(()=>msg.style.display='none',3000)
+}
+
+// ── EXPENSES ──────────────────────────────────────────────────────────────────
+async function loadExpenses(){
+  _expenses=await(await fetch('/api/expenses')).json()
+  const total=_expenses.reduce((s,e)=>s+e.total,0)
+  const now=new Date()
+  const ms=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`
+  const month=_expenses.filter(e=>e.purchase_date&&e.purchase_date.startsWith(ms)).reduce((s,e)=>s+e.total,0)
+  document.getElementById('exp-count').textContent=_expenses.length
+  document.getElementById('exp-total').textContent=total.toFixed(2)
+  document.getElementById('exp-month').textContent=month.toFixed(2)
+  // cats
+  const cats=[...new Set(_expenses.map(e=>e.category).filter(Boolean))]
+  document.getElementById('ecat-list').innerHTML=cats.map(c=>`<option value="${c}">`).join('')
+  document.getElementById('exp-tbody').innerHTML=_expenses.length?_expenses.map((e,i)=>`<tr>
+    <td style="color:#6b7fa3">${i+1}</td>
+    <td style="font-weight:600">${e.product}</td>
+    <td style="color:#6b7fa3">${e.company||'—'}</td>
+    <td>${e.category||'—'}</td>
+    <td style="color:#6b7fa3;font-size:.8rem">${fmtDate(e.purchase_date)}</td>
+    <td style="text-align:center">${e.quantity}</td>
+    <td>${(e.price||0).toFixed(2)} ₼</td>
+    <td style="font-weight:700;color:#60a5fa">${(e.total||0).toFixed(2)} ₼</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-secondary btn-sm" onclick="editExp(${e.id})">✎</button>
+      <button class="btn btn-danger btn-sm" onclick="delExp(${e.id})">✕</button>
+    </td>
+  </tr>`).join(''):'<tr><td colspan="9" style="text-align:center;padding:20px;color:#6b7fa3">Xərc yoxdur</td></tr>'
+}
+
+function openExpModal(){
+  _expEditId=null
+  document.getElementById('exp-modal-title').textContent='Xərc Əlavə Et'
+  ;['e-product','e-company','e-cat','e-price'].forEach(id=>document.getElementById(id).value='')
+  document.getElementById('e-qty').value=1
+  document.getElementById('e-date').value=new Date().toISOString().slice(0,10)
+  document.getElementById('expModal').style.display='flex'
+}
+
+function closeExpModal(){document.getElementById('expModal').style.display='none'}
+
+function editExp(id){
+  const e=_expenses.find(x=>x.id===id);if(!e)return
+  _expEditId=id
+  document.getElementById('exp-modal-title').textContent='Xərci Düzəlt'
+  document.getElementById('e-product').value=e.product||''
+  document.getElementById('e-company').value=e.company||''
+  document.getElementById('e-cat').value=e.category||''
+  document.getElementById('e-date').value=e.purchase_date||''
+  document.getElementById('e-qty').value=e.quantity||1
+  document.getElementById('e-price').value=e.price||0
+  document.getElementById('expModal').style.display='flex'
+}
+
+async function saveExpense(){
+  const d={product:document.getElementById('e-product').value.trim(),
+    company:document.getElementById('e-company').value.trim(),
+    category:document.getElementById('e-cat').value.trim(),
+    purchase_date:document.getElementById('e-date').value,
+    quantity:document.getElementById('e-qty').value,
+    price:document.getElementById('e-price').value}
+  if(!d.product){alert('Məhsul adı daxil edin');return}
+  if(_expEditId) await fetch(`/api/expenses/${_expEditId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+  else await fetch('/api/expenses',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+  closeExpModal()
+  loadExpenses()
+}
+
+async function delExp(id){
+  if(!confirm('Bu xərci silmək istəyirsiniz?'))return
+  await fetch(`/api/expenses/${id}`,{method:'DELETE'})
+  loadExpenses()
+}
+
+// ── PLANS ────────────────────────────────────────────────────────────────────
+async function loadPlans(){
+  const plans=await fetch('/api/superadmin/plans').then(r=>r.json())
+  const COLORS={free:'#6b7fa3',basic:'#3b82f6',pro:'#a855f7'}
+  const grid=document.getElementById('plans-grid')
+  grid.innerHTML=plans.map(p=>{
+    const c=COLORS[p.plan_name]||'#6b7fa3'
+    return `<div class="card" style="border:2px solid ${c}33">
+      <div class="card-hd" style="background:${c}11;border-bottom:1px solid ${c}33">
+        <h3 style="color:${c};text-transform:uppercase;letter-spacing:.06em">${p.plan_name}</h3>
+        <span style="font-size:.74rem;color:#6b7fa3">${p.clinic_count} klinika istifadə edir</span>
+      </div>
+      <div class="card-bd" style="padding:16px">
+        <div class="form-group">
+          <label class="form-label">Aylıq haqq (₼)</label>
+          <input class="form-control" id="pl-${p.plan_name}-fee" type="number" step="0.01" min="0" value="${p.monthly_fee}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Max həkim</label>
+            <input class="form-control" id="pl-${p.plan_name}-doc" type="number" min="0" value="${p.max_doctors}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Max admin</label>
+            <input class="form-control" id="pl-${p.plan_name}-adm" type="number" min="0" value="${p.max_admins}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Günlük pasiyent</label>
+            <input class="form-control" id="pl-${p.plan_name}-day" type="number" min="0" value="${p.max_patients_per_day}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ümumi pasiyent</label>
+            <input class="form-control" id="pl-${p.plan_name}-tot" type="number" min="0" value="${p.max_total_patients}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Açıqlama</label>
+          <input class="form-control" id="pl-${p.plan_name}-desc" value="${p.description||''}">
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+          <button class="btn btn-primary btn-sm" onclick="savePlan('${p.plan_name}')">💾 Yadda saxla</button>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+async function savePlan(name){
+  const data={
+    monthly_fee:document.getElementById(`pl-${name}-fee`).value,
+    max_doctors:document.getElementById(`pl-${name}-doc`).value,
+    max_admins:document.getElementById(`pl-${name}-adm`).value,
+    max_patients_per_day:document.getElementById(`pl-${name}-day`).value,
+    max_total_patients:document.getElementById(`pl-${name}-tot`).value,
+    description:document.getElementById(`pl-${name}-desc`).value
+  }
+  const r=await fetch(`/api/superadmin/plans/${name}`,{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)})
+  if(r.ok){
+    if(window.toast)toast(`✓ ${name.toUpperCase()} planı yeniləndi`,'success')
+    else alert('Yeniləndi')
+    loadBilling()  // abunələr panelində fee yenilənsin
+  }else alert('Xəta')
+}
+
+// ── BILLING / SUBSCRIPTIONS ──────────────────────────────────────────────────
+let _bills=[]
+async function loadBilling(){
+  const [bills,sum]=await Promise.all([
+    fetch('/api/superadmin/subscriptions').then(r=>r.json()),
+    fetch('/api/superadmin/billing/summary').then(r=>r.json())
+  ])
+  _bills=bills
+  // dashboard widget
+  document.getElementById('bs-mrr').textContent=(sum.mrr||0).toFixed(2)+' ₼'
+  document.getElementById('bs-overdue-cnt').textContent=sum.overdue_count||0
+  document.getElementById('bs-overdue-amt').textContent=(sum.overdue_amount||0).toFixed(0)
+  document.getElementById('bs-active').textContent=sum.active_clinics||0
+  // overdue badge
+  const badge=document.getElementById('nav-overdue-badge')
+  if(sum.overdue_count>0){badge.textContent=sum.overdue_count;badge.style.display='inline-block'}
+  else badge.style.display='none'
+  // dashboard mini-table
+  const overdue=bills.filter(b=>b.days_overdue>0&&b.plan!=='free').sort((a,b)=>b.days_overdue-a.days_overdue).slice(0,5)
+  const dot=document.getElementById('dash-overdue-tbody')
+  if(dot){
+    dot.innerHTML=overdue.length?overdue.map(b=>`<tr>
+      <td><div style="font-weight:700">${b.clinic_name}</div></td>
+      <td><span class="badge badge-${b.plan}">${b.plan.toUpperCase()}</span></td>
+      <td>${b.monthly_fee.toFixed(2)} ₼</td>
+      <td style="font-size:.78rem;color:#6b7fa3">${fmtDate(b.next_payment_date)}</td>
+      <td><span style="color:#ef4444;font-weight:700">${b.days_overdue} gün</span></td>
+      <td style="color:#ef4444;font-weight:700">${b.debt_amount.toFixed(2)} ₼</td>
+      <td><button class="btn btn-success btn-sm" onclick="recordPay(${b.clinic_id})">💰</button></td>
+    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#6b7fa3;padding:20px">Borclu klinika yoxdur ✓</td></tr>'
+  }
+  renderBilling()
+}
+function renderBilling(){
+  const f=document.getElementById('bill-filter').value
+  let list=_bills.slice()
+  if(f==='overdue') list=list.filter(b=>b.days_overdue>0&&b.plan!=='free')
+  else if(f==='active') list=list.filter(b=>b.status==='active')
+  else if(f==='suspended') list=list.filter(b=>b.status==='suspended'||!b.is_active)
+  const tb=document.getElementById('bill-tbody')
+  tb.innerHTML=list.length?list.map((b,i)=>`<tr>
+    <td style="color:#6b7fa3">${i+1}</td>
+    <td><div style="font-weight:700">${b.clinic_name}</div><div style="font-size:.7rem;color:#6b7fa3">${b.slug}</div></td>
+    <td><span class="badge badge-${b.plan}">${b.plan.toUpperCase()}</span></td>
+    <td>${b.monthly_fee.toFixed(2)}</td>
+    <td style="font-size:.78rem;color:#6b7fa3">${fmtDate(b.last_paid_date)}</td>
+    <td style="font-size:.78rem">${fmtDate(b.next_payment_date)}</td>
+    <td>${b.days_overdue>0?`<span style="color:#ef4444;font-weight:700">${b.days_overdue} gün</span>`:'<span style="color:#22c55e">—</span>'}</td>
+    <td style="${b.debt_amount>0?'color:#ef4444;font-weight:700':''}">${b.debt_amount.toFixed(2)}</td>
+    <td><span class="badge ${b.is_active?'badge-active':'badge-inactive'}">${b.is_active?b.status:'suspended'}</span></td>
+    <td><div style="display:flex;gap:4px">
+      <button class="btn btn-secondary btn-sm" onclick="editBill(${b.clinic_id})" title="Redaktə">✏️</button>
+      <button class="btn btn-success btn-sm" onclick="recordPay(${b.clinic_id})" title="Ödəniş qeyd et">💰</button>
+      <button class="btn btn-secondary btn-sm" onclick="remindBill(${b.clinic_id})" title="Email xatırlatma">📧</button>
+      ${b.is_active?`<button class="btn btn-danger btn-sm" onclick="suspendClinic(${b.clinic_id})" title="Blokla">🚫</button>`:`<button class="btn btn-success btn-sm" onclick="activateClinic(${b.clinic_id})" title="Aktivləşdir">✓</button>`}
+    </div></td>
+  </tr>`).join(''):'<tr><td colspan="10" style="text-align:center;color:#6b7fa3;padding:24px">Heç nə yoxdur</td></tr>'
+}
+let _billCid=null
+function editBill(cid){
+  const b=_bills.find(x=>x.clinic_id===cid);if(!b)return
+  _billCid=cid
+  document.getElementById('bill-info').innerHTML=`<strong>${b.clinic_name}</strong><br><span style="color:#6b7fa3;font-size:.78rem">Slug: ${b.slug}</span>`
+  document.getElementById('bill-plan').value=b.plan||'free'
+  document.getElementById('bill-fee').value=b.monthly_fee||0
+  document.getElementById('bill-next').value=b.next_payment_date||''
+  document.getElementById('billModal').style.display='flex'
+}
+function closeBill(){document.getElementById('billModal').style.display='none'}
+async function saveBill(){
+  const data={
+    plan:document.getElementById('bill-plan').value,
+    monthly_fee:parseFloat(document.getElementById('bill-fee').value)||0,
+    next_payment_date:document.getElementById('bill-next').value||null
+  }
+  const r=await fetch(`/api/superadmin/subscriptions/${_billCid}`,{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)})
+  if(r.ok){closeBill();loadBilling();load()}else{alert('Xəta')}
+}
+
+let _payCid=null
+function recordPay(cid){
+  const b=_bills.find(x=>x.clinic_id===cid);if(!b)return
+  _payCid=cid
+  document.getElementById('pay-info').innerHTML=`<strong>${b.clinic_name}</strong> — ${b.plan.toUpperCase()} planı<br><span style="color:#6b7fa3;font-size:.78rem">Aylıq haqq: ${b.monthly_fee.toFixed(2)} ₼${b.days_overdue>0?' • <span style="color:#ef4444">Gecikmə: '+b.days_overdue+' gün</span>':''}</span>`
+  document.getElementById('pay-amount').value=b.monthly_fee||0
+  document.getElementById('pay-note').value=''
+  document.getElementById('payModal').style.display='flex'
+}
+function closePay(){document.getElementById('payModal').style.display='none'}
+async function savePay(){
+  const data={
+    amount:parseFloat(document.getElementById('pay-amount').value)||0,
+    notes:document.getElementById('pay-note').value
+  }
+  const r=await fetch(`/api/superadmin/subscriptions/${_payCid}/pay`,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)})
+  const j=await r.json()
+  if(r.ok){closePay();loadBilling();load();if(window.toast)toast('✓ Ödəniş qeydə alındı. Növbəti tarix: '+j.subscription.next_payment_date,'success');else alert('Ödəniş qeydə alındı')}
+  else{alert(j.error||'Xəta')}
+}
+async function remindBill(cid){
+  if(!confirm('Klinika admininə email xatırlatma göndərilsin?'))return
+  const r=await fetch(`/api/superadmin/subscriptions/${cid}/remind`,{method:'POST'})
+  const j=await r.json();alert(j.message||(j.ok?'Göndərildi':'Xəta'))
+}
+async function suspendClinic(cid){
+  if(!confirm('Klinika bloklanacaq. Davam edək?'))return
+  await fetch(`/api/superadmin/subscriptions/${cid}/suspend`,{method:'POST'});loadBilling();load()
+}
+async function activateClinic(cid){
+  await fetch(`/api/superadmin/subscriptions/${cid}/activate`,{method:'POST'});loadBilling();load()
+}
+
+// ── ACTIVITY ─────────────────────────────────────────────────────────────────
+const LEVEL_LABEL={high:'Yüksək',medium:'Orta',low:'Aşağı',dead:'Ölü'}
+const LEVEL_COLOR={high:'#22c55e',medium:'#3b82f6',low:'#f97316',dead:'#ef4444'}
+async function loadActivity(){
+  const data=await fetch('/api/superadmin/clinics/activity').then(r=>r.json())
+  const cnt={high:0,medium:0,low:0,dead:0}
+  data.forEach(d=>cnt[d.level]++)
+  document.getElementById('act-high').textContent=cnt.high
+  document.getElementById('act-medium').textContent=cnt.medium
+  document.getElementById('act-low').textContent=cnt.low
+  document.getElementById('act-dead').textContent=cnt.dead
+  document.getElementById('act-tbody').innerHTML=data.length?data.map(d=>`<tr>
+    <td><div style="font-weight:700">${d.clinic_name}</div></td>
+    <td><span class="badge badge-${d.plan}">${d.plan.toUpperCase()}</span></td>
+    <td><span class="badge ${d.is_active?'badge-active':'badge-inactive'}">${d.is_active?'Aktiv':'Bloklu'}</span></td>
+    <td>${d.total_patients}</td>
+    <td style="font-weight:700;color:${LEVEL_COLOR[d.level]}">${d.new_patients_30d}</td>
+    <td style="font-size:.78rem;color:#6b7fa3">${d.last_login?fmtDate(d.last_login):'—'}</td>
+    <td><span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:.7rem;font-weight:700;background:${LEVEL_COLOR[d.level]}22;color:${LEVEL_COLOR[d.level]};border:1px solid ${LEVEL_COLOR[d.level]}33">${LEVEL_LABEL[d.level]}</span></td>
+  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#6b7fa3;padding:24px">Klinika yoxdur</td></tr>'
+}
+
+// ── TICKETS ──────────────────────────────────────────────────────────────────
+let _tickets=[]
+async function loadTickets(){
+  _tickets=await fetch('/api/superadmin/tickets').then(r=>r.json())
+  const open=_tickets.filter(t=>t.status==='open').length
+  const badge=document.getElementById('nav-tickets-badge')
+  if(open>0){badge.textContent=open;badge.style.display='inline-block'}else badge.style.display='none'
+  renderTickets()
+}
+function renderTickets(){
+  const f=document.getElementById('tk-filter').value
+  let list=_tickets.slice()
+  if(f!=='all') list=list.filter(t=>t.status===f||(f==='closed'&&t.status==='closed'))
+  const PRIO={low:'#6b7fa3',normal:'#3b82f6',high:'#ef4444'}
+  document.getElementById('tk-tbody').innerHTML=list.length?list.map((t,i)=>`<tr>
+    <td style="color:#6b7fa3">${t.id}</td>
+    <td style="font-size:.78rem;color:#6b7fa3">${fmtDate(t.created_at)}</td>
+    <td>${t.clinic_name}</td>
+    <td><div style="font-weight:600">${t.subject}</div>${t.body?`<div style="font-size:.74rem;color:#6b7fa3;margin-top:2px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.body}</div>`:''}</td>
+    <td><span style="color:${PRIO[t.priority]||'#6b7fa3'};font-weight:700;font-size:.76rem">${t.priority.toUpperCase()}</span></td>
+    <td>
+      <select onchange="updTicket(${t.id},'status',this.value)" style="background:#0f1623;color:#e8edf5;border:1px solid #1f2d47;border-radius:6px;padding:3px 6px;font-size:.74rem;font-family:inherit">
+        <option value="open" ${t.status==='open'?'selected':''}>Açıq</option>
+        <option value="in_progress" ${t.status==='in_progress'?'selected':''}>İşlənir</option>
+        <option value="closed" ${t.status==='closed'?'selected':''}>Bağlı</option>
+      </select>
+    </td>
+    <td><button class="btn btn-secondary btn-sm" onclick="viewTicket(${t.id})">Bax</button></td>
+  </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#6b7fa3;padding:24px">Bilet yoxdur</td></tr>'
+}
+async function updTicket(id,field,value){
+  await fetch(`/api/superadmin/tickets/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({[field]:value})})
+  loadTickets()
+}
+function viewTicket(id){
+  const t=_tickets.find(x=>x.id===id);if(!t)return
+  alert(`Bilet #${t.id}\nKlinika: ${t.clinic_name}\nMövzu: ${t.subject}\nPrioritet: ${t.priority}\nStatus: ${t.status}\n\n${t.body||'(boş)'}`)
+}
+
+// ── GLOBAL SEARCH ────────────────────────────────────────────────────────────
+let _gst=null
+function onGlobalSearch(v){
+  clearTimeout(_gst)
+  if(v.trim().length<2){document.getElementById('gs-results').innerHTML='';return}
+  _gst=setTimeout(()=>doGlobalSearch(v),250)
+}
+async function doGlobalSearch(q){
+  const r=await fetch('/api/superadmin/global-search?q='+encodeURIComponent(q)).then(r=>r.json())
+  const sec=(title,items,render)=>items.length?`<div class="card" style="margin-bottom:14px"><div class="card-hd"><h3>${title} <span style="color:#6b7fa3;font-weight:500">(${items.length})</span></h3></div><div style="overflow-x:auto"><table>${render}</table></div></div>`:''
+  let html=''
+  html+=sec('🏥 Klinikalar',r.clinics,
+    `<thead><tr><th>Ad</th><th>Slug</th><th>Telefon</th><th>Email</th></tr></thead>
+     <tbody>${r.clinics.map(c=>`<tr><td style="font-weight:700">${c.name}</td><td style="color:#6b7fa3">${c.slug}</td><td>${c.phone||'—'}</td><td>${c.email||'—'}</td></tr>`).join('')}</tbody>`)
+  html+=sec('👤 Pasiyentlər',r.patients,
+    `<thead><tr><th>Ad</th><th>Telefon</th><th>Klinika</th></tr></thead>
+     <tbody>${r.patients.map(p=>`<tr><td style="font-weight:700">${p.name}</td><td>${p.phone||'—'}</td><td style="color:#6b7fa3">${p.clinic_name}</td></tr>`).join('')}</tbody>`)
+  html+=sec('🩺 İstifadəçilər',r.users,
+    `<thead><tr><th>Ad</th><th>Email</th><th>Telefon</th><th>Rol</th><th>Klinika</th></tr></thead>
+     <tbody>${r.users.map(u=>`<tr><td style="font-weight:700">${u.name}</td><td>${u.email}</td><td>${u.phone||'—'}</td><td><span class="badge badge-basic">${u.role}</span></td><td style="color:#6b7fa3">${u.clinic_name}</td></tr>`).join('')}</tbody>`)
+  document.getElementById('gs-results').innerHTML=html||'<div style="text-align:center;color:#6b7fa3;padding:30px">Heç nə tapılmadı</div>'
+}
+
+load()
+checkUnread()
+loadBilling()
+loadTickets()
+setInterval(checkUnread,30000)
+setInterval(loadMonitor,5000)
+setInterval(loadBilling,60000)
+</script>
+<script src="/static/js/theme.js"></script>
+<!-- ABUNƏ REDAKTƏ MODAL -->
+<div class="modal-overlay" id="billModal" style="display:none" onclick="if(event.target===this)closeBill()">
+  <div class="modal">
+    <div style="padding:20px 24px;border-bottom:1px solid #1f2d47;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:1rem;font-weight:800">Abunəliyi Redaktə Et</h3>
+      <button onclick="closeBill()" style="background:none;border:none;color:#6b7fa3;font-size:1.4rem;cursor:pointer">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+      <div id="bill-info" style="margin-bottom:14px;padding:10px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;font-size:.86rem"></div>
+      <div class="form-group">
+        <label class="form-label">Plan</label>
+        <select class="form-control" id="bill-plan">
+          <option value="free">Free (0 ₼)</option>
+          <option value="basic">Basic (30 ₼)</option>
+          <option value="pro">Pro (80 ₼)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Aylıq haqq (₼)</label>
+        <input class="form-control" id="bill-fee" type="number" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Növbəti ödəniş tarixi</label>
+        <input class="form-control" id="bill-next" type="date">
+        <div style="font-size:.74rem;color:#6b7fa3;margin-top:4px">Boş qoysanız avtomatik 30 gün sonraya təyin olunur</div>
+      </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid #1f2d47;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary btn-sm" onclick="closeBill()">Ləğv et</button>
+      <button class="btn btn-primary btn-sm" onclick="saveBill()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- ÖDƏNİŞ QEYDİ MODAL -->
+<div class="modal-overlay" id="payModal" style="display:none" onclick="if(event.target===this)closePay()">
+  <div class="modal" style="max-width:440px">
+    <div style="padding:20px 24px;border-bottom:1px solid #1f2d47;display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:1rem;font-weight:800">💰 Ödəniş Qeyd Et</h3>
+      <button onclick="closePay()" style="background:none;border:none;color:#6b7fa3;font-size:1.4rem;cursor:pointer">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+      <div id="pay-info" style="margin-bottom:14px;padding:10px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;font-size:.86rem"></div>
+      <div class="form-group">
+        <label class="form-label">Məbləğ (₼)</label>
+        <input class="form-control" id="pay-amount" type="number" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qeyd (istəyə görə)</label>
+        <input class="form-control" id="pay-note" placeholder="Bank köçürməsi, nağd...">
+      </div>
+      <div style="font-size:.78rem;color:#6b7fa3;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:6px">
+        ℹ️ Növbəti ödəniş tarixi avtomatik 30 gün sonraya təyin olunacaq
+      </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid #1f2d47;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-secondary btn-sm" onclick="closePay()">Ləğv et</button>
+      <button class="btn btn-success btn-sm" onclick="savePay()">Ödənişi qeyd et</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

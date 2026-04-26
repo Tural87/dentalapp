@@ -28,21 +28,18 @@
 
     <!-- Simulation -->
     <div class="card" id="sim-card" style="display:none">
-      <div class="card-hd"><h3>🔬 Simulyasiya (Əvvəl / Sonra)</h3>
-        <button class="btn btn-secondary btn-sm" onclick="loadSim()">Yenilə</button>
-      </div>
-      <div class="card-bd">
-        <div class="sim-wrap" id="sim-wrap">
-          <img id="sim-before" src="" alt="Əvvəl">
-          <div class="sim-after" id="sim-after-div">
-            <img id="sim-after" src="" alt="Sonra">
-          </div>
-          <div class="sim-handle" id="sim-handle"></div>
-        </div>
-        <div class="sim-labels"><span>Əvvəl</span><span>Sonra</span></div>
-      </div>
-    </div>
+  <div class="card-hd"><h3>🔬 Simulyasiya (Əvvəl / Sonra)</h3>
+    <button class="btn btn-secondary btn-sm" onclick="loadSim()">Yenilə</button>
   </div>
+  <div class="card-bd">
+    <div class="sim-wrap" id="sim-wrap">
+      <img id="sim-before" src="" alt="Əvvəl" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover">
+      <img id="sim-after" src="" alt="Sonra" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover">
+      <div class="sim-handle" id="sim-handle"></div>
+    </div>
+    <div class="sim-labels"><span>Əvvəl</span><span>Sonra</span></div>
+  </div>
+</div>
 
   <!-- Sidebar -->
   <div>

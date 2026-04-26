@@ -9,5 +9,13 @@ async function api(url, method='GET', body=null){
 function fmtDate(iso){
   if(!iso)return '—'
   const d=new Date(iso)
-  return d.toLocaleDateString('az-AZ',{day:'2-digit',month:'2-digit',year:'numeric'})
+  if(isNaN(d))return '—'
+  return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear()
+}
+function fmtDateTime(iso){
+  if(!iso)return '—'
+  const d=new Date(iso)
+  if(isNaN(d))return '—'
+  return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear()+' '+
+         ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)
 }

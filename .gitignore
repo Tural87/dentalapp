@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv/
+venv/
+
+# DentalApp həssas fayllar
+dentalapp.db
+dentalapp.db-journal
+settings.json
+.env
+
+# Yüklənmiş fayllar
+static/uploads/*
+!static/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Resept — {{ patient.name }}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',Arial,sans-serif;color:#1a2235;background:#fff;padding:30px}
+.wrap{max-width:680px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px double #1a2235;padding-bottom:18px;margin-bottom:24px}
+.head h1{font-size:1.4rem;font-weight:800}
+.head .sub{font-size:.82rem;color:#6b7280;margin-top:4px}
+.head .right{text-align:right}
+.head .right .label{font-size:.7rem;color:#6b7280;letter-spacing:.1em;text-transform:uppercase}
+.head .right .num{font-size:1.6rem;font-weight:800;color:#dc2626}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:18px;font-size:.92rem}
+.row .lbl{font-size:.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;font-weight:700}
+.diagnosis{background:#fef3c7;border-left:4px solid #f59e0b;padding:10px 14px;margin:18px 0;border-radius:4px;font-size:.92rem}
+.diagnosis .lbl{font-size:.72rem;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.section-title{font-size:1.05rem;font-weight:800;margin:22px 0 10px;letter-spacing:.06em;text-transform:uppercase;color:#1a2235;border-bottom:2px solid #1a2235;padding-bottom:6px}
+.med{padding:12px 14px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:10px;background:#fafbfc}
+.med .name{font-size:1.05rem;font-weight:700;color:#1a2235}
+.med .dose{font-size:.88rem;color:#475569;margin-top:3px}
+.med .freq{font-size:.86rem;color:#6b7280;margin-top:6px}
+.notes{margin-top:20px;padding:12px;background:#f8fafc;border-radius:6px;font-size:.86rem;color:#475569}
+.sig{margin-top:50px;display:flex;justify-content:space-between;font-size:.85rem}
+.sig .box{border-top:1px solid #1a2235;padding-top:6px;width:240px;text-align:center}
+.foot{margin-top:30px;text-align:center;font-size:.74rem;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:12px}
+.print-btn{position:fixed;top:18px;right:18px;background:#3b82f6;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(59,130,246,.3)}
+@media print{.print-btn{display:none}body{padding:18px}}
+.rx-symbol{font-size:3rem;font-weight:800;color:#dc2626;line-height:1}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Çap et / PDF</button>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1>{{ clinic.name if clinic else 'DentalApp' }}</h1>
+      <div class="sub">
+        {% if clinic and clinic.address %}{{ clinic.address }}<br>{% endif %}
+        {% if clinic and clinic.phone %}Tel: {{ clinic.phone }}{% endif %}
+      </div>
+    </div>
+    <div class="right">
+      <div class="rx-symbol">℞</div>
+      <div class="label">Resept №</div>
+      <div class="num">{{ rx.id }}</div>
+      <div class="sub">{{ today }}</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <div class="lbl">Pasiyent</div>
+      <div style="font-weight:700;font-size:1.05rem">{{ patient.name }}</div>
+      {% if patient.dob %}<div style="font-size:.82rem;color:#6b7280">D.T.: {{ patient.dob }}</div>{% endif %}
+    </div>
+    <div>
+      <div class="lbl">Həkim</div>
+      <div style="font-weight:700;font-size:1.05rem">{{ doctor.name if doctor else '—' }}</div>
+    </div>
+  </div>
+
+  {% if rx.diagnosis %}
+  <div class="diagnosis">
+    <div class="lbl">Diaqnoz</div>
+    <div>{{ rx.diagnosis }}</div>
+  </div>
+  {% endif %}
+
+  <div class="section-title">Təyinatlar</div>
+  {% if meds %}
+    {% for m in meds %}
+    <div class="med">
+      <div class="name">{{ loop.index }}. {{ m.name }}{% if m.dose %} — {{ m.dose }}{% endif %}</div>
+      {% if m.frequency or m.duration %}
+      <div class="freq">
+        {% if m.frequency %}Qəbul qaydası: {{ m.frequency }}{% endif %}
+        {% if m.duration %}{% if m.frequency %} • {% endif %}Müddət: {{ m.duration }}{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div style="color:#94a3b8;text-align:center;padding:18px">(Təyinat yoxdur)</div>
+  {% endif %}
+
+  {% if rx.notes %}
+  <div class="notes">
+    <strong>Əlavə tövsiyələr:</strong> {{ rx.notes }}
+  </div>
+  {% endif %}
+
+  <div class="sig">
+    <div class="box">Pasiyent imzası</div>
+    <div class="box">Həkim imzası və möhürü</div>
+  </div>
+
+  <div class="foot">
+    Bu resept {{ today }} tarixində avtomatik yaradılıb. {{ clinic.name if clinic else 'DentalApp' }}
+  </div>
+</div>
+</body>
+</html>

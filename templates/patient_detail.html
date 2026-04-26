@@ -3,13 +3,32 @@
 {% block topbar_title %}<span id="pt-name">...</span>{% endblock %}
 {% block topbar_sub %}<span id="pt-meta"></span>{% endblock %}
 {% block topbar_actions %}
-<div style="display:flex;gap:8px">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
   <a href="/patients" class="btn btn-secondary btn-sm">← Geri</a>
+  <button class="btn btn-secondary btn-sm" onclick="openRx()" title="Yeni resept">💊 Resept</button>
+  <div style="position:relative;display:inline-block">
+    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('consent-menu').style.display=document.getElementById('consent-menu').style.display==='block'?'none':'block'">📋 Razılıq ▾</button>
+    <div id="consent-menu" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:50;min-width:180px;overflow:hidden">
+      <a href="#" onclick="openConsent('general');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">📄 Ümumi müalicə</a>
+      <a href="#" onclick="openConsent('extraction');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">🦷 Diş çıxarılması</a>
+      <a href="#" onclick="openConsent('surgery');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">🔪 Cərrahiyyə</a>
+      <a href="#" onclick="openConsent('implant');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem">⚙️ İmplant</a>
+    </div>
+  </div>
   <button class="btn btn-secondary btn-sm" onclick="openEdit()">✏️ Redaktə</button>
   <button class="btn btn-danger btn-sm" onclick="delPt()">🗑️</button>
 </div>
 {% endblock %}
 {% block content %}
+
+<!-- ALLERGIYA / XƏBƏRDARLIQ BANNERİ -->
+<div id="alert-banner" style="display:none;margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(239,68,68,.08));border:2px solid rgba(239,68,68,.45);border-radius:10px;display:flex;align-items:flex-start;gap:14px">
+  <div style="font-size:1.6rem;line-height:1">⚠️</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:800;color:#ef4444;font-size:.95rem;letter-spacing:.02em;text-transform:uppercase;margin-bottom:4px">Diqqət — Pasiyent xəbərdarlıqları</div>
+    <div id="alert-content" style="font-size:.92rem;color:var(--tx);font-weight:600;line-height:1.45"></div>
+  </div>
+</div>
 
 <!-- TAB NAV -->
 <div style="display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px">
@@ -30,7 +49,7 @@
   </div>
 </div>
 
-<div id="pn-teeth" style="display:none;position:relative;background:#0b1828;height:calc(100vh - 118px);overflow:hidden">
+<div id="pn-teeth" style="display:none;position:relative;background:#0b1828;min-height:400px;max-height:calc(100vh - 200px);overflow:hidden;border-radius:8px">
   <div id="tcRoot" style="text-align:center;padding:20px;color:var(--mu);height:100%;overflow-y:auto">Yüklənir...</div>
 
   <!-- Floating overlay panel — appears on top of chart without resizing it -->
@@ -91,6 +110,7 @@
       <div class="form-group"><label class="form-label">Status</label>
         <select class="form-control" id="tSt">
           <option value="healthy">Sağlam</option><option value="caries">Karies</option>
+          <option value="filling">Plomb</option>
           <option value="treated">Müalicə edilmiş</option><option value="crown">Tac</option>
           <option value="implant">İmplant</option><option value="root_canal">Kanal müalicəsi</option>
           <option value="missing">Çatışmayan</option><option value="extraction">Çıxarılmış</option>
@@ -119,7 +139,10 @@
         <div class="form-group"><label class="form-label">Cins</label>
           <select class="form-control" id="eGender"><option value="">Seçin</option><option>Kişi</option><option>Qadın</option></select></div>
       </div>
-      <div class="form-group"><label class="form-label">Qan qrupu</label><input class="form-control" id="eBlood"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Qan qrupu</label><input class="form-control" id="eBlood"></div>
+        <div class="form-group"><label class="form-label">FİN</label><input class="form-control" id="eFin" placeholder="ABCDE12"></div>
+      </div>
       <div class="form-group"><label class="form-label">Şikayət</label><textarea class="form-control" id="eCompl" rows="2"></textarea></div>
       <div class="form-group"><label class="form-label">Tibbi tarixçə</label><textarea class="form-control" id="eHist" rows="2"></textarea></div>
       <div class="form-group"><label class="form-label">Allergiyalar</label><input class="form-control" id="eAllg"></div>
@@ -128,6 +151,35 @@
     <div class="modal-ft">
       <button class="btn btn-secondary" onclick="document.getElementById('mEdit').style.display='none'">Ləğv et</button>
       <button class="btn btn-primary" onclick="saveEdit()">Yadda saxla</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESEPT MODAL -->
+<div id="mRx" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-hd">
+      <h3>💊 Yeni Resept</h3>
+      <button class="modal-close" onclick="document.getElementById('mRx').style.display='none'">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-group">
+        <label class="form-label">Diaqnoz</label>
+        <input class="form-control" id="rxDiag" placeholder="Məsələn: Akut periapikal periodontit (16 dişi)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dərmanlar</label>
+        <div id="rxMeds"></div>
+        <button class="btn btn-secondary btn-sm" onclick="rxAddMed()" style="margin-top:8px">+ Dərman əlavə et</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Əlavə tövsiyələr</label>
+        <textarea class="form-control" id="rxNotes" rows="2" placeholder="Soyuq/isti yeməkdən çəkinin..."></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="document.getElementById('mRx').style.display='none'">Ləğv et</button>
+      <button class="btn btn-primary" onclick="saveRx()">Yadda saxla və Çap et</button>
     </div>
   </div>
 </div>
@@ -250,9 +302,21 @@ async function init(){
 
 /* ── INFO ── */
 function renderInfo(){
-  var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['Doğum tarixi',_pt.dob||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
+  // Allergiya/xəbərdarlıq banneri
+  var warnings=[];
+  if(_pt.allergies&&_pt.allergies.trim())warnings.push('🚫 Allergiya: '+_pt.allergies);
+  if(_pt.medical_history&&_pt.medical_history.trim()){
+    var mh=_pt.medical_history.toLowerCase();
+    if(/diabet|şəkər|hipertoniya|təzyiq|ürək|qan/.test(mh))warnings.push('💉 Tibbi tarixçə: '+_pt.medical_history);
+  }
+  var banner=document.getElementById('alert-banner');
+  if(warnings.length){
+    document.getElementById('alert-content').innerHTML=warnings.join('<br>');
+    banner.style.display='flex';
+  }else{banner.style.display='none';}
+  var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['FİN',_pt.fin_code||'—'],['Doğum tarixi',_pt.dob||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
   document.getElementById('info-tbl').innerHTML=rows.map(function(r){return '<tr><td style="color:var(--mu);font-size:.8rem;padding:6px 0;width:120px;font-weight:600">'+r[0]+'</td><td style="font-size:.88rem;padding:6px 0">'+r[1]+'</td></tr>';}).join('');
-  document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:.88rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:.88rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:.88rem">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:.88rem">'+(_pt.notes||'—')+'</div></div>';
+  document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:.88rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:.88rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:.88rem;'+(_pt.allergies?'color:#ef4444;font-weight:700':'')+'">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:.88rem">'+(_pt.notes||'—')+'</div></div>';
 }
 
 /* ── TEETH ── */
@@ -381,8 +445,64 @@ async function loadMedia(type){
   grid.innerHTML=media.map(function(m){return '<div class="media-thumb" onclick="vImg(\''+m.url+'\')"><img src="'+m.url+'" alt=""><span class="media-type-tag">'+m.type+'</span><button class="media-del" onclick="event.stopPropagation();delImg('+m.id+')">✕</button></div>';}).join('');
 }
 
-function simSlide(v){}
-function initSim(){}
+function simSlide(v){
+  var box=document.getElementById('simBox');
+  var before=document.getElementById('simB');
+  var handle=document.getElementById('simH');
+  var pct=document.getElementById('simPct');
+  if(!box||!before||!handle||!pct)return;
+  var value=Math.max(0,Math.min(100,Number(v)||0));
+  before.style.clipPath='inset(0 '+(100-value)+'% 0 0)';
+  handle.style.left=value+'%';
+  pct.textContent=Math.round(value)+'%';
+}
+
+function _simSetup(){
+  var box=document.getElementById('simBox');
+  if(!box)return;
+  var dragging=false;
+
+  function pointX(evt){
+    if(evt.touches&&evt.touches.length)return evt.touches[0].clientX;
+    if(evt.changedTouches&&evt.changedTouches.length)return evt.changedTouches[0].clientX;
+    return evt.clientX;
+  }
+
+  function updateFromEvent(evt){
+    var rect=box.getBoundingClientRect();
+    var x=pointX(evt)-rect.left;
+    simSlide((x/rect.width)*100);
+  }
+
+  function start(evt){
+    dragging=true;
+    updateFromEvent(evt);
+    if(evt.cancelable)evt.preventDefault();
+  }
+
+  function move(evt){
+    if(!dragging)return;
+    updateFromEvent(evt);
+    if(evt.cancelable)evt.preventDefault();
+  }
+
+  function stop(){
+    dragging=false;
+  }
+
+  box.onmousedown=start;
+  box.onmousemove=move;
+  box.onmouseleave=stop;
+  box.onmouseup=stop;
+  box.ontouchstart=start;
+  box.ontouchmove=move;
+  box.ontouchend=stop;
+  box.ontouchcancel=stop;
+
+  simSlide(50);
+}
+
+function initSim(){ _simSetup(); }
 // cropFit=true: mərkəzdən kəs (cover), false: tam sığdır (contain)
 function resizeImage(file,targetW,targetH,quality,cropFit){
   return new Promise(function(resolve){
@@ -435,8 +555,56 @@ async function delImg(id){if(!confirm('Şəkli silmək istəyirsiniz?'))return;a
 function vImg(url){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';o.innerHTML='<img src="'+url+'" style="max-width:92vw;max-height:92vh;border-radius:12px">';o.onclick=function(){o.remove();};document.body.appendChild(o);}
 
 /* ── EDIT ── */
-function openEdit(){document.getElementById('eName').value=_pt.name||'';document.getElementById('ePhone').value=_pt.phone||'';document.getElementById('eDob').value=_pt.dob||'';document.getElementById('eGender').value=_pt.gender||'';document.getElementById('eBlood').value=_pt.blood_type||'';document.getElementById('eCompl').value=_pt.complaints||'';document.getElementById('eHist').value=_pt.medical_history||'';document.getElementById('eAllg').value=_pt.allergies||'';document.getElementById('eNotes').value=_pt.notes||'';document.getElementById('mEdit').style.display='flex';}
-async function saveEdit(){var name=document.getElementById('eName').value.trim();if(!name){alert('Ad daxil edin');return;}_pt=await api('/api/patients/'+PID,'PUT',{name:name,phone:document.getElementById('ePhone').value,dob:document.getElementById('eDob').value,gender:document.getElementById('eGender').value,blood_type:document.getElementById('eBlood').value,complaints:document.getElementById('eCompl').value,medical_history:document.getElementById('eHist').value,allergies:document.getElementById('eAllg').value,notes:document.getElementById('eNotes').value});document.getElementById('mEdit').style.display='none';document.getElementById('pt-name').textContent=_pt.name;renderInfo();}
+function openEdit(){document.getElementById('eName').value=_pt.name||'';document.getElementById('ePhone').value=_pt.phone||'';document.getElementById('eDob').value=_pt.dob||'';document.getElementById('eGender').value=_pt.gender||'';document.getElementById('eBlood').value=_pt.blood_type||'';document.getElementById('eFin').value=_pt.fin_code||'';document.getElementById('eCompl').value=_pt.complaints||'';document.getElementById('eHist').value=_pt.medical_history||'';document.getElementById('eAllg').value=_pt.allergies||'';document.getElementById('eNotes').value=_pt.notes||'';document.getElementById('mEdit').style.display='flex';}
+async function saveEdit(){var name=document.getElementById('eName').value.trim();if(!name){alert('Ad daxil edin');return;}_pt=await api('/api/patients/'+PID,'PUT',{name:name,phone:document.getElementById('ePhone').value,dob:document.getElementById('eDob').value,gender:document.getElementById('eGender').value,blood_type:document.getElementById('eBlood').value,fin_code:document.getElementById('eFin').value,complaints:document.getElementById('eCompl').value,medical_history:document.getElementById('eHist').value,allergies:document.getElementById('eAllg').value,notes:document.getElementById('eNotes').value});document.getElementById('mEdit').style.display='none';document.getElementById('pt-name').textContent=_pt.name;renderInfo();}
+
+// ── RESEPT ──
+function rxAddMed(name,dose,freq,dur){
+  var c=document.getElementById('rxMeds');
+  var i=c.children.length;
+  var d=document.createElement('div');
+  d.style.cssText='display:grid;grid-template-columns:2fr 1fr 1.5fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center';
+  d.innerHTML='<input class="form-control rx-name" placeholder="Dərman" value="'+(name||'')+'">'+
+    '<input class="form-control rx-dose" placeholder="500mg" value="'+(dose||'')+'">'+
+    '<input class="form-control rx-freq" placeholder="3 dəfə günə" value="'+(freq||'')+'">'+
+    '<input class="form-control rx-dur" placeholder="5 gün" value="'+(dur||'')+'">'+
+    '<button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">✕</button>';
+  c.appendChild(d);
+}
+function openRx(){
+  document.getElementById('rxDiag').value='';
+  document.getElementById('rxNotes').value='';
+  document.getElementById('rxMeds').innerHTML='';
+  rxAddMed('','','','');  // bir boş sətir
+  document.getElementById('mRx').style.display='flex';
+}
+async function saveRx(){
+  var meds=[];
+  document.querySelectorAll('#rxMeds > div').forEach(function(d){
+    var n=d.querySelector('.rx-name').value.trim();
+    if(!n)return;
+    meds.push({name:n,
+      dose:d.querySelector('.rx-dose').value.trim(),
+      frequency:d.querySelector('.rx-freq').value.trim(),
+      duration:d.querySelector('.rx-dur').value.trim()});
+  });
+  if(!meds.length){alert('Ən az bir dərman əlavə edin');return;}
+  var rx=await api('/api/prescriptions','POST',{
+    patient_id:PID,
+    diagnosis:document.getElementById('rxDiag').value.trim(),
+    medications:JSON.stringify(meds),
+    notes:document.getElementById('rxNotes').value.trim()
+  });
+  document.getElementById('mRx').style.display='none';
+  // yeni tab'da çap səhifəsini aç
+  window.open('/prescriptions/'+rx.id+'/print','_blank');
+}
+
+// ── RAZILIQ FORMASI ──
+function openConsent(kind){
+  document.getElementById('consent-menu').style.display='none';
+  window.open('/consent/'+PID+'?type='+kind,'_blank');
+}
 async function delPt(){if(!confirm('"'+_pt.name+'" pasiyentini silmək istəyirsiniz?'))return;await api('/api/patients/'+PID,'DELETE');location.href='/patients';}
 
 init();
