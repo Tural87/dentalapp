@@ -27,9 +27,17 @@ MIGRATIONS = [
     ("treatment_plans", "template_id", "INTEGER"),
     ("treatment_plans", "notes", "TEXT"),
     # Doctor/Patient extension
+    ("patients", "clinic_id", "INTEGER"),
+    ("patients", "blood_type", "VARCHAR(10)"),
     ("patients", "fin_code", "VARCHAR(20)"),
     ("patients", "family_member_id", "INTEGER"),
     ("patients", "family_relation", "VARCHAR(50)"),
+    ("patients", "updated_at", "DATETIME"),
+    # Treatment plans
+    ("treatment_plans", "service_id", "INTEGER"),
+    ("treatment_plans", "cost", "REAL DEFAULT 0"),
+    ("treatment_plans", "start_date", "VARCHAR(20)"),
+    ("treatment_plans", "end_date", "VARCHAR(20)"),
     # Clinic
     ("clinics", "slug", "VARCHAR(100)"),
     ("clinics", "email", "VARCHAR(200)"),
