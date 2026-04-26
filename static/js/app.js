@@ -18,7 +18,7 @@ function setDateVal(id,iso){const el=document.getElementById(id);if(el)el.value=
 function getDateVal(id){return dmyToIso((document.getElementById(id)||{}).value||'')}
 function initDateMasks(){
   document.querySelectorAll('input[type=date]').forEach(function(el){
-    el.type='text';el.placeholder='GG.AA.YYYY';el.setAttribute('maxlength','10')
+    el.type='text';el.placeholder='DD.MM.YYYY';el.setAttribute('maxlength','10')
     el.addEventListener('input',function(){
       let v=this.value.replace(/\D/g,'')
       if(v.length>2)v=v.slice(0,2)+'.'+v.slice(2)
