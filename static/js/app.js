@@ -1,8 +1,8 @@
-async function api(url, method='GET', body=null){
+﻿async function api(url, method='GET', body=null){
   const opts={method,headers:{}}
   if(body){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body)}
   const r=await fetch(url,opts)
-  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.detail||r.statusText)}
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||e.detail||r.statusText)}
   return r.json()
 }
 

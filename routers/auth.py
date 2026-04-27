@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, jsonify
+﻿from flask import Blueprint, render_template, request, session, redirect, jsonify
 from database import SessionLocal
 import models
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -269,7 +269,7 @@ def create_user():
         cid = session.get('clinic_id')
         clinic = s.query(models.Clinic).get(cid) if cid else None
         if clinic:
-            cfg = s.query(models.PlanConfig).filter_by(plan_name=clinic.plan or 'free').first()
+            cfg = s.query(models.PlanConfig).filter_by(plan_name=clinic.plan or 'kicik').first()
             if cfg:
                 role = d.get('role', 'doctor')
                 if role == 'doctor' and cfg.max_doctors:
@@ -371,5 +371,32 @@ def delete_user(uid):
         if not user: return jsonify({'error': 'Tapılmadı'}), 404
         s.delete(user); s.commit()
         return jsonify({'ok': True})
+    finally:
+        s.close()
+
+@auth.route('/api/usage')
+def get_usage():
+    e = _admin_only()
+    if e: return e
+    cid = session.get('clinic_id')
+    if not cid: return jsonify({})
+    s = SessionLocal()
+    try:
+        clinic = s.query(models.Clinic).get(cid)
+        if not clinic: return jsonify({})
+        cfg = s.query(models.PlanConfig).filter_by(plan_name=clinic.plan or 'kicik').first()
+        if not cfg: return jsonify({})
+        doctors = s.query(models.User).filter_by(clinic_id=cid, role='doctor', is_active=True).count()
+        admins = s.query(models.User).filter_by(clinic_id=cid, role='admin', is_active=True).count()
+        try:
+            patients = s.query(models.Patient).filter_by(clinic_id=cid).count()
+        except Exception:
+            patients = 0
+        return jsonify({
+            'plan': clinic.plan,
+            'doctors': {'used': doctors, 'max': cfg.max_doctors or 0},
+            'admins': {'used': admins, 'max': cfg.max_admins or 0},
+            'patients': {'used': patients, 'max': cfg.max_patients or 0},
+        })
     finally:
         s.close()

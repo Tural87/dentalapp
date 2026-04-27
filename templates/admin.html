@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}{% if session.role == 'admin' %}Həkimlər{% else %}Xidmətlər{% endif %} | DentalApp{% endblock %}
 {% block topbar_title %}{% if session.role == 'admin' %}İdarəetmə Paneli{% else %}<span id="doctor-topbar-title">Xidmətlər</span>{% endif %}{% endblock %}
 {% block topbar_sub %}{% if session.role == 'admin' %}Həkimlər, parametrlər{% else %}<span id="doctor-topbar-sub">Xidmətlər və şablonlar</span>{% endif %}{% endblock %}
@@ -114,7 +114,8 @@
       <button class="btn btn-primary btn-sm" onclick="openAp()">+ Randevu</button>
     </div>
   </div>
-  <div class="card">
+  <div id="usage-banner" style="padding:0 4px 8px"></div>
+<div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Tarix</th><th>Saat</th><th>Pasiyent</th><th>Telefon</th><th>Həkim</th><th>Status</th><th>Qeyd</th><th></th></tr></thead>
@@ -133,7 +134,8 @@
     </div>
     <a class="btn btn-secondary btn-sm" href="/api/admin/export/payments">📥 Ödənişlər CSV</a>
   </div>
-  <div class="card">
+  <div id="usage-banner" style="padding:0 4px 8px"></div>
+<div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Pasiyent</th><th>Telefon</th><th>Plan dəyəri</th><th>Ödənilmiş</th><th>Borc (₼)</th><th>Son ödəniş</th><th>Gecikmə</th><th></th></tr></thead>
@@ -155,7 +157,8 @@
       <button class="btn btn-primary btn-sm" onclick="openInv()">+ Material</button>
     </div>
   </div>
-  <div class="card">
+  <div id="usage-banner" style="padding:0 4px 8px"></div>
+<div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Material</th><th>Kateqoriya</th><th>Qalıq</th><th>Min</th><th>Vahid qiymət</th><th>Dəyər</th><th></th></tr></thead>
@@ -171,7 +174,8 @@
     <h3 style="font-size:1rem;font-weight:800">Aktivlik Logu (son 200)</h3>
     <button class="btn btn-secondary btn-sm" onclick="loadAdmLogs()">Yenilə</button>
   </div>
-  <div class="card">
+  <div id="usage-banner" style="padding:0 4px 8px"></div>
+<div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Tarix</th><th>İstifadəçi</th><th>Əməliyyat</th><th>Detal</th><th>IP</th></tr></thead>
@@ -193,7 +197,8 @@
       <button class="btn btn-primary btn-sm" onclick="openAddUser()">+ Həkim Əlavə Et</button>
     </div>
   </div>
-  <div class="card">
+  <div id="usage-banner" style="padding:0 4px 8px"></div>
+<div class="card">
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Həkim</th><th>Email</th><th>WhatsApp</th><th>Komissiya %</th><th>Status</th><th></th></tr></thead>
@@ -487,7 +492,7 @@ function switchTab(name, btn){
   }
   if(name==='services') loadServices()
   else if(name==='settings') loadSettings()
-  else if(name==='users') loadUsers()
+  else if(name==='users'){loadUsers();loadUsage()}
   else if(name==='profile') loadProfile()
   else if(name==='dashboard') loadAdmDashboard()
   else if(name==='appointments') loadAppointments()
@@ -774,14 +779,16 @@ async function saveUser(){
   const name=document.getElementById('u-name').value.trim()
   const email=document.getElementById('u-email').value.trim()
   if(!name||!email){alert('Ad və email tələb olunur');return}
-  const res=await api('/api/users','POST',{
-    name,email,phone:document.getElementById('u-phone').value.trim(),
-    role:document.getElementById('u-role').value
-  })
-  if(res.error){alert(res.error);return}
-  closeUserModal()
-  showPassResult(res)
-  loadUsers()
+  try{
+    const res=await api('/api/users','POST',{
+      name,email,phone:document.getElementById('u-phone').value.trim(),
+      role:document.getElementById('u-role').value
+    })
+    closeUserModal()
+    showPassResult(res)
+    loadUsers()
+    loadUsage()
+  }catch(err){alert(err.message||'Xeta bas verdi')}
 }
 
 function showPassResult(res){
@@ -1203,5 +1210,23 @@ async function loadAdmLogs(){
 setInterval(()=>{if(document.getElementById('tab-dashboard').classList.contains('active'))loadAdmDashboard()},60000)
 
 {% endif %}
+
+async function loadUsage(){
+  try{
+    const u=await api('/api/usage')
+    if(!u||!u.plan)return
+    const warns=[]
+    const chk=(n,used,max)=>{
+      if(!max)return
+      if(used>=max)warns.push('<div style="background:#fee2e2;border-left:4px solid #ef4444;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:.85rem"><b>&#128308; '+n+' limiti doldu!</b> '+used+'/'+max+'</div>')
+      else if(used/max>=.8)warns.push('<div style="background:#fef9c3;border-left:4px solid #f59e0b;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:.85rem"><b>&#128993; '+n+' limitine yaxinlasir</b> ('+used+'/'+max+')</div>')
+    }
+    chk('Hekim',u.doctors.used,u.doctors.max)
+    chk('Admin',u.admins.used,u.admins.max)
+    chk('Pasiyent',u.patients.used,u.patients.max)
+    const b=document.getElementById('usage-banner')
+    if(b)b.innerHTML=warns.join('')
+  }catch(e){}
+}
 </script>
 {% endblock %}
