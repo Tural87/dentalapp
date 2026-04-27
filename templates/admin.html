@@ -82,7 +82,21 @@
       <div class="stat-val" id="adm-today-app">—</div><div class="stat-lbl">Bu gün randevu</div></div>
   </div>
 
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start">
+  <div id="adm-plan-card" style="margin-bottom:14px;display:none">
+    <div class="card" style="border-left:4px solid var(--B)">
+      <div class="card-bd" style="padding:12px 18px;display:flex;align-items:center;gap:16px">
+        <div style="font-size:1.4rem">📋</div>
+        <div>
+          <div style="font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Aktiv Plan</div>
+          <div id="adm-plan-name" style="font-weight:700;font-size:1.05rem;color:var(--B)">—</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div id="adm-plan-usage" style="font-size:.8rem;color:var(--mu)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start">
     <div class="card">
       <div class="card-hd"><h3>📊 Son 6 ay — gəlir və xərc</h3></div>
       <div class="card-bd">
@@ -114,7 +128,6 @@
       <button class="btn btn-primary btn-sm" onclick="openAp()">+ Randevu</button>
     </div>
   </div>
-  <div id="usage-banner" style="padding:0 4px 8px"></div>
 <div class="card">
     <div class="tbl-wrap">
       <table>
@@ -134,7 +147,6 @@
     </div>
     <a class="btn btn-secondary btn-sm" href="/api/admin/export/payments">📥 Ödənişlər CSV</a>
   </div>
-  <div id="usage-banner" style="padding:0 4px 8px"></div>
 <div class="card">
     <div class="tbl-wrap">
       <table>
@@ -157,7 +169,6 @@
       <button class="btn btn-primary btn-sm" onclick="openInv()">+ Material</button>
     </div>
   </div>
-  <div id="usage-banner" style="padding:0 4px 8px"></div>
 <div class="card">
     <div class="tbl-wrap">
       <table>
@@ -174,7 +185,6 @@
     <h3 style="font-size:1rem;font-weight:800">Aktivlik Logu (son 200)</h3>
     <button class="btn btn-secondary btn-sm" onclick="loadAdmLogs()">Yenilə</button>
   </div>
-  <div id="usage-banner" style="padding:0 4px 8px"></div>
 <div class="card">
     <div class="tbl-wrap">
       <table>
@@ -197,7 +207,6 @@
       <button class="btn btn-primary btn-sm" onclick="openAddUser()">+ Həkim Əlavə Et</button>
     </div>
   </div>
-  <div id="usage-banner" style="padding:0 4px 8px"></div>
 <div class="card">
     <div class="tbl-wrap">
       <table>
@@ -950,6 +959,7 @@ async function loadAdmDashboard(){
   profEl.style.color=d.month_profit>=0?'var(--green)':'var(--red)'
   document.getElementById('adm-debt').textContent=d.outstanding_debt.toFixed(0)
   document.getElementById('adm-today-app').textContent=d.today_appointments
+  try{const u=await api('/api/usage');const L={'free':'Starter','starter':'Starter','kicik':'Starter','basic':'Orta','orta':'Orta','pro':'Boyuk','boyuk':'Boyuk'};document.getElementById('adm-plan-name').textContent=L[u.plan]||u.plan||'--';document.getElementById('adm-plan-usage').innerHTML='Hekim: '+u.doctors.used+'/'+u.doctors.max+'  |  Admin: '+u.admins.used+'/'+u.admins.max;document.getElementById('adm-plan-card').style.display='block'}catch(e){}
 
   // sidebar badge'lər
   const dbtBadge=document.getElementById('sb-dbt-badge'),invBadge=document.getElementById('sb-inv-badge')
