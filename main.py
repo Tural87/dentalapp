@@ -711,6 +711,12 @@ def add_step(plan_id):
     if not d.get("title"): return err("Başlıq tələb olunur")
     s = db()
     try:
+        # Plan'ın bu klinikaya aid olduğunu yoxla
+        plan = s.query(models.TreatmentPlan).join(models.Patient).filter(
+            models.TreatmentPlan.id == plan_id,
+            models.Patient.clinic_id == clinic_id()
+        ).first()
+        if not plan: return err("Plan tapılmadı", 404)
         step = models.TreatmentStep(
             plan_id=plan_id, order=d.get("order", 0), title=d.get("title"),
             description=d.get("description"), status=d.get("status", "pending"),
@@ -726,7 +732,10 @@ def update_step(step_id):
     d = request.json or {}
     s = db()
     try:
-        step = s.query(models.TreatmentStep).get(step_id)
+        step = s.query(models.TreatmentStep).join(models.TreatmentPlan).join(models.Patient).filter(
+            models.TreatmentStep.id == step_id,
+            models.Patient.clinic_id == clinic_id()
+        ).first()
         if not step: return err("Addım tapılmadı", 404)
         for k in ["title","description","status","scheduled_date","completed_date","notes"]:
             if k in d: setattr(step, k, d[k])
@@ -744,7 +753,10 @@ def update_step(step_id):
 def delete_step(step_id):
     s = db()
     try:
-        step = s.query(models.TreatmentStep).get(step_id)
+        step = s.query(models.TreatmentStep).join(models.TreatmentPlan).join(models.Patient).filter(
+            models.TreatmentStep.id == step_id,
+            models.Patient.clinic_id == clinic_id()
+        ).first()
         if not step: return err("Addım tapılmadı", 404)
         s.delete(step); s.commit()
         return jsonify({"ok": True})
@@ -817,7 +829,10 @@ def create_template(svc_id):
 def delete_template(tmpl_id):
     s = db()
     try:
-        t = s.query(models.ServiceTemplate).get(tmpl_id)
+        t = s.query(models.ServiceTemplate).join(models.Service).filter(
+            models.ServiceTemplate.id == tmpl_id,
+            models.Service.clinic_id == clinic_id()
+        ).first()
         if not t: return err("Şablon tapılmadı", 404)
         s.delete(t); s.commit()
         return jsonify({"ok": True})
@@ -829,6 +844,12 @@ def add_template_step(tmpl_id):
     d = request.json or {}
     s = db()
     try:
+        # Şablonun bu klinikaya aid olduğunu yoxla
+        t = s.query(models.ServiceTemplate).join(models.Service).filter(
+            models.ServiceTemplate.id == tmpl_id,
+            models.Service.clinic_id == clinic_id()
+        ).first()
+        if not t: return err("Şablon tapılmadı", 404)
         step = models.TemplateStep(template_id=tmpl_id, order=d.get("order",0),
                                     title=d.get("title",""), description=d.get("description"),
                                     default_duration_days=d.get("default_duration_days",7),
@@ -842,7 +863,10 @@ def add_template_step(tmpl_id):
 def delete_template_step(step_id):
     s = db()
     try:
-        step = s.query(models.TemplateStep).get(step_id)
+        step = s.query(models.TemplateStep).join(models.ServiceTemplate).join(models.Service).filter(
+            models.TemplateStep.id == step_id,
+            models.Service.clinic_id == clinic_id()
+        ).first()
         if not step: return err("Addım tapılmadı", 404)
         s.delete(step); s.commit()
         return jsonify({"ok": True})
@@ -901,7 +925,10 @@ def get_media(pid):
 def delete_media(mid):
     s = db()
     try:
-        m = s.query(models.Media).get(mid)
+        m = s.query(models.Media).join(models.Patient).filter(
+            models.Media.id == mid,
+            models.Patient.clinic_id == clinic_id()
+        ).first()
         if not m: return err("Media tapılmadı", 404)
         if m.filepath and os.path.exists(m.filepath):
             os.remove(m.filepath)
@@ -1069,7 +1096,10 @@ def add_payment(pid):
 def delete_payment(pid):
     s = db()
     try:
-        p = s.query(models.Payment).get(pid)
+        p = s.query(models.Payment).join(models.Patient).filter(
+            models.Payment.id == pid,
+            models.Patient.clinic_id == clinic_id()
+        ).first()
         if not p: return err("Tapılmadı", 404)
         s.delete(p); s.commit()
         return jsonify({"ok": True})
