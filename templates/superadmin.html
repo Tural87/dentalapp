@@ -896,6 +896,13 @@ async function loadBilling(){
     fetch('/api/superadmin/billing/summary').then(r=>r.json())
   ])
   _bills=bills
+  if(!_planConfigs.length){try{_planConfigs=await fetch('/api/superadmin/plans').then(r=>r.json())}catch(e){}}
+  if(_planConfigs.length){
+    var _PL={free:'Kiçik',starter:'Kiçik',kicik:'Kiçik',basic:'Orta',orta:'Orta',pro:'Böyük',boyuk:'Böyük'};
+    document.getElementById('bill-plan').innerHTML=_planConfigs.map(function(p){
+      return '<option value='+JSON.stringify(p.plan_name)+'>'+(_PL[p.plan_name]||p.plan_name)+' ('+(p.monthly_fee||p.price||0).toFixed(0)+' ₼)</option>';
+    }).join('');
+  }
   // dashboard widget
   document.getElementById('bs-mrr').textContent=(sum.mrr||0).toFixed(2)+' ₼'
   document.getElementById('bs-overdue-cnt').textContent=sum.overdue_count||0
@@ -1108,9 +1115,7 @@ setInterval(loadBilling,60000)
       <div class="form-group">
         <label class="form-label">Plan</label>
         <select class="form-control" id="bill-plan" onchange="fillPlanFee(this.value)">
-          <option value="free">Kiçik (0 ₼)</option>
-          <option value="basic">Orta (30 ₼)</option>
-          <option value="pro">Böyük (80 ₼)</option>
+          <option value="free">Yüklənir...</option>
         </select>
       </div>
       <div class="form-group">
