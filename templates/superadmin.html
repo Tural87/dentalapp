@@ -820,8 +820,10 @@ async function delExp(id){
 }
 
 // ── PLANS ────────────────────────────────────────────────────────────────────
+let _planConfigs=[]
 async function loadPlans(){
   const plans=await fetch('/api/superadmin/plans').then(r=>r.json())
+  _planConfigs=plans
   const PLAN_LABELS={free:'Kiçik',starter:'Kiçik',kicik:'Kiçik',basic:'Orta',orta:'Orta',pro:'Böyük',boyuk:'Böyük'}
   const COLORS={free:'#6b7fa3',starter:'#6b7fa3',kicik:'#6b7fa3',basic:'#3b82f6',orta:'#3b82f6',pro:'#a855f7',boyuk:'#a855f7'}
   const grid=document.getElementById('plans-grid')
@@ -955,6 +957,7 @@ function editBill(cid){
   document.getElementById('billModal').style.display='flex'
 }
 function closeBill(){document.getElementById('billModal').style.display='none'}
+function fillPlanFee(v){const p=_planConfigs.find(x=>x.plan_name===v);if(p!=null)document.getElementById('bill-fee').value=p.monthly_fee||0}
 async function saveBill(){
   const data={
     plan:document.getElementById('bill-plan').value,
@@ -1104,7 +1107,7 @@ setInterval(loadBilling,60000)
       <div id="bill-info" style="margin-bottom:14px;padding:10px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;font-size:.86rem"></div>
       <div class="form-group">
         <label class="form-label">Plan</label>
-        <select class="form-control" id="bill-plan">
+        <select class="form-control" id="bill-plan" onchange="fillPlanFee(this.value)">
           <option value="free">Kiçik (0 ₼)</option>
           <option value="basic">Orta (30 ₼)</option>
           <option value="pro">Böyük (80 ₼)</option>
