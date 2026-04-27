@@ -55,6 +55,7 @@ def login():
     if 'user_id' in session:
         return redirect('/')
     error = None
+    reset_sent = False
     reset_ok = request.args.get('reset') == '1'
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
@@ -80,17 +81,35 @@ def login():
                 if user.role == 'superadmin':
                     return redirect('/superadmin')
                 return redirect('/change-password' if user.must_change_password else '/')
-            error = 'Email və ya parol yanlışdır'
-            try:
-                from security import record_login_attempt
-                record_login_attempt(False)
-            except Exception: pass
-            # failed login log
-            s.add(models.ActivityLog(action='error', detail=f'Uğursuz giriş: {email}', ip=request.remote_addr))
-            s.commit()
+            elif user:
+                # Email tapildi, parol yanlisdir - reset link gonder
+                try:
+                    from security import record_login_attempt
+                    record_login_attempt(False)
+                except Exception: pass
+                import secrets as _sec
+                token = _sec.token_urlsafe(32)
+                user.reset_token = token
+                user.reset_token_expiry = datetime.utcnow() + timedelta(hours=2)
+                s.commit()
+                reset_url = f"{request.host_url}reset-password/{token}"
+                body = f"<p>Salam {user.name},</p><p>Hesabiniza yanlis parol daxil edildi. Parolu sifirlamaq ucun bu linke tiklayin (2 saat etibarlidi):</p><p><a href='{reset_url}'>{reset_url}</a></p><p style='color:#6b7fa3;font-size:.85em'>Eger bu siz deyilsinizse, bu emaili nezere almayin.</p>"
+                _send_email(email, 'DentalApp - Parol Sifirlanmasi', body)
+                reset_sent = True
+                s.add(models.ActivityLog(action='error', detail=f'Yanlis parol, reset gonderildi: {email}', ip=request.remote_addr))
+                s.commit()
+            else:
+                # Email tapilmadi
+                try:
+                    from security import record_login_attempt
+                    record_login_attempt(False)
+                except Exception: pass
+                error = 'Bu email sistemd&#601; tapilmadi'
+                s.add(models.ActivityLog(action='error', detail=f'Tapilmayan email: {email}', ip=request.remote_addr))
+                s.commit()
         finally:
             s.close()
-    return render_template('login.html', error=error, reset_ok=reset_ok)
+    return render_template('login.html', error=error, reset_ok=reset_ok, reset_sent=reset_sent)
 
 
 @auth.route('/logout')

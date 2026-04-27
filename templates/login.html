@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
@@ -25,6 +25,7 @@ h1{font-size:1.35rem;font-weight:800;color:#e8edf5;margin-bottom:6px;text-align:
 .forgot{text-align:right;margin-top:8px}
 .forgot a{font-size:.8rem;color:#6b7fa3;text-decoration:none}
 .forgot a:hover{color:#60a5fa}
+.info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#60a5fa;border-radius:9px;padding:10px 13px;font-size:.85rem;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -37,9 +38,11 @@ h1{font-size:1.35rem;font-weight:800;color:#e8edf5;margin-bottom:6px;text-align:
   <p class="sub">Davam etmək üçün daxil olun</p>
 
   {% if reset_ok %}
-  <div class="success">Parolunuz uğurla yeniləndi. Yeni parolunuzla daxil olun.</div>
+  <div class="success">Parolunuz uğurla yeniləndi. Yəni parolunuzla daxil olun.</div>
   {% endif %}
-  {% if error %}
+  {% if reset_sent %}
+  <div class="info">&#128274; Parol yanlışdır. Parol sıfırlama linki <b>emailinizə</b> göndərildi &mdash; emailinizi yoxlayın.</div>
+  {% elif error %}
   <div class="error">{{ error }}</div>
   {% endif %}
 
