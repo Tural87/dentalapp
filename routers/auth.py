@@ -394,6 +394,7 @@ def get_usage():
             patients = 0
         return jsonify({
             'plan': clinic.plan,
+            'plan_display': cfg.description or clinic.plan,
             'doctors': {'used': doctors, 'max': cfg.max_doctors or 0},
             'admins': {'used': admins, 'max': cfg.max_admins or 0},
             'patients': {'used': patients, 'max': cfg.max_patients or 0},

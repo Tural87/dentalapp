@@ -824,14 +824,13 @@ let _planConfigs=[]
 async function loadPlans(){
   const plans=await fetch('/api/superadmin/plans').then(r=>r.json())
   _planConfigs=plans
-  const PLAN_LABELS={free:'Kiçik',starter:'Kiçik',kicik:'Kiçik',basic:'Orta',orta:'Orta',pro:'Böyük',boyuk:'Böyük'}
   const COLORS={free:'#6b7fa3',starter:'#6b7fa3',kicik:'#6b7fa3',basic:'#3b82f6',orta:'#3b82f6',pro:'#a855f7',boyuk:'#a855f7'}
   const grid=document.getElementById('plans-grid')
   grid.innerHTML=plans.map(p=>{
     const c=COLORS[p.plan_name]||'#6b7fa3'
     return `<div class="card" style="border:2px solid ${c}33">
       <div class="card-hd" style="background:${c}11;border-bottom:1px solid ${c}33">
-        <h3 style="color:${c};font-size:1.1rem">${PLAN_LABELS[p.plan_name]||p.plan_name}</h3>
+        <h3 style="color:${c};font-size:1.1rem">${p.description||p.plan_name}</h3>
         <span style="font-size:.74rem;color:#6b7fa3">${p.clinic_count} klinika istifadə edir</span>
       </div>
       <div class="card-bd" style="padding:16px">
@@ -860,7 +859,7 @@ async function loadPlans(){
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Açıqlama</label>
+          <label class="form-label">Plan adı</label>
           <input class="form-control" id="pl-${p.plan_name}-desc" value="${p.description||''}">
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
@@ -898,9 +897,8 @@ async function loadBilling(){
   _bills=bills
   if(!_planConfigs.length){try{_planConfigs=await fetch('/api/superadmin/plans').then(r=>r.json())}catch(e){}}
   if(_planConfigs.length){
-    var _PL={free:'Kiçik',starter:'Kiçik',kicik:'Kiçik',basic:'Orta',orta:'Orta',pro:'Böyük',boyuk:'Böyük'};
     document.getElementById('bill-plan').innerHTML=_planConfigs.map(function(p){
-      return '<option value='+JSON.stringify(p.plan_name)+'>'+(_PL[p.plan_name]||p.plan_name)+' ('+(p.monthly_fee||p.price||0).toFixed(0)+' ₼)</option>';
+      return '<option value='+JSON.stringify(p.plan_name)+'>'+(p.description||p.plan_name)+' ('+(p.monthly_fee||p.price||0).toFixed(0)+' ₼)</option>';
     }).join('');
   }
   // dashboard widget
@@ -918,7 +916,7 @@ async function loadBilling(){
   if(dot){
     dot.innerHTML=overdue.length?overdue.map(b=>`<tr>
       <td><div style="font-weight:700">${b.clinic_name}</div></td>
-      <td><span class="badge badge-${b.plan}">${b.plan.toUpperCase()}</span></td>
+      <td><span class="badge badge-${b.plan}">${(_planConfigs.find(p=>p.plan_name===b.plan)||{}).description||b.plan}</span></td>
       <td>${b.monthly_fee.toFixed(2)} ₼</td>
       <td style="font-size:.78rem;color:#6b7fa3">${fmtDate(b.next_payment_date)}</td>
       <td><span style="color:#ef4444;font-weight:700">${b.days_overdue} gün</span></td>
@@ -938,7 +936,7 @@ function renderBilling(){
   tb.innerHTML=list.length?list.map((b,i)=>`<tr>
     <td style="color:#6b7fa3">${i+1}</td>
     <td><div style="font-weight:700">${b.clinic_name}</div><div style="font-size:.7rem;color:#6b7fa3">${b.slug}</div></td>
-    <td><span class="badge badge-${b.plan}">${b.plan.toUpperCase()}</span></td>
+    <td><span class="badge badge-${b.plan}">${(_planConfigs.find(p=>p.plan_name===b.plan)||{}).description||b.plan}</span></td>
     <td>${b.monthly_fee.toFixed(2)}</td>
     <td style="font-size:.78rem;color:#6b7fa3">${fmtDate(b.last_paid_date)}</td>
     <td style="font-size:.78rem">${fmtDate(b.next_payment_date)}</td>

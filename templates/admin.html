@@ -959,7 +959,7 @@ async function loadAdmDashboard(){
   profEl.style.color=d.month_profit>=0?'var(--green)':'var(--red)'
   document.getElementById('adm-debt').textContent=d.outstanding_debt.toFixed(0)
   document.getElementById('adm-today-app').textContent=d.today_appointments
-  try{const u=await api('/api/usage');const L={'free':'Kič[char]0x69k','starter':'Kiçik','kicik':'Kiçik','basic':'Orta','orta':'Orta','pro':'Böyük','boyuk':'Böyük'};document.getElementById('adm-plan-name').textContent=L[u.plan]||u.plan||'--';document.getElementById('adm-plan-usage').innerHTML='Hekim: '+u.doctors.used+'/'+u.doctors.max+'  |  Admin: '+u.admins.used+'/'+u.admins.max;document.getElementById('adm-plan-card').style.display='block'}catch(e){}
+  try{const u=await api('/api/usage');document.getElementById('adm-plan-name').textContent=u.plan_display||u.plan||'--';document.getElementById('adm-plan-usage').innerHTML='Həkim: '+u.doctors.used+'/'+u.doctors.max+'  |  Admin: '+u.admins.used+'/'+u.admins.max;document.getElementById('adm-plan-card').style.display='block'}catch(e){}
 
   // sidebar badge'lər
   const dbtBadge=document.getElementById('sb-dbt-badge'),invBadge=document.getElementById('sb-inv-badge')
