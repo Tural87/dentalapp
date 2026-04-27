@@ -123,7 +123,7 @@ tr:last-child td{border-bottom:none}
       <div class="stat"><div class="stat-val" id="st-total">—</div><div class="stat-lbl">Klinika</div></div>
       <div class="stat"><div class="stat-val" id="st-active">—</div><div class="stat-lbl">Online</div></div>
       <div class="stat"><div class="stat-val" id="st-doctors">—</div><div class="stat-lbl">Həkim</div></div>
-      <div class="stat"><div class="stat-val" id="st-free">—</div><div class="stat-lbl">Starter plan</div></div>
+      <div class="stat"><div class="stat-val" id="st-free">—</div><div class="stat-lbl">Kiçik plan</div></div>
     </div>
 
     <!-- Server monitoring -->
@@ -380,7 +380,7 @@ tr:last-child td{border-bottom:none}
       <div class="form-group"><label class="form-label">Ünvan</label><input class="form-control" id="c-address"></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Plan</label>
-          <select class="form-control" id="c-plan"><option value="free">Starter</option><option value="basic">Basic</option><option value="pro">Pro</option></select></div>
+          <select class="form-control" id="c-plan"><option value="free">Kiçik</option><option value="basic">Basic</option><option value="pro">Pro</option></select></div>
       </div>
       <hr style="border-color:#1f2d47;margin:12px 0">
       <div id="admin-fields">
@@ -822,7 +822,7 @@ async function delExp(id){
 // ── PLANS ────────────────────────────────────────────────────────────────────
 async function loadPlans(){
   const plans=await fetch('/api/superadmin/plans').then(r=>r.json())
-  const PLAN_LABELS={free:'Starter',starter:'Starter',kicik:'Starter',basic:'Orta',orta:'Orta',pro:'Boyuk',boyuk:'Boyuk'}
+  const PLAN_LABELS={free:'Kiçik',starter:'Kiçik',kicik:'Kiçik',basic:'Orta',orta:'Orta',pro:'Böyük',boyuk:'Böyük'}
   const COLORS={free:'#6b7fa3',starter:'#6b7fa3',kicik:'#6b7fa3',basic:'#3b82f6',orta:'#3b82f6',pro:'#a855f7',boyuk:'#a855f7'}
   const grid=document.getElementById('plans-grid')
   grid.innerHTML=plans.map(p=>{
