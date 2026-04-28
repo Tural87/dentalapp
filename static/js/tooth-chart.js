@@ -85,7 +85,7 @@ function infoPanel(side){
 
 function buildChart(teethData){
   var td=teethData||{}
-  var upperPos=calcPos(UPPER,true)
+  var upperPos=calcPos(UPPER,true).reverse()
   var lowerPos=calcPos(LOWER,false)
   var teeth=upperPos.map(function(p){return mkTooth(p,true,td)}).join('')
     +lowerPos.map(function(p){return mkTooth(p,false,td)}).join('')
