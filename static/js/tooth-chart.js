@@ -26,14 +26,14 @@ var W=420,H=600
 function calcPos(nums,isUpper){
   var n=nums.length,cx=210
   var cy=isUpper?5:595,rx=isUpper?185:168,ry=isUpper?245:228
-  var a0=isUpper?165:345,a1=isUpper?15:195
+  var a0=isUpper?15:195,a1=isUpper?165:345
   return nums.map(function(num,i){
     var deg=a0+(i/(n-1))*(a1-a0)
     var rad=deg*Math.PI/180
-    var x=cx-rx*Math.cos(rad),y=cy+ry*Math.sin(rad)
-    var rot=isUpper?-(deg-90):-(deg+90)
+    var x=cx+rx*Math.cos(rad),y=cy+ry*Math.sin(rad)
+    var rot=isUpper?deg-90:deg+90
     return{num:num,x:parseFloat(x.toFixed(1)),y:parseFloat(y.toFixed(1)),rot:parseFloat(rot.toFixed(1)),deg:deg}
-  })
+  }).reverse()
 }
 
 function mkTooth(p,isUpper,td){
