@@ -23,3 +23,5 @@ static/uploads/*
 .idea/
 *.swp
 .DS_Store
+dentalapp.db
+dentalapp.db
