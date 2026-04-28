@@ -1129,6 +1129,32 @@ setInterval(checkUnread,30000)
 setInterval(loadMonitor,5000)
 setInterval(loadBilling,60000)
 
+// ── SMTP ─────────────────────────────────────────────────────────────────────
+async function loadSmtp(){
+  try{
+    const d=await fetch('/api/superadmin/smtp').then(r=>r.json())
+    document.getElementById('smtp-host').value=d.smtp_host||''
+    document.getElementById('smtp-port').value=d.smtp_port||''
+    document.getElementById('smtp-user').value=d.smtp_user||''
+    document.getElementById('smtp-pass').value=d.smtp_pass||''
+    document.getElementById('smtp-from').value=d.smtp_from||''
+  }catch(e){console.error(e)}
+}
+async function saveSmtp(){
+  const data={
+    smtp_host:document.getElementById('smtp-host').value.trim(),
+    smtp_port:document.getElementById('smtp-port').value.trim(),
+    smtp_user:document.getElementById('smtp-user').value.trim(),
+    smtp_pass:document.getElementById('smtp-pass').value.trim(),
+    smtp_from:document.getElementById('smtp-from').value.trim()
+  }
+  const r=await fetch('/api/superadmin/smtp',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+  const el=document.getElementById('smtp-msg')
+  el.textContent=r.ok?'✅ Yadda saxlandı':'❌ Xəta baş verdi'
+  el.style.cssText=`display:block;padding:9px 12px;border-radius:8px;font-size:.83rem;margin-bottom:12px;background:${r.ok?'rgba(34,197,94,.12)':'rgba(239,68,68,.12)'};color:${r.ok?'#22c55e':'#ef4444'};border:1px solid ${r.ok?'rgba(34,197,94,.3)':'rgba(239,68,68,.3)'}`
+  setTimeout(()=>el.style.display='none',3500)
+}
+
 // ── PROFIL ──────────────────────────────────────────────────────────────────
 async function loadProfile(){
   try{
