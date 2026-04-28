@@ -8,6 +8,10 @@ from email.mime.text import MIMEText
 from urllib.parse import quote
 
 auth = Blueprint('auth', __name__)
+
+# Email-ə görə uğursuz cəhd sayğacları (in-memory)
+_failed_attempts = {}  # {email: count}
+_OFFER_RESET_AFTER = 5  # bu qədər səhv cəhddən sonra reset təklifi
 SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'settings.json')
 
 
@@ -56,24 +60,42 @@ def login():
         return redirect('/')
     error = None
     reset_sent = False
+    offer_reset = False
+    offer_email = None
     reset_ok = request.args.get('reset') == '1'
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
+        send_reset = request.form.get('send_reset') == '1'
         s = SessionLocal()
         try:
             user = s.query(models.User).filter_by(email=email, is_active=True).first()
-            if user and check_password_hash(user.password_hash, password):
+
+            # Reset göndərmə tələbi (5 cəhddən sonra "Bəli" basıldıqda)
+            if send_reset and user:
+                import secrets as _sec
+                token = _sec.token_urlsafe(32)
+                user.reset_token = token
+                user.reset_token_expiry = datetime.utcnow() + timedelta(hours=2)
+                s.commit()
+                reset_url = f"{request.host_url}reset-password/{token}"
+                body = f"<p>Salam {user.name},</p><p>Parol sifirlamaq ucun bu linke tiklayin (2 saat etibarlidi):</p><p><a href='{reset_url}'>{reset_url}</a></p><p style='color:#6b7fa3;font-size:.85em'>Eger bu siz deyilsinizse, bu emaili nezere almayin.</p>"
+                _send_email(email, 'DentalApp - Parol Sifirlanmasi', body)
+                _failed_attempts.pop(email, None)
+                reset_sent = True
+                s.add(models.ActivityLog(action='password_reset_request', detail=f'Reset gonderildi: {email}', ip=request.remote_addr))
+                s.commit()
+            elif user and check_password_hash(user.password_hash, password):
                 try:
                     from security import record_login_attempt
                     record_login_attempt(True)
                 except Exception: pass
+                _failed_attempts.pop(email, None)
                 session['user_id'] = user.id
                 session['user_name'] = user.name
                 session['role'] = user.role
                 session['clinic_id'] = user.clinic_id
                 session['must_change_password'] = user.must_change_password
-                # LOG
                 log = models.ActivityLog(clinic_id=user.clinic_id, user_id=user.id,
                     action='login', detail=f'{user.name} ({user.role}) daxil oldu',
                     ip=request.remote_addr)
@@ -82,34 +104,33 @@ def login():
                     return redirect('/superadmin')
                 return redirect('/change-password' if user.must_change_password else '/')
             elif user:
-                # Email tapildi, parol yanlisdir - reset link gonder
+                # Email var, parol yanlış - sayğacı artır
                 try:
                     from security import record_login_attempt
                     record_login_attempt(False)
                 except Exception: pass
-                import secrets as _sec
-                token = _sec.token_urlsafe(32)
-                user.reset_token = token
-                user.reset_token_expiry = datetime.utcnow() + timedelta(hours=2)
-                s.commit()
-                reset_url = f"{request.host_url}reset-password/{token}"
-                body = f"<p>Salam {user.name},</p><p>Hesabiniza yanlis parol daxil edildi. Parolu sifirlamaq ucun bu linke tiklayin (2 saat etibarlidi):</p><p><a href='{reset_url}'>{reset_url}</a></p><p style='color:#6b7fa3;font-size:.85em'>Eger bu siz deyilsinizse, bu emaili nezere almayin.</p>"
-                _send_email(email, 'DentalApp - Parol Sifirlanmasi', body)
-                reset_sent = True
-                s.add(models.ActivityLog(action='error', detail=f'Yanlis parol, reset gonderildi: {email}', ip=request.remote_addr))
+                _failed_attempts[email] = _failed_attempts.get(email, 0) + 1
+                count = _failed_attempts[email]
+                if count >= _OFFER_RESET_AFTER:
+                    offer_reset = True
+                    offer_email = email
+                    error = f'Parol {count} dəfə yanlış daxil edildi. Parolu unutmusunuz?'
+                else:
+                    error = f'Email və ya parol yanlışdır ({count}/{_OFFER_RESET_AFTER})'
+                s.add(models.ActivityLog(action='error', detail=f'Yanlis parol ({count}): {email}', ip=request.remote_addr))
                 s.commit()
             else:
-                # Email tapilmadi
                 try:
                     from security import record_login_attempt
                     record_login_attempt(False)
                 except Exception: pass
-                error = 'Bu email sistemd&#601; tapilmadi'
+                error = 'Email və ya parol yanlışdır'
                 s.add(models.ActivityLog(action='error', detail=f'Tapilmayan email: {email}', ip=request.remote_addr))
                 s.commit()
         finally:
             s.close()
-    return render_template('login.html', error=error, reset_ok=reset_ok, reset_sent=reset_sent)
+    return render_template('login.html', error=error, reset_ok=reset_ok,
+                           reset_sent=reset_sent, offer_reset=offer_reset, offer_email=offer_email)
 
 
 @auth.route('/logout')
