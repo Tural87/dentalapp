@@ -91,7 +91,7 @@ function buildChart(teethData){
   var teeth=upperPos.map(function(p){return mkTooth(p,true,td)}).join('')
     +lowerPos.map(function(p){return mkTooth(p,false,td)}).join('')
 
-  var svg='<svg id="archSVG" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:calc(100vh - 120px);height:auto;display:block">'
+  var svg='<svg id="archSVG" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:calc(100vh - 120px);height:auto;display:block;transform:scaleX(-1)">'
     +'<defs><radialGradient id="bg" cx="50%" cy="50%" r="65%"><stop offset="0%" stop-color="#1e3252"/><stop offset="100%" stop-color="#0b1828"/></radialGradient></defs>'
     +'<rect width="'+W+'" height="'+H+'" fill="url(#bg)"/>'
     +teeth
