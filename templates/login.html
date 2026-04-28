@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
@@ -41,7 +41,18 @@ h1{font-size:1.35rem;font-weight:800;color:#e8edf5;margin-bottom:6px;text-align:
   <div class="success">Parolunuz uğurla yeniləndi. Yəni parolunuzla daxil olun.</div>
   {% endif %}
   {% if reset_sent %}
-  <div class="info">&#128274; Parol yanlışdır. Parol sıfırlama linki <b>emailinizə</b> göndərildi &mdash; emailinizi yoxlayın.</div>
+  <div class="info">&#128274; Parol sıfırlama linki <b>emailinizə</b> göndərildi &mdash; emailinizi yoxlayın.</div>
+  {% elif offer_reset %}
+  <div class="error" style="margin-bottom:8px">{{ error }}</div>
+  <form method="POST" style="margin-bottom:16px">
+    <input type="hidden" name="email" value="{{ offer_email }}">
+    <input type="hidden" name="send_reset" value="1">
+    <div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:9px;padding:14px;margin-bottom:0">
+      <div style="font-size:.88rem;color:#f97316;font-weight:700;margin-bottom:6px">🔑 Parol sıfırlamaq istəyirsiniz?</div>
+      <div style="font-size:.82rem;color:#9bb3d4;margin-bottom:10px">Email ünvanınıza ({{ offer_email }}) sıfırlama linki göndərək.</div>
+      <button class="btn" type="submit" style="background:linear-gradient(135deg,#f97316,#ea580c);box-shadow:0 2px 12px rgba(249,115,22,.3);margin:0">Bəli, link göndər</button>
+    </div>
+  </form>
   {% elif error %}
   <div class="error">{{ error }}</div>
   {% endif %}
