@@ -1436,7 +1436,7 @@ def sa_billing_summary():
         for c in clinics:
             sub = _ensure_subscription(s, c.id, c.plan or 'free')
             plan_breakdown[sub.plan] = plan_breakdown.get(sub.plan, 0) + 1
-            if c.is_active and sub.plan != 'free':
+            if c.is_active and (sub.monthly_fee or 0) > 0:
                 mrr += sub.monthly_fee or 0
             od = _days_overdue(sub.next_payment_date)
             if od > 0 and sub.plan != 'free':
