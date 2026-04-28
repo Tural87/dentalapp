@@ -29,7 +29,7 @@ def _send_email(to_email, subject, body):
         return False
     msg = MIMEText(body, 'html', 'utf-8')
     msg['Subject'] = subject
-    msg['From'] = from_addr
+    msg['From'] = user
     msg['To'] = to_email
     try:
         with smtplib.SMTP(host, port) as s:
