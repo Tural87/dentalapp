@@ -991,7 +991,7 @@ function editBill(cid){
   document.getElementById('billModal').style.display='flex'
 }
 function closeBill(){document.getElementById('billModal').style.display='none'}
-function fillPlanFee(v){const p=_planConfigs.find(x=>x.plan_name===v);if(p!=null)document.getElementById('bill-fee').value=p.monthly_fee||0}
+function fillPlanFee(v){if(_planConfigs.length===0)fetch('/api/superadmin/plans').then(r=>r.json()).then(d=>{_planConfigs=d;const p=d.find(x=>x.plan_name===v);if(p)document.getElementById('bill-fee').value=p.monthly_fee||0});else{const p=_planConfigs.find(x=>x.plan_name===v);if(p)document.getElementById('bill-fee').value=p.monthly_fee||0}}
 async function saveBill(){
   const data={
     plan:document.getElementById('bill-plan').value,
