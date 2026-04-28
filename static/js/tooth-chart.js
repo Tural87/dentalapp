@@ -30,7 +30,7 @@ function calcPos(nums,isUpper){
   return nums.map(function(num,i){
     var deg=a0+(i/(n-1))*(a1-a0)
     var rad=deg*Math.PI/180
-    var x=cx+rx*Math.cos(rad),y=cy+ry*Math.sin(rad)
+    var x=cx-rx*Math.cos(rad),y=cy+ry*Math.sin(rad)
     var rot=isUpper?deg-90:deg+90
     return{num:num,x:parseFloat(x.toFixed(1)),y:parseFloat(y.toFixed(1)),rot:parseFloat(rot.toFixed(1)),deg:deg}
   })
