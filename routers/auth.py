@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 from urllib.parse import quote
 
 auth = Blueprint('auth', __name__)
-SETTINGS_FILE = 'settings.json'
+SETTINGS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'settings.json')
 
 
 def _get_settings():
