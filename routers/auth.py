@@ -1,4 +1,4 @@
-﻿from flask import Blueprint, render_template, request, session, redirect, jsonify
+from flask import Blueprint, render_template, request, session, redirect, jsonify
 from database import SessionLocal
 import models
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -188,8 +188,10 @@ def change_password():
         return redirect('/login')
     error = None
     if request.method == 'POST':
-        p1 = request.form.get('password', '')
-        p2 = request.form.get('password2', '')
+        cur = request.form.get('current_password', '') or request.form.get('password_current', '')
+        p1 = request.form.get('password', '') or request.form.get('new_password', '')
+        p2 = request.form.get('password2', '') or request.form.get('confirm_password', '')
+        forced = session.get('must_change_password', False)
         if len(p1) < 6:
             error = 'Parol ən azı 6 simvol olmalıdır'
         elif p1 != p2:
@@ -198,13 +200,21 @@ def change_password():
             s = SessionLocal()
             try:
                 user = s.query(models.User).get(session['user_id'])
-                user.password_hash = generate_password_hash(p1)
-                user.must_change_password = False
-                s.commit()
-                session['must_change_password'] = False
-                return redirect('/')
+                # Forced (ilk dəfə) deyilsə, cari parolu yoxla
+                if not forced and (not cur or not check_password_hash(user.password_hash, cur)):
+                    error = 'Cari parol yanlışdır'
+                else:
+                    user.password_hash = generate_password_hash(p1)
+                    user.must_change_password = False
+                    s.commit()
+                    session['must_change_password'] = False
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+                        return jsonify({'ok': True})
+                    return redirect('/')
             finally:
                 s.close()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'error': error}), 400
     return render_template('change_password.html', error=error,
                            forced=session.get('must_change_password', False))
 
