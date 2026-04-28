@@ -16,7 +16,7 @@ var STATUS_COLOR={healthy:'#60a5fa',caries:'#ff6b6b',treated:'#34d399',implant:'
 var LEGEND_COL={healthy:'#60a5fa',caries:'#ff6b6b',treated:'#34d399',implant:'#c084fc',crown:'#fbbf24',root_canal:'#f472b6',missing:'#94a3b8',extraction:'#64748b'}
 var LABELS={healthy:'Sağlam',caries:'Karies',treated:'Müalicə edilmiş',implant:'İmplant',crown:'Tac',root_canal:'Kanal müalicəsi',missing:'Çatışmayan',extraction:'Çıxarılmış'}
 
-var UPPER=[18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28]
+var UPPER=[28,27,26,25,24,23,22,21,11,12,13,14,15,16,17,18]
 var LOWER=[48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]
 
 function toothType(n){var d=n%10;if(d>=6)return'molar';if(d===5||d===4)return'premolar';if(d===3)return'canine';return'incisor'}
