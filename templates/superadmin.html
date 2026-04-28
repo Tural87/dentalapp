@@ -1050,7 +1050,7 @@ async function loadActivity(){
   document.getElementById('act-dead').textContent=cnt.dead
   document.getElementById('act-tbody').innerHTML=data.length?data.map(d=>`<tr>
     <td><div style="font-weight:700">${d.clinic_name}</div></td>
-    <td><span class="badge badge-${d.plan}">${d.plan.toUpperCase()}</span></td>
+    <td><span class="badge badge-${d.plan}">${d.plan==='free'?'Başlanğıc':d.plan==='basic'?'Orta':'Böyük'}</span></td>
     <td><span class="badge ${d.is_active?'badge-active':'badge-inactive'}">${d.is_active?'Aktiv':'Bloklu'}</span></td>
     <td>${d.total_patients}</td>
     <td style="font-weight:700;color:${LEVEL_COLOR[d.level]}">${d.new_patients_30d}</td>
