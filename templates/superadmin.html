@@ -408,7 +408,7 @@ tr:last-child td{border-bottom:none}
       <div class="form-group"><label class="form-label">Ünvan</label><input class="form-control" id="c-address"></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Plan</label>
-          <select class="form-control" id="c-plan"><option value="free">Starter</option><option value="basic">Basic</option><option value="pro">Pro</option></select></div>
+          <select class="form-control" id="c-plan"><option value="free">Başlanğıc</option><option value="basic">Orta</option><option value="pro">Böyük</option></select></div>
       </div>
       <hr style="border-color:#1f2d47;margin:12px 0">
       <div id="admin-fields">
@@ -501,7 +501,7 @@ async function load(){
   tbody.innerHTML=_clinics.length?_clinics.map((c,i)=>`<tr>
     <td style="color:#6b7fa3">${i+1}</td>
     <td><div style="font-weight:700">${c.name}</div><div style="font-size:.72rem;color:#6b7fa3">${c.slug}</div></td>
-    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Starter':c.plan==='basic'?'Basic':'Pro'}</span></td>
+    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Başlanğıc':c.plan==='basic'?'Orta':'Böyük'}</span></td>
     <td style="text-align:center">${c.admin_count||0}</td>
     <td style="text-align:center">${c.doctor_count||0}</td>
     <td><span class="badge ${c.is_online?'badge-active':'badge-inactive'}">${c.is_online?'Online':'Offline'}</span></td>
@@ -515,7 +515,7 @@ async function load(){
   // dash clinic summary
   document.getElementById('dash-clinic-tbody').innerHTML=_clinics.map(c=>`<tr>
     <td style="font-weight:600">${c.name}</td>
-    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Starter':c.plan==='basic'?'Basic':'Pro'}</span></td>
+    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Başlanğıc':c.plan==='basic'?'Orta':'Böyük'}</span></td>
     <td style="text-align:center">${c.admin_count||0}</td>
     <td style="text-align:center">${c.doctor_count||0}</td>
     <td><span class="badge ${c.is_online?'badge-active':'badge-inactive'}">${c.is_online?'Online':'Offline'}</span></td>
