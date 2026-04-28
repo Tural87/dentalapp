@@ -26,7 +26,7 @@ var W=420,H=600
 function calcPos(nums,isUpper){
   var n=nums.length,cx=210
   var cy=isUpper?5:595,rx=isUpper?185:168,ry=isUpper?245:228
-  var a0=isUpper?15:195,a1=isUpper?165:345
+  var a0=isUpper?15:345,a1=isUpper?165:195
   return nums.map(function(num,i){
     var deg=a0+(i/(n-1))*(a1-a0)
     var rad=deg*Math.PI/180
