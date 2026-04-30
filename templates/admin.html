@@ -1,5 +1,5 @@
 ﻿{% extends "base.html" %}
-{% block title %}{% if session.role == 'admin' %}Həkimlər{% else %}Xidmətlər{% endif %} | DentalApp{% endblock %}
+{% block title %}{% if session.role == 'admin' %}Həkimlər{% else %}Xidmətlər{% endif %} | StomApp{% endblock %}
 {% block topbar_title %}{% if session.role == 'admin' %}İdarəetmə Paneli{% else %}<span id="doctor-topbar-title">Xidmətlər</span>{% endif %}{% endblock %}
 {% block topbar_sub %}{% if session.role == 'admin' %}Həkimlər, parametrlər{% else %}<span id="doctor-topbar-sub">Xidmətlər və şablonlar</span>{% endif %}{% endblock %}
 {% block content %}
@@ -223,7 +223,7 @@
     <div class="card-hd"><h3>Klinik Məlumatları</h3></div>
     <div class="card-bd">
       <div class="form-group"><label class="form-label">Klinik adı</label>
-        <input class="form-control" id="s-clinic" placeholder="DentalApp"></div>
+        <input class="form-control" id="s-clinic" placeholder="StomApp"></div>
       <div class="form-group"><label class="form-label">Telefon</label>
         <input class="form-control" id="s-phone"></div>
       <div class="form-group"><label class="form-label">Ünvan</label>
