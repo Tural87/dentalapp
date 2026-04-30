@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>{% block title %}DentalApp{% endblock %}</title>
+<title>{% block title %}StomApp{% endblock %}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/main.css">
 <link rel="stylesheet" href="/static/css/theme.css">
@@ -14,7 +14,7 @@
   <div class="sidebar-logo">
     <a href="{% if session.role == 'admin' or session.role == 'superadmin' %}/admin{% else %}/{% endif %}">
       <img src="/static/img/teeth/medical_14372414.png" style="width:28px;height:28px;object-fit:contain">
-      <span class="logo-text">DentalApp</span>
+      <span class="logo-text">StomApp</span>
     </a>
   </div>
   <nav class="sidebar-nav">
@@ -91,7 +91,7 @@
 <div class="main">
   <div class="topbar">
     <div>
-      <div class="topbar-title">{% block topbar_title %}DentalApp{% endblock %}</div>
+      <div class="topbar-title">{% block topbar_title %}StomApp{% endblock %}</div>
       <div class="topbar-sub">{% block topbar_sub %}{% endblock %}</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
