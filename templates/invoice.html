@@ -36,7 +36,7 @@ tr:last-child td{border-bottom:none}
 <div class="wrap">
   <div class="head">
     <div>
-      <h1>{{ clinic.name if clinic else 'DentalApp' }}</h1>
+      <h1>{{ clinic.name if clinic else 'StomApp' }}</h1>
       <div class="sub">
         {% if clinic and clinic.address %}{{ clinic.address }}<br>{% endif %}
         {% if clinic and clinic.phone %}Tel: {{ clinic.phone }}{% endif %}
@@ -106,7 +106,7 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div class="foot">
-    Bu qəbz {{ today }} tarixində avtomatik yaradılıb. {{ clinic.name if clinic else 'DentalApp' }}
+    Bu qəbz {{ today }} tarixində avtomatik yaradılıb. {{ clinic.name if clinic else 'StomApp' }}
   </div>
 </div>
 </body>
