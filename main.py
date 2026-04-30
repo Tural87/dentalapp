@@ -10,7 +10,7 @@ models.Base.metadata.create_all(bind=engine)
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.environ.get('SECRET_KEY', 'dental-secret-xK9mP-2024')
 
-from security import init_security, record_login_attempt
+from security import init_security, record_login_attempt, client_ip
 init_security(app)
 
 from routers.auth import auth as auth_bp
@@ -440,7 +440,7 @@ def log_activity(action, detail="", clinic_id=None, user_id=None):
             clinic_id=clinic_id or session.get("clinic_id"),
             user_id=user_id or session.get("user_id"),
             action=action, detail=detail,
-            ip=request.remote_addr))
+            ip=client_ip()))
         s.commit()
         s.close()
     except: pass
