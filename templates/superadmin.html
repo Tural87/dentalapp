@@ -164,7 +164,15 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 #pane-dashboard>div:nth-child(3)>div:first-child{display:flex!important;align-items:center!important;gap:14px!important}
 .dash-grid .card{height:255px!important;overflow:hidden!important}
 .dash-grid .card>div:nth-child(2){max-height:196px!important}
-.sidebar-bottom::before{content:'Destek merkezi\A Sualiniz var? Biz komek edek!\A\A Destekle elaqe'!important}
+.sidebar-bottom::before{content:'Dəstək mərkəzi\A Sualınız var? Biz kömək edək!\A\A Dəstəklə əlaqə'!important}
+.sidebar,.main,.card,.stat-card,.nav-item,.btn,table{font-size:14px!important}
+.main{padding:16px 26px 34px!important}.sa-topbar{height:56px!important}.welcome h1{font-size:1rem!important}.welcome p{font-size:.78rem!important}
+.stat-row{gap:14px!important}.stat-card{min-height:118px!important;padding:16px!important}.stat-icon{width:56px!important;height:56px!important}.stat-icon svg{width:25px!important;height:25px!important}
+.stat-lbl{font-size:.84rem!important}.stat-val{font-size:1.75rem!important}.stat-card>div:first-child{align-items:center!important}.stat-card svg{width:86px!important;height:32px!important;margin-top:18px!important}
+#pane-dashboard>div:nth-child(3){padding:15px 17px!important;gap:16px!important}
+#pane-dashboard>div:nth-child(5) .stat-card{min-height:86px!important;padding:12px!important}.stat-card #bs-mrr{font-size:1.35rem!important}
+.card-hd{height:56px!important}.card-hd h3{font-size:.96rem!important}th{font-size:.72rem!important}td{font-size:.8rem!important}
+.btn{pointer-events:auto!important;position:relative!important;z-index:5!important}
 </style>
 </head>
 <body>
@@ -277,7 +285,7 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="width:24px;height:24px;border-radius:6px;background:rgba(34,197,94,.2);display:inline-flex;align-items:center;justify-content:center;color:#22c55e"><i data-lucide="trending-up" style="width:13px;height:13px"></i></span><span style="font-size:.86rem;font-weight:600">Sistem statusu</span></div>
         <div id="ai-insight-3" style="font-size:.7rem;color:var(--mu);margin-left:30px">Yoxlanılır...</div>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[2])">Daha ətraflı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
+      <button class="btn btn-primary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Daha ətraflı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
     </div>
 
     <!-- Server vəziyyəti -->
@@ -317,7 +325,7 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
     <!-- Borclu klinikalar -->
     <div class="card" style="margin-bottom:14px">
       <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444"></i>Borclu Klinikalar</h3>
-        <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[2])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
+        <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
       </div>
       <div style="overflow-x:auto;max-height:280px">
         <table>
@@ -1443,6 +1451,18 @@ async function changePass(){
 ...
 </script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const nav=[['billing','Abunələr'],['tickets','Dəstək biletləri'],['search','Qlobal axtarış'],['expenses','Xərclər']];
+  nav.forEach(([pane,text])=>{
+    const b=[...document.querySelectorAll('.nav-item')].find(x=>x.getAttribute('onclick')&&x.getAttribute('onclick').includes("'"+pane+"'"));
+    if(!b)return; const icon=b.querySelector('i'), badge=b.querySelector('.nav-badge'); b.textContent=''; if(icon)b.append(icon); b.append(' '+text+' '); if(badge)b.append(badge);
+  });
+  const map=[['st-total','Klinika sayı'],['st-doctors','Həkim sayı'],['bs-mrr','Aylıq gəlir (MRR)'],['bs-overdue-amt','Ümumi borc (₼)']];
+  map.forEach(([id,label])=>{const e=document.getElementById(id); if(e&&e.previousElementSibling)e.previousElementSibling.textContent=label;});
+  document.querySelectorAll('.stat-val').forEach(e=>{if(e.textContent.includes('в'))e.textContent='—'});
+});
+</script>
 <script>lucide.createIcons();</script>
 </body>
 </html>
