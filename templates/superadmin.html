@@ -99,17 +99,17 @@ tr:last-child td{border-bottom:none}
 <div class="sidebar">
   <div class="sidebar-logo">🦷 DentalApp</div>
   <nav class="nav">
-    <button class="nav-item active" onclick="showPane('dashboard',this)">📊 Dashboard</button>
-    <button class="nav-item" onclick="showPane('clinics',this)">🏥 Klinikalar</button>
-    <button class="nav-item" onclick="showPane('plans',this)">📋 Planlar</button>
-    <button class="nav-item" onclick="showPane('billing',this)">💳 Abunələr <span id="nav-overdue-badge" class="nav-badge" style="display:none">0</span></button>
-    <button class="nav-item" onclick="showPane('activity',this)">📈 Aktivlik</button>
-    <button class="nav-item" onclick="showPane('tickets',this)">🆘 Dəstək <span id="nav-tickets-badge" class="nav-badge" style="display:none">0</span></button>
-    <button class="nav-item" onclick="showPane('search',this)">🔍 Qlobal Axtarış</button>
-    <button class="nav-item" onclick="showPane('expenses',this)">💰 Xərclər</button>
-    <button class="nav-item" onclick="showPane('logs',this)">📋 Loglar</button>
-    <button class="nav-item" onclick="showPane('smtp',this)">⚙️ SMTP</button>
-    <button class="nav-item" onclick="showPane('profile',this)">👤 Profilim</button>
+    <button class="nav-item active" style="display:flex;align-items:center;gap:10px" onclick="showPane('dashboard',this)"><i data-lucide="layout-dashboard" style="width:15px;height:15px;flex-shrink:0"></i> Dashboard</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('clinics',this)"><i data-lucide="building-2" style="width:15px;height:15px;flex-shrink:0"></i> Klinikalar</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('plans',this)"><i data-lucide="award" style="width:15px;height:15px;flex-shrink:0"></i> Planlar</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('billing',this)"><i data-lucide="dollar-sign" style="width:15px;height:15px;flex-shrink:0"></i> Abunələr <span id="nav-overdue-badge" class="nav-badge" style="display:none">0</span></button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('activity',this)"><i data-lucide="activity" style="width:15px;height:15px;flex-shrink:0"></i> Aktivlik</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('tickets',this)"><i data-lucide="message-square" style="width:15px;height:15px;flex-shrink:0"></i> Dəstək <span id="nav-tickets-badge" class="nav-badge" style="display:none">0</span></button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('search',this)"><i data-lucide="search" style="width:15px;height:15px;flex-shrink:0"></i> Qlobal Axtarış</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('expenses',this)"><i data-lucide="receipt" style="width:15px;height:15px;flex-shrink:0"></i> Xərclər</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('logs',this)"><i data-lucide="scroll-text" style="width:15px;height:15px;flex-shrink:0"></i> Loglar</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('smtp',this)"><i data-lucide="mail" style="width:15px;height:15px;flex-shrink:0"></i> SMTP</button>
+    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('profile',this)"><i data-lucide="user-circle" style="width:15px;height:15px;flex-shrink:0"></i> Profilim</button>
   </nav>
   <div class="sidebar-bottom">
     <button class="logout-btn" onclick="location.href='/logout'">Çıxış</button>
@@ -254,7 +254,7 @@ tr:last-child td{border-bottom:none}
   <div class="pane" id="pane-plans">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div>
-        <h2 style="font-size:1.1rem;font-weight:800">Plan Konfiqurasiyaları</h2>
+        <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="award" style="width:20px;height:20px;color:#a78bfa"></i>Plan Konfiqurasiyaları</h2>
         <div style="font-size:.78rem;color:#6b7fa3;margin-top:2px">Hər plan üçün limit və qiymətləri tənzimləyin. Dəyişikliklər yeni qoşulan klinikalara və mövcud abunəliklərə tətbiq olunur.</div>
       </div>
       <button class="btn btn-secondary btn-sm" onclick="loadPlans()">Yenilə</button>
@@ -265,7 +265,7 @@ tr:last-child td{border-bottom:none}
   <!-- BILLING / SUBSCRIPTIONS -->
   <div class="pane" id="pane-billing">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Abunələr & Borclar</h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="dollar-sign" style="width:20px;height:20px;color:#22c55e"></i>Abunələr & Borclar</h2>
       <div style="display:flex;gap:8px">
         <select class="form-control" id="bill-filter" style="max-width:170px;font-size:.8rem;padding:5px 8px" onchange="renderBilling()">
           <option value="all">Hamısı</option>
@@ -289,7 +289,7 @@ tr:last-child td{border-bottom:none}
   <!-- ACTIVITY -->
   <div class="pane" id="pane-activity">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Klinika Aktivlik Səviyyəsi <span style="font-weight:500;color:#6b7fa3;font-size:.8rem">(son 30 gün)</span></h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="activity" style="width:20px;height:20px;color:#3b82f6"></i>Klinika Aktivlik Səviyyəsi <span style="font-weight:400;color:#6b7fa3;font-size:.78rem">(son 30 gün)</span></h2>
       <button class="btn btn-secondary btn-sm" onclick="loadActivity()">Yenilə</button>
     </div>
     <div class="stats" style="grid-template-columns:repeat(4,1fr)">
@@ -309,7 +309,7 @@ tr:last-child td{border-bottom:none}
   <!-- TICKETS -->
   <div class="pane" id="pane-tickets">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Dəstək Biletləri</h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="message-square" style="width:20px;height:20px;color:#f59e0b"></i>Dəstək Biletləri</h2>
       <div style="display:flex;gap:8px">
         <select class="form-control" id="tk-filter" style="max-width:160px;font-size:.8rem;padding:5px 8px" onchange="renderTickets()">
           <option value="open">Açıq</option>
@@ -329,7 +329,7 @@ tr:last-child td{border-bottom:none}
 
   <!-- GLOBAL SEARCH -->
   <div class="pane" id="pane-search">
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">Qlobal Axtarış</h2>
+    <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px"><i data-lucide="search" style="width:20px;height:20px;color:#8b5cf6"></i>Qlobal Axtarış</h2>
     <div class="card" style="margin-bottom:16px">
       <div class="card-bd">
         <input class="form-control" id="gs-input" placeholder="Ad / telefon / email / klinika adı..." oninput="onGlobalSearch(this.value)" autofocus>
@@ -342,7 +342,7 @@ tr:last-child td{border-bottom:none}
   <!-- CLINICS -->
   <div class="pane" id="pane-clinics">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Klinikalar</h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="building-2" style="width:20px;height:20px;color:#3b82f6"></i>Klinikalar</h2>
       <button class="btn btn-primary btn-sm" onclick="openAdd()">+ Yeni Klinika</button>
     </div>
     <div class="card">
@@ -358,7 +358,7 @@ tr:last-child td{border-bottom:none}
   <!-- EXPENSES -->
   <div class="pane" id="pane-expenses">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Mənim Xərclər</h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="receipt" style="width:20px;height:20px;color:#f59e0b"></i>Mənim Xərclər</h2>
       <button class="btn btn-primary btn-sm" onclick="openExpModal()">+ Xərc Əlavə Et</button>
     </div>
     <div class="stats" style="grid-template-columns:repeat(3,1fr)">
@@ -377,7 +377,7 @@ tr:last-child td{border-bottom:none}
   <!-- LOGS -->
   <div class="pane" id="pane-logs">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:800">Aktivlik Logu</h2>
+      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="scroll-text" style="width:20px;height:20px;color:#6b7fa3"></i>Aktivlik Logu</h2>
       <div style="display:flex;gap:8px">
         <select class="form-control" id="log-clinic-filter" style="max-width:180px;font-size:.8rem;padding:5px 8px" onchange="loadLogs()">
           <option value="">Bütün klinikalar</option>
@@ -395,7 +395,7 @@ tr:last-child td{border-bottom:none}
 
   <!-- SMTP -->
   <div class="pane" id="pane-smtp">
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">SMTP Ayarları</h2>
+    <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px"><i data-lucide="mail" style="width:20px;height:20px;color:#3b82f6"></i>SMTP Ayarları</h2>
     <div class="card" style="max-width:500px">
       <div class="card-bd">
         <div class="form-row">
@@ -413,7 +413,7 @@ tr:last-child td{border-bottom:none}
 
   <!-- PROFIL -->
   <div class="pane" id="pane-profile">
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">Profilim</h2>
+    <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px"><i data-lucide="user-circle" style="width:20px;height:20px;color:#a78bfa"></i>Profilim</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px">
       <div class="card">
         <div class="card-hd"><h3>Şəxsi Məlumatlar</h3></div>
@@ -538,6 +538,7 @@ function showPane(name,el){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'))
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
   document.getElementById('pane-'+name).classList.add('active')
+  if(window.lucide)setTimeout(()=>lucide.createIcons(),50)
   if(el) el.classList.add('active')
   if(name==='logs') loadLogs()
   if(name==='smtp') loadSmtp()
