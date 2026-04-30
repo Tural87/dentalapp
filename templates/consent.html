@@ -31,7 +31,7 @@ body{font-family:'Inter',Arial,sans-serif;color:#1a2235;background:#fff;padding:
 <button class="print-btn" onclick="window.print()">🖨️ Çap et / PDF</button>
 <div class="wrap">
   <div class="head">
-    <h1>{{ clinic.name if clinic else 'DentalApp' }}</h1>
+    <h1>{{ clinic.name if clinic else 'StomApp' }}</h1>
     <div class="sub">
       {% if clinic and clinic.address %}{{ clinic.address }} • {% endif %}
       {% if clinic and clinic.phone %}{{ clinic.phone }}{% endif %}
