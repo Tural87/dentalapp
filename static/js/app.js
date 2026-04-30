@@ -1,4 +1,4 @@
-﻿async function api(url, method='GET', body=null){
+async function api(url, method='GET', body=null){
   const opts={method,headers:{}}
   if(body){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body)}
   const r=await fetch(url,opts)
@@ -8,6 +8,8 @@
 
 function fmtDate(iso){
   if(!iso)return '—'
+  // Server UTC saxlayır, amma 'Z' işarəsi yoxdursa əlavə edirik ki, browser düzgün lokal saata çevirsin
+  if(typeof iso==='string'&&!iso.endsWith('Z')&&!iso.match(/[+-]\d{2}:?\d{2}$/)&&iso.includes('T'))iso=iso+'Z'
   const d=new Date(iso)
   if(isNaN(d))return '—'
   return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear()
@@ -31,6 +33,7 @@ document.addEventListener('DOMContentLoaded', initDateMasks)
 
 function fmtDateTime(iso){
   if(!iso)return '—'
+  if(typeof iso==='string'&&!iso.endsWith('Z')&&!iso.match(/[+-]\d{2}:?\d{2}$/)&&iso.includes('T'))iso=iso+'Z'
   const d=new Date(iso)
   if(isNaN(d))return '—'
   return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear()+' '+
