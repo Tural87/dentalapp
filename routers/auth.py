@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import secrets, string, json, os, smtplib, re
 from email.mime.text import MIMEText
 from urllib.parse import quote
+from security import client_ip
 
 auth = Blueprint('auth', __name__)
 
@@ -83,7 +84,7 @@ def login():
                 _send_email(email, 'DentalApp - Parol Sifirlanmasi', body)
                 _failed_attempts.pop(email, None)
                 reset_sent = True
-                s.add(models.ActivityLog(action='password_reset_request', detail=f'Reset gonderildi: {email}', ip=request.remote_addr))
+                s.add(models.ActivityLog(action='password_reset_request', detail=f'Reset gonderildi: {email}', ip=client_ip()))
                 s.commit()
             elif user and check_password_hash(user.password_hash, password):
                 try:
@@ -98,7 +99,7 @@ def login():
                 session['must_change_password'] = user.must_change_password
                 log = models.ActivityLog(clinic_id=user.clinic_id, user_id=user.id,
                     action='login', detail=f'{user.name} ({user.role}) daxil oldu',
-                    ip=request.remote_addr)
+                    ip=client_ip())
                 s.add(log); s.commit()
                 if user.role == 'superadmin':
                     return redirect('/superadmin')
@@ -117,7 +118,7 @@ def login():
                     error = f'Parol {count} dəfə yanlış daxil edildi. Parolu unutmusunuz?'
                 else:
                     error = f'Email və ya parol yanlışdır ({count}/{_OFFER_RESET_AFTER})'
-                s.add(models.ActivityLog(action='error', detail=f'Yanlis parol ({count}): {email}', ip=request.remote_addr))
+                s.add(models.ActivityLog(action='error', detail=f'Yanlis parol ({count}): {email}', ip=client_ip()))
                 s.commit()
             else:
                 try:
@@ -125,7 +126,7 @@ def login():
                     record_login_attempt(False)
                 except Exception: pass
                 error = 'Email və ya parol yanlışdır'
-                s.add(models.ActivityLog(action='error', detail=f'Tapilmayan email: {email}', ip=request.remote_addr))
+                s.add(models.ActivityLog(action='error', detail=f'Tapilmayan email: {email}', ip=client_ip()))
                 s.commit()
         finally:
             s.close()
@@ -139,7 +140,7 @@ def logout():
     try:
         log = models.ActivityLog(clinic_id=session.get('clinic_id'), user_id=session.get('user_id'),
             action='logout', detail=f"{session.get('user_name','')} çıxış etdi",
-            ip=request.remote_addr)
+            ip=client_ip())
         s.add(log); s.commit()
     except: pass
     finally: s.close()
