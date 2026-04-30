@@ -18,9 +18,16 @@ LOGIN_MAX_ATTEMPTS = 5      # 5 uğursuz cəhd
 LOGIN_WINDOW_SEC = 300      # 5 dəqiqə içində
 LOGIN_BLOCK_SEC = 900       # 15 dəqiqə blok
 
-def _client_ip():
-    return (request.headers.get('X-Forwarded-For') or
+def client_ip():
+    """Real istifadəçi IP-si (Cloudflare/Nginx proxy aralıqdadırsa header-dən)"""
+    return (request.headers.get('CF-Connecting-IP') or
+            request.headers.get('X-Real-IP') or
+            request.headers.get('X-Forwarded-For') or
             request.remote_addr or 'unknown').split(',')[0].strip()
+
+# Köhnə adı saxla geriyə uyğunluq üçün
+def _client_ip():
+    return client_ip()
 
 def check_login_rate_limit():
     """Login attempt'i yoxla. Bloklu isə True qaytarır."""
