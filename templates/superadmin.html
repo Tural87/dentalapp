@@ -139,6 +139,25 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 #pane-dashboard>.card:nth-child(6){grid-column:3!important}
 #pane-dashboard>.card:nth-child(6) table th:nth-child(2),#pane-dashboard>.card:nth-child(6) table th:nth-child(3),#pane-dashboard>.card:nth-child(6) table th:nth-child(4),#pane-dashboard>.card:nth-child(6) table td:nth-child(2),#pane-dashboard>.card:nth-child(6) table td:nth-child(3),#pane-dashboard>.card:nth-child(6) table td:nth-child(4){display:none!important}
 #pane-dashboard>.dash-grid:nth-child(7){grid-column:1/-1!important}
+
+/* Final visual pass against F:\superadmin.png */
+.sidebar-logo{position:relative!important;display:flex!important;align-items:center!important;gap:12px!important}
+.sidebar-logo::before{content:''!important;width:43px!important;height:43px!important;border-radius:14px!important;border:2px solid #516cff!important;box-shadow:0 0 28px rgba(86,98,255,.42)!important;background:radial-gradient(circle at 50% 22%,transparent 12px,rgba(81,108,255,.22) 13px)!important;flex:0 0 auto!important}
+.sidebar-logo::after{content:'StomApp\A Superadmin Panel'!important;white-space:pre!important;font-size:1.25rem!important;line-height:1.16!important;font-weight:800!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+.sidebar-bottom{gap:14px!important}
+.sidebar-bottom::before{content:'Dəstək mərkəzi\A Sualınız var? Biz kömək edək!\A\A Dəstəklə əlaqə'!important;white-space:pre!important;display:block!important;border:1px solid #21324c!important;border-radius:8px!important;background:rgba(9,20,36,.82)!important;padding:16px!important;color:#fff!important;font-size:.86rem!important;line-height:1.55!important}
+.sidebar-bottom::after{content:'Superadmin\A super@stomapp.az'!important;white-space:pre!important;display:block!important;border:1px solid #21324c!important;border-radius:8px!important;background:rgba(9,20,36,.82)!important;padding:15px 14px 15px 58px!important;color:#fff!important;font-size:.86rem!important;line-height:1.45!important;position:relative!important}
+.sa-topbar{display:flex!important}.welcome{display:flex!important}
+#pane-dashboard.active{padding:0 6px!important}
+#pane-dashboard>.card:nth-child(4),#pane-dashboard>div:nth-child(5),#pane-dashboard>.card:nth-child(6){min-height:300px!important}
+#pane-dashboard>.card:nth-child(4) .card-bd{padding:18px!important}
+#pane-dashboard>div:nth-child(5){height:300px!important;align-content:end!important}
+#pane-dashboard>.card:nth-child(6){height:300px!important}
+#pane-dashboard>.card:nth-child(6)>div:nth-child(2){max-height:238px!important}
+#pane-dashboard>div:nth-child(3){min-height:86px!important}
+#pane-dashboard>div:nth-child(3)>div:first-child{display:flex!important;align-items:center!important;gap:14px!important}
+.dash-grid .card{height:255px!important;overflow:hidden!important}
+.dash-grid .card>div:nth-child(2){max-height:196px!important}
 </style>
 </head>
 <body>
