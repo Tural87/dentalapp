@@ -176,6 +176,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 .btn{pointer-events:auto!important;position:relative!important;z-index:5!important}
 /* HTML-əsaslı layout - CSS grid hack-ı ləğv et */
 #pane-dashboard.active{display:block!important}
+/* dash-grid-ə yanlış tətbiq olunan nth-child(5) CSS-ni sıfırla */
+#pane-dashboard>.dash-grid{background:transparent!important;border:none!important;padding:0!important;position:static!important;box-shadow:none!important;height:auto!important;align-content:start!important;grid-template-columns:1fr 1fr!important}
+#pane-dashboard>.dash-grid::before,#pane-dashboard>.dash-grid::after{content:none!important;display:none!important}
 .overdue-narrow th:nth-child(2),.overdue-narrow th:nth-child(3),.overdue-narrow th:nth-child(4),
 .overdue-narrow td:nth-child(2),.overdue-narrow td:nth-child(3),.overdue-narrow td:nth-child(4){display:none!important}
 /* Nav ikonlarını görünümlü et */
@@ -857,9 +860,14 @@ function toggleFC(){
 
 function fcOpen(cid){
   _fcClinic=cid
+  if(!_fcOpen){_fcOpen=true;document.getElementById('fc-box').classList.add('open')}
   document.getElementById('fc-inp').style.display='flex'
   document.querySelectorAll('.fc-list-item').forEach(el=>el.classList.remove('active'))
-  event.target.classList.add('active')
+  const li=document.querySelector(`.fc-list-item[onclick="fcOpen(${cid})"]`)
+  if(li)li.classList.add('active')
+  const cl=_clinics.find(c=>c.id===cid)
+  const hd=document.querySelector('.fc-hd span')
+  if(hd)hd.textContent=(cl?cl.name:'Klinika')+' ilə Mesajlaşma'
   clearInterval(_fcInterval)
   fcFetch()
   _fcInterval=setInterval(fcFetch,4000)
@@ -921,13 +929,14 @@ async function fcSendFile(){
 }
 
 // unread check
+let _unreadClinics=[]
 async function checkUnread(){
   const res=await fetch('/api/chat/unread')
   const d=await res.json()
   const ids=d.clinic_ids||[]
+  _unreadClinics=ids
   const b=document.getElementById('fc-badge')
   if(b){if(ids.length){b.textContent=ids.length;b.style.display='block'}else b.style.display='none'}
-  // Topbar bell - tickets + chat unread göstər
   const ticketsBadge=document.getElementById('nav-tickets-badge')
   const ticketsCnt=ticketsBadge&&ticketsBadge.style.display!=='none'?parseInt(ticketsBadge.textContent)||0:0
   const overdueBadge=document.getElementById('nav-overdue-badge')
@@ -952,9 +961,16 @@ function toggleNotif(e){
   const overdueBadge=document.getElementById('nav-overdue-badge')
   const overdueCnt=overdueBadge&&overdueBadge.style.display!=='none'?parseInt(overdueBadge.textContent)||0:0
   const items=[]
-  if(ticketsCnt)items.push(`<div onclick="showPane('tickets');toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='transparent'"><i data-lucide="message-square" style="width:16px;height:16px;color:#f59e0b"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Açıq dəstək biletləri</div><div style="font-size:.7rem;color:#8a95ad">${ticketsCnt} bilet cavab gözləyir</div></div></div>`)
-  if(overdueCnt)items.push(`<div onclick="showPane('billing');toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='transparent'"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Borclu klinikalar</div><div style="font-size:.7rem;color:#8a95ad">${overdueCnt} klinika ödəniş gecikdirir</div></div></div>`)
-  pop.innerHTML=`<div style="font-size:.82rem;font-weight:600;margin-bottom:8px;padding:0 4px">Bildirişlər</div>${items.length?items.join(''):'<div style="text-align:center;color:#6b7fa3;padding:20px;font-size:.78rem">Yeni bildiriş yoxdur ✓</div>'}`
+  if(_unreadClinics.length){
+    _unreadClinics.forEach(cid=>{
+      const cl=_clinics.find(c=>c.id===cid)
+      const name=cl?cl.name:'Klinika #'+cid
+      items.push(`<div onclick="fcOpen(${cid});toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background='transparent'"><i data-lucide="message-circle" style="width:16px;height:16px;color:#3b82f6;flex-shrink:0"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">${name}</div><div style="font-size:.7rem;color:#8a95ad">Oxunmamış mesaj var</div></div></div>`)
+    })
+  }
+  if(ticketsCnt)items.push(`<div onclick="showPane('tickets',document.querySelector('.nav-item[onclick*=tickets]'));toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background='transparent'"><i data-lucide="message-square" style="width:16px;height:16px;color:#f59e0b;flex-shrink:0"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Açıq dəstək biletləri</div><div style="font-size:.7rem;color:#8a95ad">${ticketsCnt} bilet cavab gözləyir</div></div></div>`)
+  if(overdueCnt)items.push(`<div onclick="showPane('billing',document.querySelector('.nav-item[onclick*=billing]'));toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background='transparent'"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444;flex-shrink:0"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Borclu klinikalar</div><div style="font-size:.7rem;color:#8a95ad">${overdueCnt} klinika ödəniş gecikdirir</div></div></div>`)
+  pop.innerHTML=`<div style="font-size:.82rem;font-weight:700;margin-bottom:10px;padding:0 4px;color:#fff">Bildirişlər</div>${items.length?items.join(''):'<div style="text-align:center;color:#6b7fa3;padding:20px;font-size:.78rem">Yeni bildiriş yoxdur ✓</div>'}`
   document.body.appendChild(pop)
   if(window.lucide)setTimeout(()=>lucide.createIcons(),50)
   setTimeout(()=>{
