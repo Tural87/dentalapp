@@ -318,28 +318,30 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
       <!-- Billing xülasə -->
       <div class="card">
-        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="bar-chart-2" style="width:16px;height:16px;color:#22c55e"></i>Billing xülasə</h3><button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button></div>
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="bar-chart-2" style="width:16px;height:16px;color:#22c55e"></i>Billing xülasə</h3>
+          <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Bu ay</button>
+        </div>
         <div class="card-bd">
-          <div style="margin-bottom:16px">
-            <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Aylıq gəlir (MRR)</div>
-            <div id="bs-mrr" style="font-size:1.9rem;font-weight:800;color:#22c55e;line-height:1">—</div>
+          <div style="margin-bottom:6px">
+            <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Aylıq gəlir (MRR)</div>
+            <div id="bs-mrr" style="font-size:1.75rem;font-weight:800;color:#22c55e;line-height:1">—</div>
+            <div id="bs-mrr-trend" style="font-size:.75rem;color:#22c55e;margin-top:5px;display:flex;align-items:center;gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i><span>—</span></div>
           </div>
+          <svg viewBox="0 0 200 40" style="width:100%;height:36px;margin:8px 0 12px">
+            <polyline points="0,32 30,24 60,28 90,16 120,20 160,8 200,12" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="0,32 30,24 60,28 90,16 120,20 160,8 200,12" fill="url(#gfill)" stroke="none"/>
+            <defs><linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity=".18"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+          </svg>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(239,68,68,.06)">
-              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Borclu klinika</div>
-              <div id="bs-overdue-cnt" style="font-size:1.15rem;font-weight:700;color:#ef4444">—</div>
+              <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">Borclu klinikalar</div>
+              <div id="bs-overdue-cnt" style="font-size:1.2rem;font-weight:800;color:#ef4444">—</div>
             </div>
             <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(239,68,68,.06)">
-              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Ümumi borc (₼)</div>
-              <div id="bs-overdue-amt" style="font-size:1.15rem;font-weight:700;color:#ef4444">—</div>
-            </div>
-            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(34,197,94,.06)">
-              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Aktiv klinika</div>
-              <div id="bs-active" style="font-size:1.15rem;font-weight:700;color:#22c55e">—</div>
-            </div>
-            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(47,140,255,.06)">
-              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Online indi</div>
-              <div id="bs-online-now" style="font-size:1.15rem;font-weight:700;color:#2f8cff">—</div>
+              <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">Ümumi borc</div>
+              <div id="bs-overdue-amt" style="font-size:1.2rem;font-weight:800;color:#ef4444">—</div>
+              <div id="bs-active" style="display:none">—</div>
+              <div id="bs-online-now" style="display:none">—</div>
             </div>
           </div>
         </div>
@@ -362,19 +364,23 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
     <div class="dash-grid">
       <div class="card">
-        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="activity" style="width:16px;height:16px;color:#8b5cf6"></i>Son Aktivliklər</h3></div>
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="activity" style="width:16px;height:16px;color:#8b5cf6"></i>Son Aktivliklər</h3>
+          <button class="btn btn-secondary btn-sm" onclick="showPane('logs',document.querySelector('.nav-item[onclick*=logs]'))">Hamısına bax</button>
+        </div>
         <div style="overflow-y:auto;max-height:300px">
           <table>
-            <thead><tr><th>Tarix</th><th>Klinika</th><th>Əməliyyat</th><th>Detal</th></tr></thead>
+            <thead><tr><th>Tarix</th><th>İstifadəçi</th><th>Əməliyyat</th><th>Klinika</th><th>IP</th></tr></thead>
             <tbody id="dash-log-tbody"></tbody>
           </table>
         </div>
       </div>
       <div class="card">
-        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="building-2" style="width:16px;height:16px;color:#3b82f6"></i>Klinikalar</h3></div>
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="building-2" style="width:16px;height:16px;color:#3b82f6"></i>Klinika siyahısı</h3>
+          <button class="btn btn-secondary btn-sm" onclick="showPane('clinics',document.querySelector('.nav-item[onclick*=clinics]'))">Hamısı</button>
+        </div>
         <div style="overflow-y:auto;max-height:300px">
           <table>
-            <thead><tr><th>Ad</th><th>Plan</th><th>Admin</th><th>Həkim</th><th>Status</th></tr></thead>
+            <thead><tr><th>Klinika</th><th>Plan</th><th>Həkim</th><th>Status</th><th>Tarix</th></tr></thead>
             <tbody id="dash-clinic-tbody"></tbody>
           </table>
         </div>
@@ -732,10 +738,10 @@ async function load(){
   // dash clinic summary
   document.getElementById('dash-clinic-tbody').innerHTML=_clinics.map(c=>`<tr>
     <td style="font-weight:600">${c.name}</td>
-    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Başlanğıc':c.plan==='basic'?'Orta':'Böyük'}</span></td>
-    <td style="text-align:center">${c.admin_count||0}</td>
+    <td><span class="badge badge-${c.plan}">${c.plan==='free'?'Starter':c.plan==='basic'?'Basic':c.plan==='pro'?'Pro':'—'}</span></td>
     <td style="text-align:center">${c.doctor_count||0}</td>
     <td><span class="badge ${c.is_online?'badge-active':'badge-inactive'}">${c.is_online?'Online':'Offline'}</span></td>
+    <td style="font-size:.74rem;color:var(--muted)">${fmtDate(c.created_at)}</td>
   </tr>`).join('')
 
   // fc list
@@ -752,6 +758,7 @@ async function loadMonitor(){
     const res=await fetch('/api/superadmin/monitor')
     const d=await res.json()
     const clr=v=>v>80?'#ef4444':v>60?'#f97316':'#22c55e'
+    const lbl=v=>v>80?'Yüksək':v>60?'Yaxşı':'Normal'
     const bar=(v,c)=>`<div class="monitor-bar"><div class="monitor-fill" style="width:${v}%;background:${c}"></div></div>`
     const diskHtml=d.disks.map(dk=>`
       <div class="monitor-item">
@@ -761,14 +768,14 @@ async function loadMonitor(){
       </div>`).join('')
     document.getElementById('monitor-grid').innerHTML=`
       <div class="monitor-item">
-        <div class="monitor-label">🖥️ CPU — ${d.cpu_cores} core / ${d.cpu_threads} thread${d.cpu_freq?' @ '+d.cpu_freq+' GHz':''}</div>
+        <div class="monitor-label" style="display:flex;justify-content:space-between"><span>CPU</span><span style="font-size:.72rem;color:${clr(d.cpu)};font-weight:700">${lbl(d.cpu)}</span></div>
         ${bar(d.cpu,clr(d.cpu))}
         <div class="monitor-val" style="color:${clr(d.cpu)}">${d.cpu}%</div>
       </div>
       <div class="monitor-item">
-        <div class="monitor-label">🧠 RAM — ${d.ram_total} GB</div>
+        <div class="monitor-label" style="display:flex;justify-content:space-between"><span>RAM — ${d.ram_total} GB</span><span style="font-size:.72rem;color:${clr(d.ram)};font-weight:700">${lbl(d.ram)}</span></div>
         ${bar(d.ram,clr(d.ram))}
-        <div class="monitor-val" style="color:${clr(d.ram)}">${d.ram}% — İstifadə: ${d.ram_used} GB / Boş: ${d.ram_available} GB</div>
+        <div class="monitor-val" style="color:${clr(d.ram)}">${d.ram}%</div>
       </div>
       ${diskHtml}`
   }catch{
@@ -781,12 +788,19 @@ async function loadDashLogs(){
   const res=await fetch('/api/superadmin/logs')
   const logs=await res.json()
   const cm=Object.fromEntries(_clinics.map(c=>[c.id,c.name]))
-  document.getElementById('dash-log-tbody').innerHTML=logs.slice(0,20).map(l=>`<tr>
-    <td style="font-size:.75rem;color:#6b7fa3;white-space:nowrap">${fmtDateTime(l.created_at)}</td>
-    <td style="font-size:.78rem">${cm[l.clinic_id]||'—'}</td>
-    <td><span class="log-${l.action}" style="font-weight:700;font-size:.76rem">${l.action}</span></td>
-    <td style="font-size:.76rem;color:#9bb3d4;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.detail||'—'}</td>
-  </tr>`).join('')
+  const actColors={login:'#22c55e',logout:'#6b7fa3',error:'#ef4444',password_reset:'#f97316'}
+  document.getElementById('dash-log-tbody').innerHTML=logs.slice(0,20).map(l=>{
+    const dot=actColors[l.action]||'#3b82f6'
+    const user=l.user_name||l.detail?.split('(')[0]?.trim()||'—'
+    const action=l.detail||l.action
+    return`<tr>
+      <td style="font-size:.73rem;color:var(--muted);white-space:nowrap">${fmtDateTime(l.created_at)}</td>
+      <td style="font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0"></span>${user}</td>
+      <td style="font-size:.76rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${action}</td>
+      <td style="font-size:.76rem">${cm[l.clinic_id]||'—'}</td>
+      <td style="font-size:.72rem;color:var(--muted)">${l.ip||'—'}</td>
+    </tr>`
+  }).join('')
 }
 
 // ── CLINIC CRUD ───────────────────────────────────────────────────────────────
@@ -1223,9 +1237,9 @@ async function loadBilling(){
   // dashboard widget
   document.getElementById('bs-mrr').textContent=(sum.mrr||0).toFixed(2)+' ₼'
   document.getElementById('bs-overdue-cnt').textContent=sum.overdue_count||0
-  document.getElementById('bs-overdue-amt').textContent=(sum.overdue_amount||0).toFixed(0)
-  document.getElementById('bs-active').textContent=sum.active_clinics||0
-  const bsOn=document.getElementById('bs-online-now');if(bsOn)bsOn.textContent=sum.active_clinics||0
+  document.getElementById('bs-overdue-amt').textContent=(sum.overdue_amount||0).toFixed(2)+' ₼'
+  const trendEl=document.getElementById('bs-mrr-trend')
+  if(trendEl&&sum.mrr_prev!=null){const pct=sum.mrr_prev>0?((sum.mrr-sum.mrr_prev)/sum.mrr_prev*100).toFixed(1):null;if(pct)trendEl.querySelector('span').textContent=pct+'% bu ay'}
   // AI Insight (sadə hesablamalar əsasında)
   const ai1=document.getElementById('ai-insight-1')
   const ai2t=document.getElementById('ai-insight-2-title')
