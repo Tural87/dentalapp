@@ -184,6 +184,14 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 /* Nav ikonlarını görünümlü et */
 .nav-item i,.nav-item svg{width:18px!important;height:18px!important;flex-shrink:0;stroke:#7ea5d8!important;color:#7ea5d8!important}
 .nav-item.active i,.nav-item.active svg{stroke:#fff!important;color:#fff!important}
+/* Aktivlik və Xərclər stat sıraları */
+.stats{display:grid;gap:14px;margin-bottom:16px}
+.stat{background:linear-gradient(180deg,rgba(12,23,40,.9),rgba(6,14,26,.9));border:1px solid var(--line2);border-radius:8px;padding:18px 20px}
+.stat .stat-val{font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:4px}
+.stat .stat-lbl{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+/* Pane başlıqları üçün standart boşluq */
+.pane-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.pane-title{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--txt)}
 </style>
 </head>
 <body>
@@ -417,21 +425,35 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
   <!-- ACTIVITY -->
   <div class="pane" id="pane-activity">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="activity" style="width:20px;height:20px;color:#3b82f6"></i>Klinika Aktivlik Səviyyəsi <span style="font-weight:400;color:#6b7fa3;font-size:.78rem">(son 30 gün)</span></h2>
-      <button class="btn btn-secondary btn-sm" onclick="loadActivity()">Yenilə</button>
+    <div class="pane-header">
+      <h2 class="pane-title"><i data-lucide="activity" style="width:20px;height:20px;color:#3b82f6"></i>Klinika Aktivliyi <span style="font-weight:400;color:var(--muted);font-size:.78rem">son 30 gün</span></h2>
+      <button class="btn btn-secondary btn-sm" onclick="loadActivity()"><i data-lucide="refresh-cw" style="width:13px;height:13px"></i> Yenilə</button>
     </div>
     <div class="stats" style="grid-template-columns:repeat(4,1fr)">
-      <div class="stat"><div class="stat-val" id="act-high" style="color:#22c55e">—</div><div class="stat-lbl">Yüksək (20+)</div></div>
-      <div class="stat"><div class="stat-val" id="act-medium" style="color:#3b82f6">—</div><div class="stat-lbl">Orta (6-20)</div></div>
-      <div class="stat"><div class="stat-val" id="act-low" style="color:#f97316">—</div><div class="stat-lbl">Aşağı (1-5)</div></div>
-      <div class="stat"><div class="stat-val" id="act-dead" style="color:#ef4444">—</div><div class="stat-lbl">Ölü (0)</div></div>
+      <div class="stat" style="border-left:3px solid #22c55e">
+        <div class="stat-val" id="act-high" style="color:#22c55e">—</div>
+        <div class="stat-lbl">Yüksək (20+)</div>
+      </div>
+      <div class="stat" style="border-left:3px solid #3b82f6">
+        <div class="stat-val" id="act-medium" style="color:#3b82f6">—</div>
+        <div class="stat-lbl">Orta (6–20)</div>
+      </div>
+      <div class="stat" style="border-left:3px solid #f97316">
+        <div class="stat-val" id="act-low" style="color:#f97316">—</div>
+        <div class="stat-lbl">Aşağı (1–5)</div>
+      </div>
+      <div class="stat" style="border-left:3px solid #ef4444">
+        <div class="stat-val" id="act-dead" style="color:#ef4444">—</div>
+        <div class="stat-lbl">Fəaliyyətsiz (0)</div>
+      </div>
     </div>
     <div class="card">
-      <table>
-        <thead><tr><th>Klinika</th><th>Plan</th><th>Status</th><th>Ümumi pasiyent</th><th>Son 30 gün yeni</th><th>Son giriş</th><th>Səviyyə</th></tr></thead>
-        <tbody id="act-tbody"></tbody>
-      </table>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Klinika</th><th>Plan</th><th>Status</th><th>Ümumi pasiyent</th><th>Son 30 gün</th><th>Son giriş</th><th>Səviyyə</th></tr></thead>
+          <tbody id="act-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -486,20 +508,31 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
   <!-- EXPENSES -->
   <div class="pane" id="pane-expenses">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 style="font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:10px"><i data-lucide="receipt" style="width:20px;height:20px;color:#f59e0b"></i>Mənim Xərclər</h2>
-      <button class="btn btn-primary btn-sm" onclick="openExpModal()">+ Xərc Əlavə Et</button>
+    <div class="pane-header">
+      <h2 class="pane-title"><i data-lucide="receipt" style="width:20px;height:20px;color:#f59e0b"></i>Xərclər</h2>
+      <button class="btn btn-primary btn-sm" onclick="openExpModal()"><i data-lucide="plus" style="width:14px;height:14px"></i> Xərc Əlavə Et</button>
     </div>
     <div class="stats" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat"><div class="stat-val" id="exp-count">—</div><div class="stat-lbl">Ümumi qeyd</div></div>
-      <div class="stat"><div class="stat-val" id="exp-total">—</div><div class="stat-lbl">Ümumi (₼)</div></div>
-      <div class="stat"><div class="stat-val" id="exp-month">—</div><div class="stat-lbl">Bu ay (₼)</div></div>
+      <div class="stat" style="border-left:3px solid #6b7fa3">
+        <div class="stat-val" id="exp-count" style="color:var(--txt)">—</div>
+        <div class="stat-lbl">Ümumi qeyd</div>
+      </div>
+      <div class="stat" style="border-left:3px solid #ef4444">
+        <div class="stat-val" id="exp-total" style="color:#ef4444">—</div>
+        <div class="stat-lbl">Ümumi məbləğ (₼)</div>
+      </div>
+      <div class="stat" style="border-left:3px solid #f97316">
+        <div class="stat-val" id="exp-month" style="color:#f97316">—</div>
+        <div class="stat-lbl">Bu ay (₼)</div>
+      </div>
     </div>
     <div class="card">
-      <table>
-        <thead><tr><th>#</th><th>Məhsul</th><th>Firma</th><th>Kateqoriya</th><th>Tarix</th><th>Say</th><th>Qiymət</th><th>Cəm</th><th></th></tr></thead>
-        <tbody id="exp-tbody"></tbody>
-      </table>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Məhsul</th><th>Firma</th><th>Kateqoriya</th><th>Tarix</th><th>Say</th><th>Qiymət (₼)</th><th>Cəm (₼)</th><th></th></tr></thead>
+          <tbody id="exp-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
