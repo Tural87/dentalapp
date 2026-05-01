@@ -245,62 +245,56 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
     <!-- Stat kartlar -->
     <div class="stat-row">
       <div class="stat-card purple">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <div class="stat-icon purple"><i data-lucide="building-2" style="width:17px;height:17px"></i></div>
-          <svg width="56" height="22" viewBox="0 0 56 22"><polyline points="0,18 10,14 20,16 30,10 40,12 56,4" fill="none" stroke="#a78bfa" stroke-width="1.5"/></svg>
-        </div>
+        <div class="stat-icon purple" style="margin-bottom:12px"><i data-lucide="building-2" style="width:17px;height:17px"></i></div>
         <div class="stat-lbl">Klinika sayı</div>
         <div class="stat-val" id="st-total">—</div>
-        <div style="font-size:.7rem;color:#22c55e;margin-top:4px;display:flex;align-items:center;gap:3px"><i data-lucide="trending-up" style="width:10px;height:10px"></i>Aktiv</div>
+        <div style="font-size:.8rem;color:#22c55e;margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:600"><i data-lucide="trending-up" style="width:12px;height:12px"></i>Aktiv</div>
       </div>
 
       <div class="stat-card blue">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <div class="stat-icon"><i data-lucide="activity" style="width:17px;height:17px"></i></div>
-          <svg width="56" height="22" viewBox="0 0 56 22"><polyline points="0,16 10,18 20,12 30,14 40,8 56,6" fill="none" stroke="#60a5fa" stroke-width="1.5"/></svg>
-        </div>
+        <div class="stat-icon" style="margin-bottom:12px"><i data-lucide="activity" style="width:17px;height:17px"></i></div>
         <div class="stat-lbl">Online klinikalar</div>
         <div class="stat-val" id="st-active">—</div>
-        <div style="font-size:.7rem;color:#22c55e;margin-top:4px;display:flex;align-items:center;gap:3px"><i data-lucide="trending-up" style="width:10px;height:10px"></i>Real-time</div>
+        <div style="font-size:.8rem;color:#22c55e;margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:600"><i data-lucide="radio" style="width:12px;height:12px"></i>Real-time</div>
       </div>
 
       <div class="stat-card green">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <div class="stat-icon green"><i data-lucide="users" style="width:17px;height:17px"></i></div>
-          <svg width="56" height="22" viewBox="0 0 56 22"><polyline points="0,18 10,12 20,14 30,8 40,10 56,4" fill="none" stroke="#4ade80" stroke-width="1.5"/></svg>
-        </div>
+        <div class="stat-icon green" style="margin-bottom:12px"><i data-lucide="users" style="width:17px;height:17px"></i></div>
         <div class="stat-lbl">Həkim sayı</div>
         <div class="stat-val" id="st-doctors">—</div>
-        <div style="font-size:.7rem;color:#22c55e;margin-top:4px;display:flex;align-items:center;gap:3px"><i data-lucide="trending-up" style="width:10px;height:10px"></i>Bütün klinikalarda</div>
+        <div style="font-size:.8rem;color:#22c55e;margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:600"><i data-lucide="trending-up" style="width:12px;height:12px"></i>Bütün klinikalarda</div>
       </div>
 
       <div class="stat-card amber">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <div class="stat-icon amber"><i data-lucide="crown" style="width:17px;height:17px"></i></div>
-          <svg width="56" height="22" viewBox="0 0 56 22"><polyline points="0,8 10,10 20,12 30,16 40,14 56,18" fill="none" stroke="#fbbf24" stroke-width="1.5"/></svg>
-        </div>
+        <div class="stat-icon amber" style="margin-bottom:12px"><i data-lucide="crown" style="width:17px;height:17px"></i></div>
         <div class="stat-lbl">Starter plan</div>
         <div class="stat-val" id="st-free">—</div>
-        <div style="font-size:.7rem;color:#f59e0b;margin-top:4px;display:flex;align-items:center;gap:3px"><i data-lucide="info" style="width:10px;height:10px"></i>Pulsuz istifadə</div>
+        <div style="font-size:.8rem;color:#f59e0b;margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:600"><i data-lucide="info" style="width:12px;height:12px"></i>Pulsuz istifadə</div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,159,28,.2);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.72rem;color:var(--muted)">Borclu klinikalar</span>
+          <span id="st-free-overdue" style="font-size:.82rem;font-weight:700;color:#ef4444">—</span>
+        </div>
       </div>
     </div>
 
     <!-- AI Insight -->
-    <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:12px;padding:14px 18px;display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:14px;align-items:center;margin-bottom:14px">
-      <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.3)"><i data-lucide="sparkles" style="width:22px;height:22px"></i></div>
-      <div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-size:.86rem;font-weight:600;color:var(--tx)">AI Insight</span><span style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:4px;font-weight:500">Yeni</span></div>
-        <div id="ai-insight-1" style="font-size:.76rem;color:var(--tx2)">Yüklənir...</div>
+    <div style="background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#8b5cf6,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0"><i data-lucide="sparkles" style="width:16px;height:16px"></i></div>
+      <div style="flex:1;min-width:120px">
+        <div style="display:flex;align-items:center;gap:5px"><span style="font-size:.82rem;font-weight:700">AI Insight</span><span style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;font-size:.6rem;padding:1px 5px;border-radius:4px">Yeni</span></div>
+        <div id="ai-insight-1" style="font-size:.73rem;color:var(--muted)">Yüklənir...</div>
       </div>
-      <div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="width:24px;height:24px;border-radius:6px;background:rgba(239,68,68,.2);display:inline-flex;align-items:center;justify-content:center;color:#ef4444"><i data-lucide="dollar-sign" style="width:13px;height:13px"></i></span><span id="ai-insight-2-title" style="font-size:.86rem;font-weight:600">—</span></div>
-        <div id="ai-insight-2" style="font-size:.7rem;color:var(--mu);margin-left:30px">—</div>
+      <div style="height:32px;width:1px;background:rgba(139,92,246,.2);flex-shrink:0"></div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:140px">
+        <span style="width:20px;height:20px;border-radius:5px;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;color:#ef4444;flex-shrink:0"><i data-lucide="dollar-sign" style="width:11px;height:11px"></i></span>
+        <div><div id="ai-insight-2-title" style="font-size:.8rem;font-weight:700">—</div><div id="ai-insight-2" style="font-size:.7rem;color:var(--muted)">—</div></div>
       </div>
-      <div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="width:24px;height:24px;border-radius:6px;background:rgba(34,197,94,.2);display:inline-flex;align-items:center;justify-content:center;color:#22c55e"><i data-lucide="trending-up" style="width:13px;height:13px"></i></span><span style="font-size:.86rem;font-weight:600">Sistem statusu</span></div>
-        <div id="ai-insight-3" style="font-size:.7rem;color:var(--mu);margin-left:30px">Yoxlanılır...</div>
+      <div style="height:32px;width:1px;background:rgba(139,92,246,.2);flex-shrink:0"></div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:140px">
+        <span style="width:20px;height:20px;border-radius:5px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;color:#22c55e;flex-shrink:0"><i data-lucide="trending-up" style="width:11px;height:11px"></i></span>
+        <div><div style="font-size:.8rem;font-weight:700">Sistem statusu</div><div id="ai-insight-3" style="font-size:.7rem;color:var(--muted)">Yoxlanılır...</div></div>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Daha ətraflı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
+      <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Daha ətraflı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
     </div>
 
     <!-- 3-sütunlu panel: Server | Billing | Borclu -->
@@ -1238,6 +1232,7 @@ async function loadBilling(){
   document.getElementById('bs-mrr').textContent=(sum.mrr||0).toFixed(2)+' ₼'
   document.getElementById('bs-overdue-cnt').textContent=sum.overdue_count||0
   document.getElementById('bs-overdue-amt').textContent=(sum.overdue_amount||0).toFixed(2)+' ₼'
+  const sfOvEl=document.getElementById('st-free-overdue');if(sfOvEl)sfOvEl.textContent=sum.overdue_count||0
   const trendEl=document.getElementById('bs-mrr-trend')
   if(trendEl&&sum.mrr_prev!=null){const pct=sum.mrr_prev>0?((sum.mrr-sum.mrr_prev)/sum.mrr_prev*100).toFixed(1):null;if(pct)trendEl.querySelector('span').textContent=pct+'% bu ay'}
   // AI Insight (sadə hesablamalar əsasında)
