@@ -20,13 +20,18 @@ function setDateVal(id,iso){const el=document.getElementById(id);if(el)el.value=
 function getDateVal(id){return dmyToIso((document.getElementById(id)||{}).value||'')}
 function initDateMasks(){
   document.querySelectorAll('input[type=date]').forEach(function(el){
-    el.type='text';el.placeholder='DD.MM.YYYY';el.setAttribute('maxlength','10')
-    el.addEventListener('input',function(){
-      let v=this.value.replace(/\D/g,'')
-      if(v.length>2)v=v.slice(0,2)+'.'+v.slice(2)
-      if(v.length>5)v=v.slice(0,5)+'.'+v.slice(5)
-      this.value=v.slice(0,10)
-    })
+    if(typeof flatpickr!=='undefined'){
+      el.type='text'
+      flatpickr(el,{dateFormat:'d.m.Y',allowInput:true,locale:flatpickr.l10ns.az||{firstDayOfWeek:1},disableMobile:true})
+    } else {
+      el.type='text';el.placeholder='DD.MM.YYYY';el.setAttribute('maxlength','10')
+      el.addEventListener('input',function(){
+        let v=this.value.replace(/\D/g,'')
+        if(v.length>2)v=v.slice(0,2)+'.'+v.slice(2)
+        if(v.length>5)v=v.slice(0,5)+'.'+v.slice(5)
+        this.value=v.slice(0,10)
+      })
+    }
   })
 }
 document.addEventListener('DOMContentLoaded', initDateMasks)

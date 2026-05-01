@@ -6,6 +6,7 @@
 <title>Superadmin | StomApp</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/theme.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#030914;--panel:#07111f;--panel2:#0b1525;--line:#20314d;--line2:#2a3d63;--txt:#eef4ff;--tx:#eef4ff;--tx2:#c8d5ea;--muted:#8fa3c2;--mu:#8fa3c2;--border:#20314d;--soft:#c8d5ea;--blue:#2f8cff;--violet:#7047ff;--green:#00e69a;--red:#ff475d;--amber:#ff9f1c}
@@ -223,8 +224,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   <div class="pane active" id="pane-dashboard">
     <div class="welcome">
       <div>
-        <h1>Xos geldiniz, Superadmin!</h1>
-        <p>Sistemin umumi veziyyeti</p>
+        <h1>Xoş gəldiniz, Superadmin!</h1>
+        <p>Sistemin ümumi vəziyyəti</p>
       </div>
       <div class="date-chip"><i data-lucide="calendar-days" style="width:16px"></i>18 May 2025 <i data-lucide="chevron-down" style="width:15px"></i></div>
     </div>
@@ -1508,9 +1509,15 @@ async function changePass(){
 
 ...
 </script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/az.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('input[type=date]').forEach(function(el){
+    el.type='text';
+    flatpickr(el,{dateFormat:'d.m.Y',allowInput:true,locale:flatpickr.l10ns.az||{firstDayOfWeek:1},disableMobile:true});
+  });
   const nav=[['billing','Abunələr'],['tickets','Dəstək biletləri'],['search','Qlobal axtarış'],['expenses','Xərclər']];
   nav.forEach(([pane,text])=>{
     const b=[...document.querySelectorAll('.nav-item')].find(x=>x.getAttribute('onclick')&&x.getAttribute('onclick').includes("'"+pane+"'"));

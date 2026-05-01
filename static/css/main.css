@@ -47,7 +47,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--tx);background:var(--b
 .stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--B),var(--purple))}
 .stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
 .stat-icon svg{width:20px;height:20px;stroke-width:2}
-.stat-val{font-size:2rem;font-weight:900;color:var(--tx);line-height:1}
+.stat-val{font-size:1.5rem;font-weight:800;color:var(--tx);line-height:1}
 .stat-lbl{font-size:0.875rem;color:var(--mu);margin-top:4px;font-weight:600}
 
 /* BUTTONS */
@@ -162,7 +162,7 @@ tr:hover td{background:rgba(26,34,53,.6)}
 
 /* EMPTY */
 .empty{text-align:center;padding:44px 20px;color:var(--mu)}
-.empty-icon{font-size:2.2rem;margin-bottom:10px;opacity:.5}
+.empty-icon{font-size:1.6rem;margin-bottom:10px;opacity:.5;display:flex;justify-content:center}
 .empty-text{font-size:.9rem;font-weight:600}
 .empty-sub{font-size:0.875rem;margin-top:3px;opacity:.7}
 
@@ -184,3 +184,17 @@ tr:hover td{background:rgba(26,34,53,.6)}
   .main{margin-left:60px}
   .wrap{padding:16px 14px 50px}
 }
+
+/* flatpickr dark theme override */
+.flatpickr-calendar{background:var(--bg3);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);color:var(--tx)}
+.flatpickr-month,.flatpickr-weekdays,.flatpickr-day{color:var(--tx)}
+.flatpickr-prev-month,.flatpickr-next-month{fill:var(--mu)}
+.flatpickr-prev-month:hover,.flatpickr-next-month:hover{fill:var(--tx)}
+.flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover{background:var(--bg4);border-color:var(--border)}
+.flatpickr-day.selected,.flatpickr-day.selected:hover{background:var(--B);border-color:var(--B);color:#fff}
+.flatpickr-day.today{border-color:var(--B)}
+.flatpickr-day.prevMonthDay,.flatpickr-day.nextMonthDay{color:var(--mu)}
+.flatpickr-weekday{color:var(--mu);font-weight:600}
+.numInputWrapper span{border-color:var(--border)}
+.flatpickr-current-month .flatpickr-monthDropdown-months{background:var(--bg3);color:var(--tx)}
+.flatpickr-current-month input.cur-year{color:var(--tx)}
