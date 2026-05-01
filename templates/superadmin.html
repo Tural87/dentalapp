@@ -174,6 +174,10 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 #pane-dashboard>div:nth-child(5) .stat-card{min-height:86px!important;padding:12px!important}.stat-card #bs-mrr{font-size:1.35rem!important}
 .card-hd{height:56px!important}.card-hd h3{font-size:.96rem!important}th{font-size:.72rem!important}td{font-size:.8rem!important}
 .btn{pointer-events:auto!important;position:relative!important;z-index:5!important}
+/* HTML-əsaslı layout - CSS grid hack-ı ləğv et */
+#pane-dashboard.active{display:block!important}
+.overdue-narrow th:nth-child(2),.overdue-narrow th:nth-child(3),.overdue-narrow th:nth-child(4),
+.overdue-narrow td:nth-child(2),.overdue-narrow td:nth-child(3),.overdue-narrow td:nth-child(4){display:none!important}
 </style>
 </head>
 <body>
@@ -290,51 +294,61 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
       <button class="btn btn-primary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Daha ətraflı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
     </div>
 
-    <!-- Server vəziyyəti -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="server" style="width:16px;height:16px;color:#3b82f6"></i>Server Vəziyyəti</h3><button class="btn btn-secondary btn-sm" onclick="loadMonitor()"><i data-lucide="refresh-cw" style="width:12px;height:12px"></i> Yenilə</button></div>
-      <div class="card-bd">
-        <div class="monitor-grid" id="monitor-grid">
-          <div style="color:#6b7fa3;font-size:.82rem">Yüklənir...</div>
+    <!-- 3-sütunlu panel: Server | Billing | Borclu -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;margin-bottom:14px">
+
+      <!-- Server vəziyyəti -->
+      <div class="card">
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="server" style="width:16px;height:16px;color:#3b82f6"></i>Server Vəziyyəti</h3><button class="btn btn-secondary btn-sm" onclick="loadMonitor()"><i data-lucide="refresh-cw" style="width:12px;height:12px"></i> Yenilə</button></div>
+        <div class="card-bd">
+          <div class="monitor-grid" id="monitor-grid">
+            <div style="color:#6b7fa3;font-size:.82rem">Yüklənir...</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Billing kartlar -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px">
-      <div class="stat-card green">
-        <div class="stat-icon green" style="margin-bottom:10px"><i data-lucide="dollar-sign" style="width:17px;height:17px"></i></div>
-        <div class="stat-lbl">Aylıq gəlir (MRR)</div>
-        <div class="stat-val" id="bs-mrr" style="color:#22c55e">—</div>
+      <!-- Billing xülasə -->
+      <div class="card">
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="bar-chart-2" style="width:16px;height:16px;color:#22c55e"></i>Billing xülasə</h3><button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button></div>
+        <div class="card-bd">
+          <div style="margin-bottom:16px">
+            <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Aylıq gəlir (MRR)</div>
+            <div id="bs-mrr" style="font-size:1.9rem;font-weight:800;color:#22c55e;line-height:1">—</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(239,68,68,.06)">
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Borclu klinika</div>
+              <div id="bs-overdue-cnt" style="font-size:1.15rem;font-weight:700;color:#ef4444">—</div>
+            </div>
+            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(239,68,68,.06)">
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Ümumi borc (₼)</div>
+              <div id="bs-overdue-amt" style="font-size:1.15rem;font-weight:700;color:#ef4444">—</div>
+            </div>
+            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(34,197,94,.06)">
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Aktiv klinika</div>
+              <div id="bs-active" style="font-size:1.15rem;font-weight:700;color:#22c55e">—</div>
+            </div>
+            <div style="border:1px solid var(--line2);border-radius:8px;padding:11px;background:rgba(47,140,255,.06)">
+              <div style="font-size:.7rem;color:var(--muted);margin-bottom:3px">Online indi</div>
+              <div id="bs-online-now" style="font-size:1.15rem;font-weight:700;color:#2f8cff">—</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card red">
-        <div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);margin-bottom:10px"><i data-lucide="alert-triangle" style="width:17px;height:17px"></i></div>
-        <div class="stat-lbl">Borclu klinika</div>
-        <div class="stat-val" id="bs-overdue-cnt" style="color:#ef4444">—</div>
-      </div>
-      <div class="stat-card red">
-        <div class="stat-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444);margin-bottom:10px"><i data-lucide="banknote" style="width:17px;height:17px"></i></div>
-        <div class="stat-lbl">Ümumi borc (₼)</div>
-        <div class="stat-val" id="bs-overdue-amt" style="color:#ef4444">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="margin-bottom:10px"><i data-lucide="check-circle" style="width:17px;height:17px"></i></div>
-        <div class="stat-lbl">Aktiv klinika</div>
-        <div class="stat-val" id="bs-active">—</div>
-      </div>
-    </div>
 
-    <!-- Borclu klinikalar -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444"></i>Borclu Klinikalar</h3>
-        <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
+      <!-- Borclu klinikalar -->
+      <div class="card">
+        <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444"></i>Borclu Klinikalar</h3>
+          <button class="btn btn-secondary btn-sm" onclick="showPane('billing',document.querySelectorAll('.nav-item')[3])">Hamısı <i data-lucide="arrow-right" style="width:11px;height:11px"></i></button>
+        </div>
+        <div style="overflow-y:auto;max-height:260px">
+          <table class="overdue-narrow">
+            <thead><tr><th>Klinika</th><th>Plan</th><th>Aylıq</th><th>Növbəti ödəniş</th><th>Gecikmə</th><th>Borc</th><th></th></tr></thead>
+            <tbody id="dash-overdue-tbody"></tbody>
+          </table>
+        </div>
       </div>
-      <div style="overflow-x:auto;max-height:280px">
-        <table>
-          <thead><tr><th>Klinika</th><th>Plan</th><th>Aylıq</th><th>Növbəti ödəniş</th><th>Gecikmə</th><th>Borc</th><th></th></tr></thead>
-          <tbody id="dash-overdue-tbody"></tbody>
-        </table>
-      </div>
+
     </div>
 
     <div class="dash-grid">
@@ -1171,6 +1185,7 @@ async function loadBilling(){
   document.getElementById('bs-overdue-cnt').textContent=sum.overdue_count||0
   document.getElementById('bs-overdue-amt').textContent=(sum.overdue_amount||0).toFixed(0)
   document.getElementById('bs-active').textContent=sum.active_clinics||0
+  const bsOn=document.getElementById('bs-online-now');if(bsOn)bsOn.textContent=sum.active_clinics||0
   // AI Insight (sadə hesablamalar əsasında)
   const ai1=document.getElementById('ai-insight-1')
   const ai2t=document.getElementById('ai-insight-2-title')
