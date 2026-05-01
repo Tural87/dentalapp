@@ -178,6 +178,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 #pane-dashboard.active{display:block!important}
 .overdue-narrow th:nth-child(2),.overdue-narrow th:nth-child(3),.overdue-narrow th:nth-child(4),
 .overdue-narrow td:nth-child(2),.overdue-narrow td:nth-child(3),.overdue-narrow td:nth-child(4){display:none!important}
+/* Nav ikonlarını görünümlü et */
+.nav-item i,.nav-item svg{width:18px!important;height:18px!important;flex-shrink:0;stroke:#7ea5d8!important;color:#7ea5d8!important}
+.nav-item.active i,.nav-item.active svg{stroke:#fff!important;color:#fff!important}
 </style>
 </head>
 <body>
@@ -231,7 +234,7 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
         <h1>Xoş gəldiniz, Superadmin!</h1>
         <p>Sistemin ümumi vəziyyəti</p>
       </div>
-      <div class="date-chip"><i data-lucide="calendar-days" style="width:16px"></i>18 May 2025 <i data-lucide="chevron-down" style="width:15px"></i></div>
+      <div class="date-chip"><i data-lucide="calendar-days" style="width:16px"></i><span id="sa-today-date"></span></div>
     </div>
     <!-- Stat kartlar -->
     <div class="stat-row">
@@ -1536,13 +1539,17 @@ document.addEventListener('DOMContentLoaded',function(){
   const nav=[['billing','Abunələr'],['tickets','Dəstək biletləri'],['search','Qlobal axtarış'],['expenses','Xərclər']];
   nav.forEach(([pane,text])=>{
     const b=[...document.querySelectorAll('.nav-item')].find(x=>x.getAttribute('onclick')&&x.getAttribute('onclick').includes("'"+pane+"'"));
-    if(!b)return; const icon=b.querySelector('i'), badge=b.querySelector('.nav-badge'); b.textContent=''; if(icon)b.append(icon); b.append(' '+text+' '); if(badge)b.append(badge);
+    if(!b)return; const icon=b.querySelector('i,svg'), badge=b.querySelector('.nav-badge'); b.textContent=''; if(icon)b.append(icon); b.append(' '+text+' '); if(badge)b.append(badge);
   });
   const map=[['st-total','Klinika sayı'],['st-doctors','Həkim sayı'],['bs-mrr','Aylıq gəlir (MRR)'],['bs-overdue-amt','Ümumi borc (₼)']];
   map.forEach(([id,label])=>{const e=document.getElementById(id); if(e&&e.previousElementSibling)e.previousElementSibling.textContent=label;});
   document.querySelectorAll('.stat-val').forEach(e=>{if(e.textContent.includes('в'))e.textContent='—'});
+  // Tarixi dinamik göstər
+  const sd=document.getElementById('sa-today-date');
+  if(sd){const d=new Date();const ay=['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];sd.textContent=d.getDate()+' '+ay[d.getMonth()]+' '+d.getFullYear();}
+  // Lucide-ı nav rebuild-dən SONRA çağır
+  if(window.lucide)lucide.createIcons();
 });
 </script>
-<script>lucide.createIcons();</script>
 </body>
 </html>
