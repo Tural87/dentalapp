@@ -205,7 +205,6 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('billing',this)"><i data-lucide="dollar-sign" style="width:15px;height:15px;flex-shrink:0"></i> Abunələr <span id="nav-overdue-badge" class="nav-badge" style="display:none">0</span></button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('activity',this)"><i data-lucide="activity" style="width:15px;height:15px;flex-shrink:0"></i> Aktivlik</button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('tickets',this)"><i data-lucide="message-square" style="width:15px;height:15px;flex-shrink:0"></i> Dəstək <span id="nav-tickets-badge" class="nav-badge" style="display:none">0</span></button>
-    <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('search',this)"><i data-lucide="search" style="width:15px;height:15px;flex-shrink:0"></i> Qlobal Axtarış</button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('expenses',this)"><i data-lucide="receipt" style="width:15px;height:15px;flex-shrink:0"></i> Xərclər</button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('logs',this)"><i data-lucide="scroll-text" style="width:15px;height:15px;flex-shrink:0"></i> Loglar</button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('smtp',this)"><i data-lucide="mail" style="width:15px;height:15px;flex-shrink:0"></i> SMTP</button>
@@ -218,11 +217,7 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
 <div class="main">
   <div class="sa-topbar">
-    <label class="sa-search">
-      <i data-lucide="search"></i>
-      <input placeholder="Axtaris..." oninput="onGlobalSearch(this.value)">
-      <span style="font-size:.75rem;color:#c6d4ee">Ctrl + K</span>
-    </label>
+    <div style="font-size:.95rem;font-weight:700;color:var(--txt)">StomApp <span style="font-size:.75rem;font-weight:400;color:var(--muted)">Superadmin Panel</span></div>
     <div class="sa-top-actions">
       <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər"><i data-lucide="bell"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
       <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn"><i data-lucide="moon"></i></button>
@@ -479,16 +474,6 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   </div>
 
   <!-- GLOBAL SEARCH -->
-  <div class="pane" id="pane-search">
-    <h2 style="font-size:1.1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px"><i data-lucide="search" style="width:20px;height:20px;color:#8b5cf6"></i>Qlobal Axtarış</h2>
-    <div class="card" style="margin-bottom:16px">
-      <div class="card-bd">
-        <input class="form-control" id="gs-input" placeholder="Ad / telefon / email / klinika adı..." oninput="onGlobalSearch(this.value)" autofocus>
-        <div style="font-size:.74rem;color:#6b7fa3;margin-top:6px">Bütün klinikalar üzrə pasiyent, həkim və klinika axtarışı</div>
-      </div>
-    </div>
-    <div id="gs-results"></div>
-  </div>
 
   <!-- CLINICS -->
   <div class="pane" id="pane-clinics">
@@ -901,6 +886,9 @@ function fcOpen(cid){
   const cl=_clinics.find(c=>c.id===cid)
   const hd=document.querySelector('.fc-hd span')
   if(hd)hd.textContent=(cl?cl.name:'Klinika')+' ilə Mesajlaşma'
+  // Oxundu — bildirişdən çıxar
+  _unreadClinics=_unreadClinics.filter(id=>id!==cid)
+  checkUnread()
   clearInterval(_fcInterval)
   fcFetch()
   _fcInterval=setInterval(fcFetch,4000)
@@ -1585,7 +1573,7 @@ document.addEventListener('DOMContentLoaded',function(){
     el.type='text';
     flatpickr(el,{dateFormat:'d.m.Y',allowInput:true,locale:flatpickr.l10ns.az||{firstDayOfWeek:1},disableMobile:true});
   });
-  const nav=[['billing','Abunələr'],['tickets','Dəstək biletləri'],['search','Qlobal axtarış'],['expenses','Xərclər']];
+  const nav=[['billing','Abunələr'],['tickets','Dəstək biletləri'],['expenses','Xərclər']];
   nav.forEach(([pane,text])=>{
     const b=[...document.querySelectorAll('.nav-item')].find(x=>x.getAttribute('onclick')&&x.getAttribute('onclick').includes("'"+pane+"'"));
     if(!b)return; const icon=b.querySelector('i,svg'), badge=b.querySelector('.nav-badge'); b.textContent=''; if(icon)b.append(icon); b.append(' '+text+' '); if(badge)b.append(badge);

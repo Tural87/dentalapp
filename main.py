@@ -364,6 +364,11 @@ def get_messages(cid):
                 if m.sender_role == "superadmin" and not m.is_read:
                     m.is_read = True
             s.commit()
+        elif is_superadmin():
+            for m in msgs:
+                if m.sender_role == "admin" and not m.is_read:
+                    m.is_read = True
+            s.commit()
         return jsonify([m.to_dict() for m in msgs])
     finally:
         s.close()
