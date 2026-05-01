@@ -31,23 +31,28 @@
   --grad-gc:linear-gradient(135deg,#22c55e,#06b6d4);
   --grad-ar:linear-gradient(135deg,#f59e0b,#ef4444);
   /* Şriftlər */
-  --fs-xs:.72rem;
-  --fs-sm:.8rem;
-  --fs-base:.86rem;
-  --fs-md:.95rem;
-  --fs-lg:1.1rem;
+  --fs-xs:.7rem;
+  --fs-sm:.78rem;
+  --fs-base:.83rem;
+  --fs-md:.92rem;
+  --fs-lg:1.05rem;
+  --fs-xl:1.2rem;
 }
 
 *{box-sizing:border-box}
 html,body{background:var(--bg0)!important;color:var(--tx)!important}
 body{
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif!important;
+  font-family:'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif!important;
   font-size:var(--fs-base)!important;
   background:radial-gradient(ellipse at top left,rgba(59,130,246,.08),transparent 50%),
              radial-gradient(ellipse at bottom right,rgba(139,92,246,.08),transparent 50%),
              var(--bg0)!important;
   min-height:100vh;
 }
+h1{font-size:var(--fs-xl)!important}
+h2{font-size:var(--fs-lg)!important;font-weight:600!important}
+h3{font-size:var(--fs-md)!important;font-weight:600!important}
+h4{font-size:var(--fs-base)!important;font-weight:600!important}
 
 /* iOS auto-zoom */
 input,select,textarea,.form-control{font-size:16px!important}
@@ -61,36 +66,39 @@ input,select,textarea,.form-control{font-size:16px!important}
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
   border-right:1px solid var(--border)!important;
-  padding:14px 12px!important;
+  padding:12px 10px!important;
+  width:200px!important;
 }
-.sidebar-logo{padding:6px 8px 14px!important;border-bottom:1px solid var(--border)!important;margin-bottom:14px!important}
+.main{margin-left:200px!important}
+.sidebar-logo{padding:4px 8px 12px!important;border-bottom:1px solid var(--border)!important;margin-bottom:10px!important}
 .sidebar-logo a{display:flex!important;align-items:center;gap:8px;text-decoration:none;color:var(--tx)}
-.sidebar-logo img{width:32px!important;height:32px!important;border-radius:8px;background:var(--grad-bp);padding:4px}
-.sidebar-logo .logo-text{font-size:var(--fs-md);font-weight:600;color:var(--tx)}
-.sidebar-nav{display:flex;flex-direction:column;gap:2px}
+.sidebar-logo img{width:30px!important;height:30px!important;border-radius:8px;padding:0!important}
+.sidebar-logo .logo-text{font-size:var(--fs-md)!important;font-weight:600;color:var(--tx);background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sidebar-logo .logo-sub{font-size:.62rem!important;color:var(--mu2)!important;line-height:1.1}
+.sidebar-nav{display:flex;flex-direction:column;gap:1px}
 .nav-item{
-  display:flex!important;align-items:center;gap:10px;
-  padding:8px 10px!important;border-radius:8px!important;
-  color:var(--tx2)!important;font-size:var(--fs-base)!important;font-weight:500;
-  text-decoration:none;transition:all .2s;border:none!important;background:transparent!important;
+  display:flex!important;align-items:center;gap:9px;
+  padding:7px 10px!important;border-radius:7px!important;
+  color:var(--tx2)!important;font-size:var(--fs-sm)!important;font-weight:500;
+  text-decoration:none;transition:all .15s;border:none!important;background:transparent!important;
 }
 .nav-item:hover{background:rgba(255,255,255,.04)!important;color:var(--tx)!important}
 .nav-item.active{
   background:var(--grad-bp)!important;
   color:#fff!important;
-  box-shadow:0 4px 14px rgba(59,130,246,.3);
+  box-shadow:0 3px 12px rgba(59,130,246,.3);
 }
-.nav-item .ni{width:14px!important;height:14px!important;flex-shrink:0}
-.sidebar-bottom{margin-top:auto;padding-top:14px}
+.nav-item .ni,.nav-item i[data-lucide]{width:14px!important;height:14px!important;flex-shrink:0}
+.sidebar-bottom{margin-top:auto;padding-top:10px}
 .new-patient-btn{
   display:flex!important;align-items:center;justify-content:center;gap:6px;
-  width:100%;padding:8px!important;
+  width:100%;padding:7px!important;
   background:var(--grad-bp)!important;color:#fff!important;
   border:none;border-radius:8px;font-size:var(--fs-sm);font-weight:500;
-  text-decoration:none;transition:all .2s;
-  box-shadow:0 4px 14px rgba(59,130,246,.3);
+  text-decoration:none;transition:all .15s;
+  box-shadow:0 3px 12px rgba(59,130,246,.3);
 }
-.new-patient-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,.4)}
+.new-patient-btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(59,130,246,.4)}
 
 /* ─── TOPBAR ─────────────────────────────────────────────────────────────── */
 .main{background:transparent!important}
