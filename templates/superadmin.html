@@ -27,7 +27,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle 
 .logout-btn{width:100%;padding:12px;border-radius:8px;background:rgba(255,255,255,.03);color:#d7e2f5;border:1px solid var(--line);font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit}
 .main{margin-left:250px;flex:1;min-width:0;padding:16px 20px 52px}
 .sa-topbar{height:54px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.sa-search{width:min(440px,42vw);height:40px;border:1px solid var(--line);background:rgba(9,18,33,.8);border-radius:8px;display:flex;align-items:center;gap:10px;padding:0 12px;color:var(--muted)}.sa-search input{flex:1;background:transparent;border:0;outline:0;color:var(--txt);font-family:inherit}.sa-top-actions{display:flex;align-items:center;gap:14px}.top-icon{width:36px;height:36px;border:0;border-left:1px solid var(--line);background:transparent;color:#b8c7e4;display:flex;align-items:center;justify-content:center;position:relative}.top-icon .dot{position:absolute;top:4px;right:3px;background:#ff3f58;color:#fff;border-radius:50%;font-size:.62rem;padding:2px 5px;font-weight:800}.date-chip{margin-left:auto;width:max-content;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:rgba(8,18,33,.7);border-radius:8px;padding:10px 14px;color:#d5e0f5;font-size:.82rem}
+.sa-search{width:min(440px,42vw);height:40px;border:1px solid var(--line);background:rgba(9,18,33,.8);border-radius:8px;display:flex;align-items:center;gap:10px;padding:0 12px;color:var(--muted)}.sa-search input{flex:1;background:transparent;border:0;outline:0;color:var(--txt);font-family:inherit}.sa-top-actions{display:flex;align-items:center;gap:14px}.top-icon{width:36px;height:36px;border:0;border-left:1px solid var(--line);background:transparent;color:#b8c7e4;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .15s}.top-icon:hover{color:#fff;background:rgba(255,255,255,.05)}.top-icon .dot{position:absolute;top:4px;right:3px;background:#ff3f58;color:#fff;border-radius:50%;font-size:.62rem;padding:2px 5px;font-weight:800}.date-chip{margin-left:auto;width:max-content;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:rgba(8,18,33,.7);border-radius:8px;padding:10px 14px;color:#d5e0f5;font-size:.82rem}
 .welcome{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}.welcome h1{font-size:1rem;font-weight:800}.welcome p{font-size:.8rem;color:var(--muted);margin-top:4px}
 .card{background:linear-gradient(180deg,rgba(12,23,40,.86),rgba(6,14,26,.86));border:1px solid var(--line2);border-radius:8px;overflow:hidden;margin-bottom:14px;box-shadow:0 18px 40px rgba(0,0,0,.22)}
 .card-hd{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.card-hd h3{font-size:.97rem;font-weight:800}.card-bd{padding:16px}
@@ -205,8 +205,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
       <span style="font-size:.75rem;color:#c6d4ee">Ctrl + K</span>
     </label>
     <div class="sa-top-actions">
-      <button class="top-icon"><i data-lucide="bell"></i><span class="dot">5</span></button>
-      <button class="top-icon"><i data-lucide="moon"></i></button>
+      <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər"><i data-lucide="bell"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
+      <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn"><i data-lucide="moon"></i></button>
+      <a href="/logout" class="top-icon" title="Çıxış" style="text-decoration:none;color:inherit"><i data-lucide="log-out"></i></a>
       <div style="display:flex;align-items:center;gap:10px;border-left:1px solid var(--line);padding-left:14px">
         <div class="avatar">SA</div>
         <div>
@@ -907,8 +908,65 @@ async function checkUnread(){
   const d=await res.json()
   const ids=d.clinic_ids||[]
   const b=document.getElementById('fc-badge')
-  if(ids.length){b.textContent=ids.length;b.style.display='block'}else b.style.display='none'
+  if(b){if(ids.length){b.textContent=ids.length;b.style.display='block'}else b.style.display='none'}
+  // Topbar bell - tickets + chat unread göstər
+  const ticketsBadge=document.getElementById('nav-tickets-badge')
+  const ticketsCnt=ticketsBadge&&ticketsBadge.style.display!=='none'?parseInt(ticketsBadge.textContent)||0:0
+  const overdueBadge=document.getElementById('nav-overdue-badge')
+  const overdueCnt=overdueBadge&&overdueBadge.style.display!=='none'?parseInt(overdueBadge.textContent)||0:0
+  const total=ids.length+ticketsCnt+overdueCnt
+  const dot=document.getElementById('notif-dot')
+  if(dot){
+    if(total>0){dot.textContent=total>9?'9+':total;dot.style.display='block'}
+    else dot.style.display='none'
+  }
 }
+
+function toggleNotif(e){
+  if(e)e.stopPropagation()
+  let pop=document.getElementById('notif-pop')
+  if(pop){pop.remove();return}
+  pop=document.createElement('div')
+  pop.id='notif-pop'
+  pop.style.cssText='position:absolute;top:50px;right:120px;width:320px;background:rgba(15,23,42,.98);border:1px solid #1f2d47;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:1000;padding:14px;backdrop-filter:blur(20px)'
+  const ticketsBadge=document.getElementById('nav-tickets-badge')
+  const ticketsCnt=ticketsBadge&&ticketsBadge.style.display!=='none'?parseInt(ticketsBadge.textContent)||0:0
+  const overdueBadge=document.getElementById('nav-overdue-badge')
+  const overdueCnt=overdueBadge&&overdueBadge.style.display!=='none'?parseInt(overdueBadge.textContent)||0:0
+  const items=[]
+  if(ticketsCnt)items.push(`<div onclick="showPane('tickets');toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='transparent'"><i data-lucide="message-square" style="width:16px;height:16px;color:#f59e0b"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Açıq dəstək biletləri</div><div style="font-size:.7rem;color:#8a95ad">${ticketsCnt} bilet cavab gözləyir</div></div></div>`)
+  if(overdueCnt)items.push(`<div onclick="showPane('billing');toggleNotif()" style="padding:10px;border-radius:7px;cursor:pointer;display:flex;gap:10px;align-items:center" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='transparent'"><i data-lucide="alert-circle" style="width:16px;height:16px;color:#ef4444"></i><div style="flex:1"><div style="font-size:.82rem;font-weight:600">Borclu klinikalar</div><div style="font-size:.7rem;color:#8a95ad">${overdueCnt} klinika ödəniş gecikdirir</div></div></div>`)
+  pop.innerHTML=`<div style="font-size:.82rem;font-weight:600;margin-bottom:8px;padding:0 4px">Bildirişlər</div>${items.length?items.join(''):'<div style="text-align:center;color:#6b7fa3;padding:20px;font-size:.78rem">Yeni bildiriş yoxdur ✓</div>'}`
+  document.body.appendChild(pop)
+  if(window.lucide)setTimeout(()=>lucide.createIcons(),50)
+  setTimeout(()=>{
+    document.addEventListener('click',function close(ev){
+      if(!pop.contains(ev.target)){pop.remove();document.removeEventListener('click',close)}
+    })
+  },100)
+}
+
+// Theme toggle - icon dəyişikliyi
+function updateThemeIcon(){
+  const btn=document.getElementById('theme-btn')
+  if(!btn)return
+  const isLight=document.body.classList.contains('light')
+  const i=btn.querySelector('i')
+  if(i){i.setAttribute('data-lucide',isLight?'sun':'moon');if(window.lucide)lucide.createIcons()}
+}
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(updateThemeIcon,100)
+  // toggleTheme'in original-i theme.js-də - genişləndir
+  const orig=window.toggleTheme
+  window.toggleTheme=function(){
+    if(orig)orig()
+    else{
+      document.body.classList.toggle('light')
+      localStorage.setItem('theme',document.body.classList.contains('light')?'light':'dark')
+    }
+    updateThemeIcon()
+  }
+})
 
 // ── LOGS ──────────────────────────────────────────────────────────────────────
 async function loadLogs(){
