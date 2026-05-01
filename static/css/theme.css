@@ -368,3 +368,21 @@ body.light .sa-search,body.light .sa-search input{background:#fff!important;colo
 body.light .top-icon{color:#475569!important}
 body.light .top-icon:hover{color:#0f172a!important;background:rgba(15,23,42,.05)!important}
 body.light .logout-btn{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.12)!important}
+body.light{--bg0:#f8fafc;--bg1:#fff;--bg2:#fff;--bg3:#f1f5f9;--tx:#0f172a;--tx2:#475569;--mu:#64748b;--border:rgba(15,23,42,.08);--border-2:rgba(15,23,42,.12);background:#f8fafc!important;color:#0f172a!important}
+body.light .sidebar,body.light .sa-sidebar{background:rgba(255,255,255,.95)!important;border-right:1px solid rgba(15,23,42,.08)!important}
+body.light .sa-topbar,body.light .topbar{background:rgba(255,255,255,.85)!important;border-color:rgba(15,23,42,.08)!important;color:#0f172a!important}
+body.light .card{background:#fff!important;border-color:rgba(15,23,42,.08)!important;color:#0f172a!important}
+body.light .card-hd{border-color:rgba(15,23,42,.08)!important}
+body.light table th{background:#f8fafc!important;color:#475569!important}
+body.light table td{color:#0f172a!important;border-color:rgba(15,23,42,.06)!important}
+body.light .nav-item{color:#475569!important}
+body.light .nav-item:hover{background:rgba(15,23,42,.04)!important;color:#0f172a!important}
+body.light .form-control,body.light input,body.light select,body.light textarea{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.12)!important}
+body.light .stat-val,body.light h1,body.light h2,body.light h3,body.light h4{color:#0f172a!important}
+body.light .modal{background:#fff!important;color:#0f172a!important}
+body.light .sa-search,body.light .sa-search input{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.12)!important}
+body.light .top-icon{color:#475569!important;border-color:rgba(15,23,42,.08)!important}
+body.light .top-icon:hover{color:#0f172a!important;background:rgba(15,23,42,.05)!important}
+body.light .logout-btn{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.12)!important}
+body.light .stat-card{color:#0f172a!important}
+body.light .stat-lbl{color:#475569!important}
