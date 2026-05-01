@@ -87,7 +87,7 @@
       <div class="card-bd" style="padding:12px 18px;display:flex;align-items:center;gap:16px">
         <div style="font-size:1.4rem">📋</div>
         <div>
-          <div style="font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Aktiv Plan</div>
+          <div style="font-size:0.875rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Aktiv Plan</div>
           <div id="adm-plan-name" style="font-weight:700;font-size:1.05rem;color:var(--B)">—</div>
         </div>
         <div style="margin-left:auto;text-align:right">
@@ -117,9 +117,9 @@
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
     <div style="display:flex;gap:8px;align-items:center">
       <button class="btn btn-secondary btn-sm" onclick="apShift(-7)">◀</button>
-      <input type="date" id="ap-date-from" class="form-control" style="max-width:160px;font-size:.82rem;padding:6px 10px" onchange="loadAppointments()">
+      <input type="date" id="ap-date-from" class="form-control" style="max-width:160px;font-size:0.9375rem;padding:6px 10px" onchange="loadAppointments()">
       <span style="color:var(--mu)">→</span>
-      <input type="date" id="ap-date-to" class="form-control" style="max-width:160px;font-size:.82rem;padding:6px 10px" onchange="loadAppointments()">
+      <input type="date" id="ap-date-to" class="form-control" style="max-width:160px;font-size:0.9375rem;padding:6px 10px" onchange="loadAppointments()">
       <button class="btn btn-secondary btn-sm" onclick="apShift(7)">▶</button>
       <button class="btn btn-secondary btn-sm" onclick="apToday()">Bu gün</button>
     </div>
@@ -290,13 +290,13 @@
           <option value="doctor">Həkim</option>
           <option value="admin">Admin</option>
         </select></div>
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:.82rem;color:var(--mu);line-height:1.5">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:0.9375rem;color:var(--mu);line-height:1.5">
         Sistem müvəqqəti parol yaradacaq. Email konfiqurasiyası varsa həkimə göndəriləcək, yoxdursa sizə göstəriləcək. Həkim ilk girişdə parolu dəyişməlidir.
       </div>
       <div id="user-pass-result" style="display:none;background:var(--bg3);border:1px solid #22c55e;border-radius:8px;padding:12px;margin-top:10px">
-        <div style="font-size:.72rem;color:var(--mu);margin-bottom:4px">Müvəqqəti parol:</div>
+        <div style="font-size:0.875rem;color:var(--mu);margin-bottom:4px">Müvəqqəti parol:</div>
         <div id="user-pass-val" style="font-size:1rem;font-weight:800;color:#22c55e;letter-spacing:.05em"></div>
-        <div id="user-email-val" style="font-size:.78rem;color:var(--mu);margin-top:4px"></div>
+        <div id="user-email-val" style="font-size:0.875rem;color:var(--mu);margin-top:4px"></div>
       </div>
     </div>
     <div class="modal-ft">
@@ -314,11 +314,11 @@
       <button class="modal-close" onclick="document.getElementById('waModal').style.display='none'">✕</button>
     </div>
     <div class="modal-bd">
-      <p style="font-size:.88rem;color:var(--mu);margin-bottom:16px">Həkim: <b style="color:var(--tx)" id="wa-name"></b></p>
+      <p style="font-size:1rem;color:var(--mu);margin-bottom:16px">Həkim: <b style="color:var(--tx)" id="wa-name"></b></p>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
-        <div style="font-size:.75rem;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Giriş məlumatları</div>
-        <div style="font-size:.88rem;color:var(--mu)">Email: <span style="color:var(--tx);font-weight:600" id="wa-email"></span></div>
-        <div style="font-size:.88rem;color:var(--mu);margin-top:4px">Parol: <span style="color:var(--green);font-weight:800;font-size:1rem;letter-spacing:.05em" id="wa-pass"></span></div>
+        <div style="font-size:0.875rem;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Giriş məlumatları</div>
+        <div style="font-size:1rem;color:var(--mu)">Email: <span style="color:var(--tx);font-weight:600" id="wa-email"></span></div>
+        <div style="font-size:1rem;color:var(--mu);margin-top:4px">Parol: <span style="color:var(--green);font-weight:800;font-size:1rem;letter-spacing:.05em" id="wa-pass"></span></div>
       </div>
       <a id="wa-link" href="#" target="_blank" class="btn btn-success" style="width:100%;justify-content:center;text-decoration:none;background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(34,197,94,.1));color:var(--green);border:1px solid rgba(34,197,94,.3)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -382,7 +382,7 @@
       </div>
       <div class="form-group"><label class="form-label">Mövcud Pasiyent</label>
         <select class="form-control" id="ap-patient"></select></div>
-      <div style="text-align:center;color:var(--mu);font-size:.78rem;margin:8px 0">— və ya yeni pasiyent —</div>
+      <div style="text-align:center;color:var(--mu);font-size:0.875rem;margin:8px 0">— və ya yeni pasiyent —</div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Ad Soyad</label>
           <input class="form-control" id="ap-patient-name" placeholder="Manual ad"></div>
@@ -444,7 +444,7 @@
 <style>
 #float-chat-btn{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(59,130,246,.5);z-index:900;transition:transform .2s}
 #float-chat-btn:hover{transform:scale(1.1)}
-#float-chat-badge{position:absolute;top:-2px;right:-2px;background:#ef4444;color:#fff;border-radius:100px;font-size:.6rem;font-weight:800;padding:1px 5px;display:none;min-width:16px;text-align:center}
+#float-chat-badge{position:absolute;top:-2px;right:-2px;background:#ef4444;color:#fff;border-radius:100px;font-size:0.75rem;font-weight:800;padding:1px 5px;display:none;min-width:16px;text-align:center}
 #float-chat-box{position:fixed;bottom:86px;right:24px;width:340px;height:440px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.6);z-index:901;display:none;flex-direction:column;overflow:hidden}
 #float-chat-box.open{display:flex}
 .fc-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
@@ -453,7 +453,7 @@
 .fc-close:hover{color:var(--tx)}
 .fc-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px}
 .fc-input{display:flex;gap:6px;padding:8px;border-top:1px solid var(--border)}
-.fc-input input{flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);font-family:inherit;font-size:.84rem;outline:none}
+.fc-input input{flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);font-family:inherit;font-size:0.9375rem;outline:none}
 .fc-input input:focus{border-color:var(--B)}
 </style>
 {% endblock %}
@@ -567,7 +567,7 @@ async function loadServices(){
       <div class="card-hd" style="background:${_activeSvcId===s.id?'var(--BL)':''}">
         <div style="font-weight:700">${s.name}</div>
         <div style="display:flex;gap:6px">
-          <span style="font-size:.78rem;color:var(--mu)">${s.templates.length} şablon</span>
+          <span style="font-size:0.875rem;color:var(--mu)">${s.templates.length} şablon</span>
           <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delService(${s.id})">🗑️</button>
         </div>
       </div>
@@ -588,15 +588,15 @@ async function selectService(id){
 function renderTemplates(svc){
   const el=document.getElementById('tmpl-list')
   if(!svc.templates.length){
-    el.innerHTML='<div style="color:var(--mu);font-size:.88rem;text-align:center;padding:20px">Şablon yoxdur</div>'
+    el.innerHTML='<div style="color:var(--mu);font-size:1rem;text-align:center;padding:20px">Şablon yoxdur</div>'
     return
   }
   el.innerHTML=svc.templates.map(t=>`
     <div style="border:1px solid #e8eef5;border-radius:10px;margin-bottom:10px;overflow:hidden">
       <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;background:var(--lt)">
         <div>
-          <div style="font-weight:700;font-size:.92rem">${t.name}</div>
-          ${t.description?`<div style="font-size:.78rem;color:var(--mu)">${t.description}</div>`:''}
+          <div style="font-weight:700;font-size:1.0625rem">${t.name}</div>
+          ${t.description?`<div style="font-size:0.875rem;color:var(--mu)">${t.description}</div>`:''}
         </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-secondary btn-sm" onclick="selectTmpl(${t.id})">Addımlar (${t.steps.length})</button>
@@ -607,13 +607,13 @@ function renderTemplates(svc){
         <div style="padding:12px 14px;border-top:1px solid #e8eef5">
           ${t.steps.map(s=>`
             <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f0f4f8">
-              <span style="background:var(--BL);color:var(--B);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0">${s.order+1}</span>
+              <span style="background:var(--BL);color:var(--B);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:800;flex-shrink:0">${s.order+1}</span>
               <div style="flex:1">
-                <div style="font-size:.88rem;font-weight:700">${s.title}</div>
-                ${s.description?`<div style="font-size:.76rem;color:var(--mu)">${s.description}</div>`:''}
+                <div style="font-size:1rem;font-weight:700">${s.title}</div>
+                ${s.description?`<div style="font-size:0.875rem;color:var(--mu)">${s.description}</div>`:''}
               </div>
-              <span style="font-size:.76rem;color:var(--mu)">${s.default_duration_days}g</span>
-              ${s.price?`<span style="font-size:.76rem;font-weight:700;color:var(--green)">${s.price.toFixed(2)} ₼</span>`:''}
+              <span style="font-size:0.875rem;color:var(--mu)">${s.default_duration_days}g</span>
+              ${s.price?`<span style="font-size:0.875rem;font-weight:700;color:var(--green)">${s.price.toFixed(2)} ₼</span>`:''}
               <button class="btn btn-danger btn-sm" onclick="delTmplStep(${s.id})">✕</button>
             </div>
           `).join('')}
@@ -754,10 +754,10 @@ async function loadUsers(){
       <div style="font-weight:700;color:var(--tx)">${u.name}</div>
       ${u.must_change_password?'<span class="badge badge-pending" style="font-size:.63rem">Parol gözləyir</span>':''}
     </td>
-    <td style="color:var(--mu);font-size:.84rem">${u.email}</td>
-    <td style="color:var(--mu);font-size:.84rem">${u.phone||'—'}</td>
+    <td style="color:var(--mu);font-size:0.9375rem">${u.email}</td>
+    <td style="color:var(--mu);font-size:0.9375rem">${u.phone||'—'}</td>
     <td>
-      ${u.role==='doctor'?`<input type="number" min="0" max="100" step="0.5" value="${u.commission_percent||0}" onblur="setComm(${u.id},this.value)" onclick="event.stopPropagation()" style="width:70px;background:var(--bg3);color:var(--tx);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:inherit;font-size:.82rem">`:'—'}
+      ${u.role==='doctor'?`<input type="number" min="0" max="100" step="0.5" value="${u.commission_percent||0}" onblur="setComm(${u.id},this.value)" onclick="event.stopPropagation()" style="width:70px;background:var(--bg3);color:var(--tx);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-family:inherit;font-size:0.9375rem">`:'—'}
     </td>
     <td><span class="badge ${u.is_active?'badge-completed':'badge-cancelled'}">${u.is_active?'Aktiv':'Deaktiv'}</span></td>
     <td>
@@ -854,8 +854,8 @@ document.body.insertAdjacentHTML('beforeend', `
 <div id="float-chat-box">
   <div class="fc-hd"><span>🦷 Dəstək</span><div style="display:flex;gap:6px"><button class="btn btn-secondary btn-sm" onclick="fcToggleTicket()" title="Bilet aç">🎫</button><button class="fc-close" onclick="toggleChat()">✕</button></div></div>
   <div id="fc-ticket-form" style="display:none;padding:10px;border-bottom:1px solid var(--border);display:none">
-    <input id="fc-tk-subject" class="form-control" placeholder="Mövzu" style="margin-bottom:6px;font-size:.82rem">
-    <textarea id="fc-tk-body" class="form-control" placeholder="Təfərrüat..." rows="3" style="font-size:.82rem;resize:none"></textarea>
+    <input id="fc-tk-subject" class="form-control" placeholder="Mövzu" style="margin-bottom:6px;font-size:0.9375rem">
+    <textarea id="fc-tk-body" class="form-control" placeholder="Təfərrüat..." rows="3" style="font-size:0.9375rem;resize:none"></textarea>
     <div style="display:flex;gap:6px;margin-top:6px">
       <select id="fc-tk-priority" class="form-control" style="font-size:.8rem"><option value="normal">Normal</option><option value="high">Təcili</option><option value="low">Aşağı</option></select>
       <button class="btn btn-primary btn-sm" onclick="fcSubmitTicket()">Göndər</button>
@@ -886,17 +886,17 @@ async function fcFetchMsgs(){
   const msgs = await res.json()
   const el = document.getElementById('fc-msgs')
   if(!msgs.length){
-    el.innerHTML='<div style="color:var(--mu);font-size:.82rem;text-align:center;margin:auto">Hələ mesaj yoxdur</div>'
+    el.innerHTML='<div style="color:var(--mu);font-size:0.9375rem;text-align:center;margin:auto">Hələ mesaj yoxdur</div>'
     return
   }
   el.innerHTML = msgs.map(m=>`
-    <div style="max-width:82%;padding:8px 11px;border-radius:10px;font-size:.82rem;line-height:1.4;
+    <div style="max-width:82%;padding:8px 11px;border-radius:10px;font-size:0.9375rem;line-height:1.4;
       ${m.sender_role!=='superadmin'
         ?'align-self:flex-end;background:var(--BL);border:1px solid rgba(59,130,246,.2);border-radius:10px 3px 10px 10px'
         :'align-self:flex-start;background:var(--bg3);border:1px solid var(--border);border-radius:3px 10px 10px 10px'}">
-      <div style="font-size:.68rem;font-weight:700;color:var(--mu);margin-bottom:2px">${m.sender_name}</div>
+      <div style="font-size:0.875rem;font-weight:700;color:var(--mu);margin-bottom:2px">${m.sender_name}</div>
       <div>${m.text}</div>
-      <div style="font-size:.65rem;color:var(--mu);margin-top:3px">${new Date(m.created_at).toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'})}</div>
+      <div style="font-size:0.75rem;color:var(--mu);margin-top:3px">${new Date(m.created_at).toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'})}</div>
     </div>`).join('')
   el.scrollTop = el.scrollHeight
   // oxundu — badge-i sil
@@ -981,7 +981,7 @@ async function loadAdmDashboard(){
     bars+=`<text x="${x+bw}" y="${H-pad+14}" fill="#6b7fa3" font-size="10" text-anchor="middle">${t.month.slice(5)}</text>`
   })
   document.getElementById('adm-trend').innerHTML=`
-    <div style="display:flex;gap:14px;font-size:.78rem;margin-bottom:8px">
+    <div style="display:flex;gap:14px;font-size:0.875rem;margin-bottom:8px">
       <span><span style="display:inline-block;width:10px;height:10px;background:#22c55e;border-radius:2px;margin-right:5px"></span>Gəlir</span>
       <span><span style="display:inline-block;width:10px;height:10px;background:#ef4444;border-radius:2px;margin-right:5px"></span>Xərc</span>
     </div>
@@ -992,11 +992,11 @@ async function loadAdmDashboard(){
     <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">
       <div style="min-width:0;flex:1">
         <div style="font-weight:700;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i<3?['🥇','🥈','🥉'][i]+' ':''}${p.name}</div>
-        <div style="font-size:.74rem;color:var(--mu);margin-top:2px">${p.patient_count} pasiyent • komissiya ${p.commission_percent}%</div>
+        <div style="font-size:0.875rem;color:var(--mu);margin-top:2px">${p.patient_count} pasiyent • komissiya ${p.commission_percent}%</div>
       </div>
       <div style="text-align:right">
-        <div style="font-weight:700;color:var(--green);font-size:.95rem">${p.month_revenue.toFixed(0)} ₼</div>
-        <div style="font-size:.72rem;color:var(--purple)">→ ${p.month_commission.toFixed(0)} ₼</div>
+        <div style="font-weight:700;color:var(--green);font-size:1.0625rem">${p.month_revenue.toFixed(0)} ₼</div>
+        <div style="font-size:0.875rem;color:var(--purple)">→ ${p.month_commission.toFixed(0)} ₼</div>
       </div>
     </div>`).join(''):'<div class="empty" style="padding:30px"><div class="empty-text">Həkim yoxdur</div></div>'
 }
@@ -1034,14 +1034,14 @@ async function loadAppointments(){
     <td style="font-weight:700">${fmtDate(a.appointment_date)}</td>
     <td>${a.appointment_time||'—'}</td>
     <td>${a.patient_name_resolved}</td>
-    <td style="color:var(--mu);font-size:.82rem">${a.patient_phone||'—'}</td>
+    <td style="color:var(--mu);font-size:0.9375rem">${a.patient_phone||'—'}</td>
     <td>${a.doctor_name}</td>
     <td>
-      <select onchange="updAp(${a.id},'status',this.value)" style="background:var(--bg3);color:var(--tx);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-family:inherit;font-size:.78rem">
+      <select onchange="updAp(${a.id},'status',this.value)" style="background:var(--bg3);color:var(--tx);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-family:inherit;font-size:0.875rem">
         ${Object.keys(STATUS_LBL).map(k=>`<option value="${k}" ${a.status===k?'selected':''}>${STATUS_LBL[k]}</option>`).join('')}
       </select>
     </td>
-    <td style="font-size:.82rem;color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes||'—'}</td>
+    <td style="font-size:0.9375rem;color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes||'—'}</td>
     <td><div style="display:flex;gap:4px">
       <button class="btn btn-secondary btn-sm" onclick="editAp(${a.id})">✏️</button>
       <button class="btn btn-danger btn-sm" onclick="delAp(${a.id})">🗑</button>
@@ -1122,12 +1122,12 @@ async function loadDebtors(){
     const overdueColor=d.days_since_payment&&d.days_since_payment>30?'color:var(--red);font-weight:700':d.days_since_payment&&d.days_since_payment>14?'color:var(--orange);font-weight:700':'color:var(--mu)'
     return `<tr>
       <td><a href="/patients/${d.patient_id}" style="font-weight:700;color:var(--B);text-decoration:none">${d.patient_name}</a></td>
-      <td style="color:var(--mu);font-size:.82rem">${d.phone||'—'}</td>
+      <td style="color:var(--mu);font-size:0.9375rem">${d.phone||'—'}</td>
       <td>${d.plan_total.toFixed(2)}</td>
       <td style="color:var(--green)">${d.paid.toFixed(2)}</td>
       <td style="color:var(--red);font-weight:700">${d.debt.toFixed(2)}</td>
-      <td style="font-size:.82rem;color:var(--mu)">${d.last_payment?fmtDate(d.last_payment):'heç vaxt'}</td>
-      <td style="${overdueColor};font-size:.82rem">${d.days_since_payment===null?'—':d.days_since_payment+' gün'}</td>
+      <td style="font-size:0.9375rem;color:var(--mu)">${d.last_payment?fmtDate(d.last_payment):'heç vaxt'}</td>
+      <td style="${overdueColor};font-size:0.9375rem">${d.days_since_payment===null?'—':d.days_since_payment+' gün'}</td>
       <td><a href="/admin/invoice/${d.patient_id}" target="_blank" class="btn btn-secondary btn-sm">🧾 Qəbz</a></td>
     </tr>`
   }).join('')
@@ -1145,10 +1145,10 @@ async function loadInventory(){
   tb.innerHTML=list.map(i=>`<tr style="${i.low_stock?'background:rgba(249,115,22,.06)':''}">
     <td>
       <div style="font-weight:700">${i.name}</div>
-      ${i.low_stock?'<span class="badge badge-cancelled" style="font-size:.65rem">⚠ Az qalıb</span>':''}
+      ${i.low_stock?'<span class="badge badge-cancelled" style="font-size:0.75rem">⚠ Az qalıb</span>':''}
     </td>
-    <td style="color:var(--mu);font-size:.84rem">${i.category||'—'}</td>
-    <td><strong>${i.quantity}</strong> <span style="color:var(--mu);font-size:.78rem">${i.unit}</span></td>
+    <td style="color:var(--mu);font-size:0.9375rem">${i.category||'—'}</td>
+    <td><strong>${i.quantity}</strong> <span style="color:var(--mu);font-size:0.875rem">${i.unit}</span></td>
     <td style="color:var(--mu)">${i.min_quantity}</td>
     <td>${i.unit_price.toFixed(2)} ₼</td>
     <td style="font-weight:700">${(i.quantity*i.unit_price).toFixed(2)} ₼</td>
@@ -1208,11 +1208,11 @@ async function loadAdmLogs(){
   if(!logs.length){tb.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-text">Log yoxdur</div></div></td></tr>';return}
   const COLOR={login:'var(--green)',logout:'var(--mu)',error:'var(--red)',password_reset:'var(--orange)',payment_reminder:'var(--purple)'}
   tb.innerHTML=logs.map(l=>`<tr>
-    <td style="font-size:.78rem;color:var(--mu)">${l.created_at?fmtDateTime(l.created_at):'—'}</td>
+    <td style="font-size:0.875rem;color:var(--mu)">${l.created_at?fmtDateTime(l.created_at):'—'}</td>
     <td>${l.user_name}</td>
-    <td><span style="color:${COLOR[l.action]||'var(--tx)'};font-weight:700;font-size:.78rem">${(l.action||'').toUpperCase()}</span></td>
-    <td style="font-size:.82rem;color:var(--mu);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.detail||'—'}</td>
-    <td style="font-size:.78rem;color:var(--mu);font-family:monospace">${l.ip||'—'}</td>
+    <td><span style="color:${COLOR[l.action]||'var(--tx)'};font-weight:700;font-size:0.875rem">${(l.action||'').toUpperCase()}</span></td>
+    <td style="font-size:0.9375rem;color:var(--mu);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.detail||'—'}</td>
+    <td style="font-size:0.875rem;color:var(--mu);font-family:monospace">${l.ip||'—'}</td>
   </tr>`).join('')
 }
 
@@ -1228,8 +1228,8 @@ async function loadUsage(){
     const warns=[]
     const chk=(n,used,max)=>{
       if(!max)return
-      if(used>=max)warns.push('<div style="background:#fee2e2;border-left:4px solid #ef4444;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:.85rem"><b>&#128308; '+n+' limiti doldu!</b> '+used+'/'+max+'</div>')
-      else if(used/max>=.8)warns.push('<div style="background:#fef9c3;border-left:4px solid #f59e0b;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:.85rem"><b>&#128993; '+n+' limitine yaxinlasir</b> ('+used+'/'+max+')</div>')
+      if(used>=max)warns.push('<div style="background:#fee2e2;border-left:4px solid #ef4444;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:1rem"><b>&#128308; '+n+' limiti doldu!</b> '+used+'/'+max+'</div>')
+      else if(used/max>=.8)warns.push('<div style="background:#fef9c3;border-left:4px solid #f59e0b;padding:8px 14px;margin:2px 0;border-radius:6px;font-size:1rem"><b>&#128993; '+n+' limitine yaxinlasir</b> ('+used+'/'+max+')</div>')
     }
     chk('Hekim',u.doctors.used,u.doctors.max)
     chk('Admin',u.admins.used,u.admins.max)

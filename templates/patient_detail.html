@@ -9,10 +9,10 @@
   <div style="position:relative;display:inline-block">
     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('consent-menu').style.display=document.getElementById('consent-menu').style.display==='block'?'none':'block'">📋 Razılıq ▾</button>
     <div id="consent-menu" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:50;min-width:180px;overflow:hidden">
-      <a href="#" onclick="openConsent('general');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">📄 Ümumi müalicə</a>
-      <a href="#" onclick="openConsent('extraction');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">🦷 Diş çıxarılması</a>
-      <a href="#" onclick="openConsent('surgery');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem;border-bottom:1px solid var(--border)">🔪 Cərrahiyyə</a>
-      <a href="#" onclick="openConsent('implant');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:.88rem">⚙️ İmplant</a>
+      <a href="#" onclick="openConsent('general');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:1rem;border-bottom:1px solid var(--border)">📄 Ümumi müalicə</a>
+      <a href="#" onclick="openConsent('extraction');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:1rem;border-bottom:1px solid var(--border)">🦷 Diş çıxarılması</a>
+      <a href="#" onclick="openConsent('surgery');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:1rem;border-bottom:1px solid var(--border)">🔪 Cərrahiyyə</a>
+      <a href="#" onclick="openConsent('implant');return false" style="display:block;padding:10px 14px;color:var(--tx);text-decoration:none;font-size:1rem">⚙️ İmplant</a>
     </div>
   </div>
   <button class="btn btn-secondary btn-sm" onclick="openEdit()">✏️ Redaktə</button>
@@ -25,18 +25,18 @@
 <div id="alert-banner" style="display:none;margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(239,68,68,.08));border:2px solid rgba(239,68,68,.45);border-radius:10px;display:flex;align-items:flex-start;gap:14px">
   <div style="font-size:1.6rem;line-height:1">⚠️</div>
   <div style="flex:1;min-width:0">
-    <div style="font-weight:800;color:#ef4444;font-size:.95rem;letter-spacing:.02em;text-transform:uppercase;margin-bottom:4px">Diqqət — Pasiyent xəbərdarlıqları</div>
-    <div id="alert-content" style="font-size:.92rem;color:var(--tx);font-weight:600;line-height:1.45"></div>
+    <div style="font-weight:800;color:#ef4444;font-size:1.0625rem;letter-spacing:.02em;text-transform:uppercase;margin-bottom:4px">Diqqət — Pasiyent xəbərdarlıqları</div>
+    <div id="alert-content" style="font-size:1.0625rem;color:var(--tx);font-weight:600;line-height:1.45"></div>
   </div>
 </div>
 
 <!-- TAB NAV -->
 <div style="display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px">
-  <button id="btn-info"  style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid var(--B);color:var(--B);margin-bottom:-1px"  onclick="tab('info')">📋 Məlumat</button>
-  <button id="btn-teeth" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('teeth')">🦷 Diş Xəritəsi</button>
-  <button id="btn-plans" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('plans')">📅 Müalicə Planları</button>
-  <button id="btn-media"    style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('media')">🖼️ Media</button>
-  <button id="btn-payments" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('payments')">💰 Ödənişlər</button>
+  <button id="btn-info"  style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border-bottom:2px solid var(--B);color:var(--B);margin-bottom:-1px"  onclick="tab('info')">📋 Məlumat</button>
+  <button id="btn-teeth" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('teeth')">🦷 Diş Xəritəsi</button>
+  <button id="btn-plans" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('plans')">📅 Müalicə Planları</button>
+  <button id="btn-media"    style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('media')">🖼️ Media</button>
+  <button id="btn-payments" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);margin-bottom:-1px" onclick="tab('payments')">💰 Ödənişlər</button>
 </div>
 
 <!-- PANES -->
@@ -58,15 +58,15 @@
       <div class="card-hd" style="padding:11px 14px">
         <div style="display:flex;align-items:center;gap:8px;flex:1">
           <div id="tc-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:#60a5fa"></div>
-          <span id="tc-num" style="font-weight:800;font-size:.95rem;color:var(--tx)">—</span>
+          <span id="tc-num" style="font-weight:800;font-size:1.0625rem;color:var(--tx)">—</span>
         </div>
         <button onclick="closeTcPanel()" style="background:none;border:none;cursor:pointer;color:var(--mu);font-size:1.1rem;line-height:1;padding:0">✕</button>
       </div>
       <div class="card-bd" style="padding:12px 14px">
         <div class="form-label">Status</div>
-        <div id="tc-st" style="font-size:.88rem;font-weight:700;margin-bottom:12px;color:var(--tx)">—</div>
+        <div id="tc-st" style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--tx)">—</div>
         <div class="form-label">Qeyd</div>
-        <div id="tc-nt" style="font-size:.82rem;color:var(--mu);margin-bottom:14px;min-height:28px;line-height:1.5">—</div>
+        <div id="tc-nt" style="font-size:0.9375rem;color:var(--mu);margin-bottom:14px;min-height:28px;line-height:1.5">—</div>
         <button class="btn btn-primary btn-sm" style="width:100%" onclick="onTooth(window._tcSelNum)">✏️ Redaktə Et</button>
       </div>
     </div>
@@ -90,7 +90,7 @@
       <button class="btn btn-secondary btn-sm" onclick="mf('sim',this)">⇆ Simulyasiya</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <select class="form-control" id="mtype" style="max-width:160px;font-size:.82rem">
+      <select class="form-control" id="mtype" style="max-width:160px;font-size:0.9375rem">
         <option value="other">Digər</option><option value="before">Əvvəl</option>
         <option value="after">Sonra</option><option value="xray">Rentgen</option>
       </select>
@@ -194,12 +194,12 @@
         <select class="form-control" id="pSvc" onchange="loadTmpls()"><option value="">Seçin</option></select></div>
       <div class="form-group"><label class="form-label">Şablon</label>
         <select class="form-control" id="pTmpl" onchange="onTmplChange()"><option value="">Yoxdur</option></select></div>
-      <div id="tmpl-preview" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:12px;font-size:.83rem">
+      <div id="tmpl-preview" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:12px;font-size:0.9375rem">
         <div style="color:var(--mu);margin-bottom:6px;font-weight:700">Şablon məlumatları:</div>
         <div id="tmpl-steps-preview"></div>
         <div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
-          <span style="color:var(--mu);font-size:.82rem">Seçilən addımların dəyəri:</span>
-          <span style="font-weight:800;color:var(--green);font-size:.95rem" id="tmpl-cost-preview">0.00 ₼</span>
+          <span style="color:var(--mu);font-size:0.9375rem">Seçilən addımların dəyəri:</span>
+          <span style="font-weight:800;color:var(--green);font-size:1.0625rem" id="tmpl-cost-preview">0.00 ₼</span>
         </div>
       </div>
       <div class="form-row">
@@ -315,8 +315,8 @@ function renderInfo(){
     banner.style.display='flex';
   }else{banner.style.display='none';}
   var rows=[['Ad Soyad',_pt.name],['Telefon',_pt.phone||'—'],['FİN',_pt.fin_code||'—'],['Doğum tarixi',fmtDate(_pt.dob)||'—'],['Cins',_pt.gender||'—'],['Qan qrupu',_pt.blood_type||'—'],['Qeydiyyat',fmtDate(_pt.created_at)]];
-  document.getElementById('info-tbl').innerHTML=rows.map(function(r){return '<tr><td style="color:var(--mu);font-size:.8rem;padding:6px 0;width:120px;font-weight:600">'+r[0]+'</td><td style="font-size:.88rem;padding:6px 0">'+r[1]+'</td></tr>';}).join('');
-  document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:.88rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:.88rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:.88rem;'+(_pt.allergies?'color:#ef4444;font-weight:700':'')+'">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:.88rem">'+(_pt.notes||'—')+'</div></div>';
+  document.getElementById('info-tbl').innerHTML=rows.map(function(r){return '<tr><td style="color:var(--mu);font-size:.8rem;padding:6px 0;width:120px;font-weight:600">'+r[0]+'</td><td style="font-size:1rem;padding:6px 0">'+r[1]+'</td></tr>';}).join('');
+  document.getElementById('med-info').innerHTML='<div class="form-group"><label class="form-label">Şikayət</label><div style="font-size:1rem">'+(_pt.complaints||'—')+'</div></div><div class="form-group"><label class="form-label">Tibbi tarixçə</label><div style="font-size:1rem">'+(_pt.medical_history||'—')+'</div></div><div class="form-group"><label class="form-label">Allergiyalar</label><div style="font-size:1rem;'+(_pt.allergies?'color:#ef4444;font-weight:700':'')+'">'+(_pt.allergies||'—')+'</div></div><div class="form-group"><label class="form-label">Qeydlər</label><div style="font-size:1rem">'+(_pt.notes||'—')+'</div></div>';
 }
 
 /* ── TEETH ── */
@@ -381,8 +381,8 @@ function onTmplChange(){
       return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer">'
         +'<input type="checkbox" class="step-chk" data-price="'+(s.price||0)+'" value="'+s.id+'" checked '
         +'style="width:15px;height:15px;accent-color:var(--B);cursor:pointer" onchange="recalcCost()">'
-        +'<span style="flex:1;font-size:.85rem">'+(i+1)+'. '+s.title+'</span>'
-        +(s.price?'<span style="color:var(--green);font-weight:700;font-size:.82rem">'+s.price.toFixed(2)+' ₼</span>':'')
+        +'<span style="flex:1;font-size:1rem">'+(i+1)+'. '+s.title+'</span>'
+        +(s.price?'<span style="color:var(--green);font-weight:700;font-size:0.9375rem">'+s.price.toFixed(2)+' ₼</span>':'')
         +'</label>';
     }).join('');
   prev.style.display='block';
@@ -429,11 +429,11 @@ async function loadMedia(type){
           +'<div id="simH" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);pointer-events:none;box-shadow:0 0 6px rgba(0,0,0,.6)">'
             +'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;pointer-events:none">⇆</div>'
           +'</div>'
-          +'<div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.65);color:#fff;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Əvvəl</div>'
-          +'<div style="position:absolute;top:10px;right:12px;background:rgba(34,197,94,.8);color:#fff;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Sonra</div>'
-          +'<div id="simPct" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:99px;pointer-events:none">50%</div>'
+          +'<div style="position:absolute;top:10px;left:12px;background:rgba(0,0,0,.65);color:#fff;font-size:0.875rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Əvvəl</div>'
+          +'<div style="position:absolute;top:10px;right:12px;background:rgba(34,197,94,.8);color:#fff;font-size:0.875rem;font-weight:700;padding:3px 9px;border-radius:99px;pointer-events:none">Sonra</div>'
+          +'<div id="simPct" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:0.875rem;font-weight:700;padding:2px 10px;border-radius:99px;pointer-events:none">50%</div>'
         +'</div>'
-        +'<div style="text-align:center;font-size:.76rem;color:var(--mu);margin-top:8px">← Sürüşdürün →</div>'
+        +'<div style="text-align:center;font-size:0.875rem;color:var(--mu);margin-top:8px">← Sürüşdürün →</div>'
       +'</div>';
 
     _simSetup();
@@ -620,9 +620,9 @@ async function loadPayments(){
   else banner.style.display='none';
   var tbody=document.getElementById('py-tbody');
   if(!r.payments.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--mu);padding:20px">Ödəniş yoxdur</td></tr>';return;}
-  tbody.innerHTML=r.payments.map(function(p){return '<tr><td style="font-size:.84rem;color:var(--mu)">'+
+  tbody.innerHTML=r.payments.map(function(p){return '<tr><td style="font-size:0.9375rem;color:var(--mu)">'+
     (p.date||'—')+'</td><td style="font-weight:700;color:var(--green)">'+p.amount.toFixed(2)+' ₼</td>'+
-    '<td style="color:var(--mu);font-size:.84rem">'+(p.notes||'—')+'</td>'+
+    '<td style="color:var(--mu);font-size:0.9375rem">'+(p.notes||'—')+'</td>'+
     '<td><button class="btn btn-danger btn-sm" onclick="delPayment('+p.id+')">✕</button></td></tr>';}).join('');
 }
 

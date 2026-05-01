@@ -135,7 +135,7 @@ async function loadDash(){
   tbody.innerHTML=recent.map(p=>`<tr>
     <td><a href="/patients/${p.id}" style="font-weight:700;color:var(--B);text-decoration:none">${p.name}</a></td>
     <td style="color:var(--mu)">${p.phone||'—'}</td>
-    <td style="color:var(--mu);font-size:.82rem">${fmtDate(p.created_at)}</td>
+    <td style="color:var(--mu);font-size:0.9375rem">${fmtDate(p.created_at)}</td>
     <td><a href="/patients/${p.id}" class="btn btn-secondary btn-sm">Bax →</a></td>
   </tr>`).join('')
 
@@ -145,7 +145,7 @@ async function loadDash(){
   if(active.length){
     tlEl.innerHTML=active.map(g=>`
       <div style="margin-bottom:16px">
-        <a href="/patients/${g.patient.id}" style="font-size:.82rem;font-weight:700;color:var(--B);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:8px">
+        <a href="/patients/${g.patient.id}" style="font-size:0.9375rem;font-weight:700;color:var(--B);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:8px">
           <span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block"></span>${g.patient.name}
         </a>
         <div class="timeline">
@@ -200,8 +200,8 @@ async function loadTodayAppointments(){
     c.innerHTML=list.map(a=>`<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">
       <div style="min-width:0;flex:1">
         <div style="font-weight:700">${a.appointment_time||'—'} • ${a.patient_name_resolved}</div>
-        ${a.patient_phone?`<div style="font-size:.74rem;color:var(--mu)">${a.patient_phone}</div>`:''}
-        ${a.notes?`<div style="font-size:.74rem;color:var(--mu);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes}</div>`:''}
+        ${a.patient_phone?`<div style="font-size:0.875rem;color:var(--mu)">${a.patient_phone}</div>`:''}
+        ${a.notes?`<div style="font-size:0.875rem;color:var(--mu);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes}</div>`:''}
       </div>
       <span style="display:inline-block;padding:3px 8px;border-radius:100px;font-size:.7rem;font-weight:700;background:${STATUS[a.status]}22;color:${STATUS[a.status]}">${STATUS_LBL[a.status]||a.status}</span>
     </div>`).join('')
