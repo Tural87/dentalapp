@@ -11,7 +11,8 @@
 {% block head %}{% endblock %}
 </head>
 <body>
-<aside class="sidebar">
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <a href="{% if session.role == 'admin' or session.role == 'superadmin' %}/admin{% else %}/{% endif %}">
       <img src="/static/img/teeth/medical_14372414.png" style="width:28px;height:28px;object-fit:contain">
@@ -91,16 +92,19 @@
 </aside>
 <div class="main">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">{% block topbar_title %}StomApp{% endblock %}</div>
-      <div class="topbar-sub">{% block topbar_sub %}{% endblock %}</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()"><i data-lucide="menu" class="ni"></i></button>
+      <div>
+        <div class="topbar-title">{% block topbar_title %}StomApp{% endblock %}</div>
+        <div class="topbar-sub">{% block topbar_sub %}{% endblock %}</div>
+      </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       {% block topbar_actions %}{% endblock %}
       <div style="display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid var(--border)">
         <div style="width:30px;height:30px;border-radius:50%;background:var(--BL);border:1px solid rgba(59,130,246,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--B)">{{ session.user_name[0]|upper if session.user_name else 'U' }}</div>
-        <span style="font-size:.83rem;font-weight:600;color:var(--tx)">{{ session.user_name }}</span>
-        {% if session.role == 'admin' %}<span style="font-size:.68rem;background:var(--BL);color:var(--B);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 8px;font-weight:700">Admin</span>{% endif %}
+        <span class="topbar-user-name" style="font-size:.83rem;font-weight:600;color:var(--tx)">{{ session.user_name }}</span>
+        {% if session.role == 'admin' %}<span class="topbar-role" style="font-size:.68rem;background:var(--BL);color:var(--B);border:1px solid rgba(59,130,246,.2);border-radius:100px;padding:2px 8px;font-weight:700">Admin</span>{% endif %}
         <a href="/logout" style="display:flex;align-items:center;padding:5px 10px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--mu);text-decoration:none;font-size:.78rem;font-weight:600;transition:all .15s" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--mu)'">Çıxış</a>
       </div>
     </div>
@@ -116,6 +120,16 @@
 {% block scripts %}{% endblock %}
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>lucide.createIcons();</script>
+<script>
+function toggleSidebar(){
+  const s=document.getElementById('sidebar'),o=document.getElementById('sidebar-overlay')
+  s.classList.toggle('open');o.classList.toggle('open')
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open')
+  document.getElementById('sidebar-overlay').classList.remove('open')
+}
+</script>
 <script>
 (function(){
   const p = location.pathname

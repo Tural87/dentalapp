@@ -176,13 +176,48 @@ tr:hover td{background:rgba(26,34,53,.6)}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:10px}
 
+/* Responsive grid utilities */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* Hamburger - hidden on desktop */
+.menu-toggle{display:none;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--mu);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.menu-toggle:hover{color:var(--tx);border-color:rgba(107,127,163,.4)}
+.menu-toggle svg{width:18px;height:18px;stroke-width:2}
+
+/* Sidebar backdrop */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;backdrop-filter:blur(2px)}
+.sidebar-overlay.open{display:block}
+
 @media(max-width:768px){
-  .sidebar{width:60px}
-  .sidebar-logo .logo-text{display:none}
-  .nav-item span:not(.ni){display:none}
-  .new-patient-btn span{display:none}
-  .main{margin-left:60px}
-  .wrap{padding:16px 14px 50px}
+  .sidebar{width:230px;transform:translateX(-230px);transition:transform .25s ease}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-logo .logo-text{display:block}
+  .nav-item span:not(.ni){display:block}
+  .new-patient-btn span{display:block}
+  .main{margin-left:0}
+  .wrap{padding:16px 12px 60px}
+  .topbar{padding:0 12px}
+  .menu-toggle{display:flex}
+  .g2,.g21,.g3{grid-template-columns:1fr!important;gap:14px!important}
+  .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .tab-btn{white-space:nowrap;flex-shrink:0;font-size:.875rem;padding:9px 12px}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{max-width:100%;width:100%;border-radius:16px 16px 0 0;max-height:92vh;overflow-y:auto}
+  .topbar-user-name,.topbar-role{display:none}
+  .page-header{flex-wrap:wrap}
+  .search-bar{max-width:100%}
+}
+
+@media(max-width:480px){
+  .ap-filters{flex-wrap:wrap}
+  .ap-filters input[type=date]{max-width:130px!important;font-size:.8rem!important}
+}
+
+@media(max-width:400px){
+  .wrap{padding:10px 10px 60px}
+  .stat-val{font-size:1.25rem}
 }
 
 /* flatpickr dark theme override */
