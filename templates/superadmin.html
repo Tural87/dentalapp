@@ -1612,14 +1612,24 @@ document.addEventListener('DOMContentLoaded',function(){
   if(sd){const d=new Date();const ay=['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];sd.textContent=d.getDate()+' '+ay[d.getMonth()]+' '+d.getFullYear();}
   // Lucide-ı nav rebuild-dən SONRA çağır
   if(window.lucide)lucide.createIcons();
+  if(window.innerWidth<=768){
+    var s=document.getElementById('sa-sidebar');
+    if(s){s.style.setProperty('transform','translateX(-250px)','important');s.style.setProperty('transition','transform .25s ease','important');}
+  }
 });
 function saToggleSidebar(){
-  document.getElementById('sa-sidebar').classList.toggle('open');
-  document.getElementById('sa-overlay').classList.toggle('open');
+  var s=document.getElementById('sa-sidebar'),o=document.getElementById('sa-overlay');
+  var closed=s.getAttribute('data-open')!=='1';
+  s.style.setProperty('transform',closed?'translateX(0)':'translateX(-250px)','important');
+  s.style.setProperty('transition','transform .25s ease','important');
+  o.style.display=closed?'block':'none';
+  s.setAttribute('data-open',closed?'1':'0');
 }
 function saCloseSidebar(){
-  document.getElementById('sa-sidebar').classList.remove('open');
-  document.getElementById('sa-overlay').classList.remove('open');
+  var s=document.getElementById('sa-sidebar'),o=document.getElementById('sa-overlay');
+  s.style.setProperty('transform','translateX(-250px)','important');
+  o.style.display='none';
+  s.setAttribute('data-open','0');
 }
 </script>
 </body>
