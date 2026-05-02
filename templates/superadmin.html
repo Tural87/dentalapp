@@ -226,9 +226,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   #pane-dashboard>div:nth-child(4),
   #pane-dashboard>div:nth-child(5),
   #pane-dashboard>div:nth-child(6){height:auto!important;min-height:0!important}
-  /* Logs - Detal sütunu truncate et */
-  #log-tbody td:nth-child(4){max-width:140px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important}
-  #dash-log-tbody td:nth-child(3){max-width:120px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  /* Log cədvəli td-lər - inline word-break-i ləğv et, normal wrap */
+  #log-tbody td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-break:normal!important}
+  #log-tbody td:nth-child(4){white-space:normal!important;word-wrap:break-word;line-height:1.4}
 }
 @media(max-width:480px){
   .stat-row,.stats,[style*="grid-template-columns"]{grid-template-columns:1fr!important}
@@ -399,7 +399,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
           <button class="btn btn-secondary btn-sm" onclick="showPane('logs',document.querySelector('.nav-item[onclick*=logs]'))">Hamısına bax</button>
         </div>
         <div style="overflow-x:auto;overflow-y:auto;max-height:300px">
-          <table id="dash-log-tbl" style="min-width:480px">
+          <table id="dash-log-tbl" style="width:100%;table-layout:fixed">
+            <colgroup><col style="width:20%"><col style="width:22%"><col style="width:30%"><col style="width:18%"><col style="width:10%"></colgroup>
             <thead><tr><th>Tarix</th><th>İstifadəçi</th><th>Əməliyyat</th><th>Klinika</th><th>IP</th></tr></thead>
             <tbody id="dash-log-tbody"></tbody>
           </table>
@@ -410,7 +411,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
           <button class="btn btn-secondary btn-sm" onclick="showPane('clinics',document.querySelector('.nav-item[onclick*=clinics]'))">Hamısı</button>
         </div>
         <div style="overflow-x:auto;overflow-y:auto;max-height:300px">
-          <table id="dash-clinic-tbl" style="min-width:380px">
+          <table id="dash-clinic-tbl" style="width:100%;table-layout:fixed">
+            <colgroup><col style="width:28%"><col style="width:18%"><col style="width:16%"><col style="width:18%"><col style="width:20%"></colgroup>
             <thead><tr><th>Klinika</th><th>Plan</th><th>Həkim</th><th>Status</th><th>Tarix</th></tr></thead>
             <tbody id="dash-clinic-tbody"></tbody>
           </table>
@@ -571,7 +573,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
     </div>
     <div class="card">
       <div style="overflow-x:auto">
-        <table style="min-width:480px">
+        <table style="width:100%;table-layout:fixed">
+          <colgroup><col style="width:18%"><col style="width:18%"><col style="width:14%"><col style="width:36%"><col style="width:14%"></colgroup>
           <thead><tr><th>Tarix</th><th>Klinika</th><th>Əməliyyat</th><th>Detal</th><th>IP</th></tr></thead>
           <tbody id="log-tbody"></tbody>
         </table>
