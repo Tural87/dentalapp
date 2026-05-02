@@ -192,12 +192,37 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 /* Pane başlıqları üçün standart boşluq */
 .pane-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .pane-title{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--txt)}
+/* Hamburger */
+.sa-menu-toggle{display:none;background:none;border:1px solid var(--line);border-radius:8px;padding:7px 9px;color:var(--muted);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
+.sa-menu-toggle svg{width:18px;height:18px;stroke-width:2;stroke:currentColor;fill:none}
+.sa-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;backdrop-filter:blur(2px)}
+.sa-overlay.open{display:block}
+@media(max-width:768px){
+  .sidebar{width:250px!important;transform:translateX(-250px)!important;transition:transform .25s ease!important}
+  .sidebar.open{transform:translateX(0)!important}
+  .main{margin-left:0!important;padding:12px 12px 52px!important}
+  .sa-menu-toggle{display:flex!important}
+  .stat-row{grid-template-columns:1fr 1fr!important}
+  .dash-grid,.dash-grid.two{grid-template-columns:1fr!important}
+  .insight{grid-template-columns:1fr!important;gap:10px!important}
+  .sa-search{display:none!important}
+  .date-chip{display:none!important}
+  .form-row{grid-template-columns:1fr!important}
+  .sa-top-actions{gap:6px!important}
+}
+@media(max-width:480px){
+  .stat-row{grid-template-columns:1fr!important}
+  .main{padding:10px 10px 52px!important}
+}
 </style>
 </head>
 <body>
-
-<div class="sidebar">
-  <div class="sidebar-logo">🦷 StomApp</div>
+<div class="sa-overlay" id="sa-overlay" onclick="saCloseSidebar()"></div>
+<div class="sidebar" id="sa-sidebar">
+  <div class="sidebar-logo" style="flex-direction:column;align-items:flex-start;justify-content:center;gap:2px">
+    <div style="font-size:.95rem;font-weight:700;color:var(--txt)">StomApp</div>
+    <div style="font-size:.72rem;font-weight:400;color:var(--muted)">Superadmin Panel</div>
+  </div>
   <nav class="nav">
     <button class="nav-item active" style="display:flex;align-items:center;gap:10px" onclick="showPane('dashboard',this)"><i data-lucide="layout-dashboard" style="width:15px;height:15px;flex-shrink:0"></i> Dashboard</button>
     <button class="nav-item" style="display:flex;align-items:center;gap:10px" onclick="showPane('clinics',this)"><i data-lucide="building-2" style="width:15px;height:15px;flex-shrink:0"></i> Klinikalar</button>
@@ -217,7 +242,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
 <div class="main">
   <div class="sa-topbar">
-    <div style="font-size:.95rem;font-weight:700;color:var(--txt)">StomApp <span style="font-size:.75rem;font-weight:400;color:var(--muted)">Superadmin Panel</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="sa-menu-toggle" onclick="saToggleSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
     <div class="sa-top-actions">
       <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər" style="width:22px;height:22px;margin-top:-42px"><i data-lucide="bell" style="width:13px;height:13px"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
       <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn" style="width:22px;height:22px;margin-top:-42px"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
@@ -1586,6 +1613,14 @@ document.addEventListener('DOMContentLoaded',function(){
   // Lucide-ı nav rebuild-dən SONRA çağır
   if(window.lucide)lucide.createIcons();
 });
+function saToggleSidebar(){
+  document.getElementById('sa-sidebar').classList.toggle('open');
+  document.getElementById('sa-overlay').classList.toggle('open');
+}
+function saCloseSidebar(){
+  document.getElementById('sa-sidebar').classList.remove('open');
+  document.getElementById('sa-overlay').classList.remove('open');
+}
 </script>
 </body>
 </html>
