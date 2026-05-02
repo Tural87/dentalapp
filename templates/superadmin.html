@@ -103,7 +103,7 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:.72rem;fo
 body{background:radial-gradient(circle at 78% 0,rgba(20,96,180,.20),transparent 34%),linear-gradient(180deg,#020914,#061121 48%,#030914);overflow-x:hidden}
 .sidebar{width:250px!important;background:linear-gradient(180deg,#07111f,#030b16)!important;padding:0 16px!important}
 .main{margin-left:250px!important;padding:16px 20px 34px!important}
-.sidebar-logo{height:54px!important;padding:0 16px!important;background:none!important;-webkit-text-fill-color:transparent!important;color:transparent!important;border-bottom:1px solid #21324c!important}
+.sidebar-logo{height:54px!important;margin:0 -16px!important;padding:0 16px!important;background:none!important;-webkit-text-fill-color:transparent!important;color:transparent!important;border-bottom:1px solid #21324c!important}
 .nav{padding:16px 0!important;gap:8px!important}.nav-item{height:48px!important;border-radius:8px!important;padding:0 15px!important;color:#c9d5eb!important;font-size:.92rem!important;font-weight:500!important}
 .nav-item.active{background:linear-gradient(135deg,#4968ff,#6427d6)!important;color:#fff!important;box-shadow:0 14px 34px rgba(83,69,255,.36)!important}
 .nav-item:hover{background:rgba(255,255,255,.045)!important;color:#fff!important}.nav-item svg{width:20px!important;height:20px!important}.nav-badge{right:16px!important;top:50%!important;transform:translateY(-50%)!important;border-radius:7px!important;padding:4px 7px!important}
@@ -273,18 +273,19 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 
 <div class="main">
   <div class="sa-topbar">
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:10px;flex:1">
       <button class="sa-menu-toggle" onclick="saToggleSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="sa-search" style="display:flex"><i data-lucide="search" style="width:14px;height:14px;flex-shrink:0;color:#6b7fa3"></i><input placeholder="Axtar..." style="flex:1;background:transparent;border:0;outline:0;color:#eef4ff;font-family:inherit;font-size:.82rem;margin-left:8px"></div>
     </div>
-    <div class="sa-top-actions" style="display:flex;align-items:center;gap:10px">
+    <div class="sa-top-actions" style="display:flex;align-items:center;gap:8px">
       <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər"><i data-lucide="bell" style="width:15px;height:15px"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
       <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn"><i data-lucide="moon" style="width:15px;height:15px"></i></button>
       <a href="/logout" class="top-icon" title="Çıxış" style="text-decoration:none;color:inherit"><i data-lucide="log-out" style="width:15px;height:15px"></i></a>
-      <div style="display:flex;align-items:center;gap:7px;border-left:1px solid var(--line);padding-left:10px">
-        <div class="avatar" style="width:28px;height:28px;font-size:.6rem">SA</div>
-        <div>
-          <div style="font-size:.72rem;font-weight:700;color:#eef4ff">Superadmin</div>
-          <div style="font-size:.62rem;color:var(--muted)">superadmin</div>
+      <div style="display:flex;align-items:center;gap:8px;border-left:1px solid var(--line);padding-left:10px">
+        <div class="avatar" style="width:30px;height:30px;font-size:.58rem;flex-shrink:0">SA</div>
+        <div style="line-height:1.3">
+          <div style="font-size:.75rem;font-weight:700;color:#eef4ff;white-space:nowrap">Superadmin</div>
+          <div style="font-size:.65rem;color:#6b7fa3;white-space:nowrap">super@stomapp.az</div>
         </div>
       </div>
     </div>
