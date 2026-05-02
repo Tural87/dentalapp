@@ -226,9 +226,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   #pane-dashboard>div:nth-child(4),
   #pane-dashboard>div:nth-child(5),
   #pane-dashboard>div:nth-child(6){height:auto!important;min-height:0!important}
-  /* Logs pane cədvəli overflow */
-  #pane-logs .card{overflow:hidden!important}
-  #pane-logs .card table{min-width:420px}
+  /* Logs - Detal sütunu truncate et */
+  #log-tbody td:nth-child(4){max-width:140px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important}
+  #dash-log-tbody td:nth-child(3){max-width:120px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 }
 @media(max-width:480px){
   .stat-row,.stats,[style*="grid-template-columns"]{grid-template-columns:1fr!important}
