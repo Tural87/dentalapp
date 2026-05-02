@@ -195,6 +195,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 /* Hamburger */
 .sa-menu-toggle{display:none;background:none;border:1px solid var(--line);border-radius:8px;padding:7px 9px;color:var(--muted);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
 .sa-menu-toggle svg{width:18px;height:18px;stroke-width:2;stroke:currentColor;fill:none}
+.top-icon{border-left:none!important;width:32px!important;height:32px!important;border-radius:8px!important}
+.sa-top-actions .avatar{border-radius:50%!important}
 .sa-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;backdrop-filter:blur(2px)}
 .sa-overlay.open{display:block}
 @media(max-width:768px){
@@ -269,17 +271,16 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
     <div style="display:flex;align-items:center;gap:10px">
       <button class="sa-menu-toggle" onclick="saToggleSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     </div>
-    <div class="sa-top-actions">
-      <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər" style="width:22px;height:22px;margin-top:-42px"><i data-lucide="bell" style="width:13px;height:13px"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
-      <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn" style="width:22px;height:22px;margin-top:-42px"><i data-lucide="moon" style="width:13px;height:13px"></i></button>
-      <a href="/logout" class="top-icon" title="Çıxış" style="text-decoration:none;color:inherit;width:22px;height:22px;margin-top:-42px"><i data-lucide="log-out" style="width:13px;height:13px"></i></a>
-      <div style="display:flex;align-items:center;gap:5px;border-left:1px solid var(--line);padding-left:8px;margin-top:-42px">
-        <div class="avatar" style="width:22px;height:22px;font-size:.55rem">SA</div>
+    <div class="sa-top-actions" style="display:flex;align-items:center;gap:10px">
+      <button class="top-icon" onclick="toggleNotif(event)" title="Bildirişlər"><i data-lucide="bell" style="width:15px;height:15px"></i><span class="dot" id="notif-dot" style="display:none">0</span></button>
+      <button class="top-icon" onclick="toggleTheme()" title="Tema dəyiş" id="theme-btn"><i data-lucide="moon" style="width:15px;height:15px"></i></button>
+      <a href="/logout" class="top-icon" title="Çıxış" style="text-decoration:none;color:inherit"><i data-lucide="log-out" style="width:15px;height:15px"></i></a>
+      <div style="display:flex;align-items:center;gap:7px;border-left:1px solid var(--line);padding-left:10px">
+        <div class="avatar" style="width:28px;height:28px;font-size:.6rem">SA</div>
         <div>
-          <div style="font-size:.67rem;font-weight:700">Superadmin</div>
-          <div style="font-size:.58rem;color:var(--muted)">Superadmin</div>
+          <div style="font-size:.72rem;font-weight:700;color:#eef4ff">Superadmin</div>
+          <div style="font-size:.62rem;color:var(--muted)">superadmin</div>
         </div>
-        <i data-lucide="chevron-down" style="width:11px;color:var(--muted)"></i>
       </div>
     </div>
   </div>
