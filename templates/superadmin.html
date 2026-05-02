@@ -198,20 +198,33 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 .sa-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;backdrop-filter:blur(2px)}
 .sa-overlay.open{display:block}
 @media(max-width:768px){
-  .sidebar{width:250px!important;transform:translateX(-250px)!important;transition:transform .25s ease!important}
-  .sidebar.open{transform:translateX(0)!important}
+  .sidebar{width:250px!important;transition:transform .25s ease!important}
   .main{margin-left:0!important;padding:12px 12px 52px!important}
   .sa-menu-toggle{display:flex!important}
-  .stat-row{grid-template-columns:1fr 1fr!important}
-  .dash-grid,.dash-grid.two{grid-template-columns:1fr!important}
-  .insight{grid-template-columns:1fr!important;gap:10px!important}
+  /* Bütün inline grid-ləri 1 sütuna endur */
+  [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  /* Stat kartları 2 sütun qalsın */
+  .stat-row,.stats{grid-template-columns:1fr 1fr!important}
+  /* CSS class grid-lər */
+  .dash-grid,.dash-grid.two,.form-row,.metric-pair,.billing-card,.insight{grid-template-columns:1fr!important}
+  .insight{gap:10px!important}
+  .mini-insight{border-left:none!important;padding-left:0!important;border-top:1px solid var(--line2)!important;padding-top:10px!important}
+  /* Dashboard pane öz grid-ini ləğv et */
+  #pane-dashboard.active{display:block!important}
+  #pane-dashboard>div:nth-child(3){grid-template-columns:1fr!important;display:block!important}
+  #pane-dashboard>div:nth-child(5){grid-template-columns:1fr!important;padding:14px!important}
+  #pane-dashboard>.dash-grid{grid-template-columns:1fr!important}
+  #plans-grid{grid-template-columns:1fr!important}
+  /* Topbar */
   .sa-search{display:none!important}
   .date-chip{display:none!important}
-  .form-row{grid-template-columns:1fr!important}
   .sa-top-actions{gap:6px!important}
+  .sa-topbar{padding:0 10px!important}
+  /* Tbl scroll */
+  .tbl-wrap,table{overflow-x:auto}
 }
 @media(max-width:480px){
-  .stat-row{grid-template-columns:1fr!important}
+  .stat-row,.stats,[style*="grid-template-columns"]{grid-template-columns:1fr!important}
   .main{padding:10px 10px 52px!important}
 }
 </style>
@@ -699,6 +712,7 @@ let _clinics=[],_editId=null,_fcClinic=null,_fcInterval=null,_expenses=[],_expEd
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function showPane(name,el){
+  if(window.innerWidth<=768)saCloseSidebar()
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'))
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
   document.getElementById('pane-'+name).classList.add('active')
