@@ -201,7 +201,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 .sa-overlay.open{display:block}
 @media(max-width:768px){
   .sidebar{width:250px!important;transition:transform .25s ease!important}
-  .main{margin-left:0!important;padding:12px 12px 52px!important}
+  .main{margin-left:0!important;padding:0 0 52px!important}
+  .sa-topbar{padding:0 12px!important;position:sticky!important;top:0!important;z-index:50!important;background:rgba(7,17,31,.95)!important;backdrop-filter:blur(10px)!important}
+  .pane{padding:14px 12px!important}
   .sa-menu-toggle{display:flex!important}
   /* Bütün inline grid-ləri 1 sütuna endur */
   [style*="grid-template-columns"]{grid-template-columns:1fr!important}
@@ -222,6 +224,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   .date-chip{display:none!important}
   .sa-top-actions{gap:6px!important}
   .sa-topbar{padding:0 10px!important}
+  /* Kartlar arasında məsafə */
+  .pane .card{margin-bottom:12px!important}
+  .pane>div{margin-bottom:12px}
   /* dash-grid kartları fixed height-i sıfırla */
   .dash-grid .card{height:auto!important;overflow:hidden!important;min-height:0!important}
   /* Stat card fixed heights sıfırla */
