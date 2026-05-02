@@ -221,14 +221,15 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
   .sa-top-actions{gap:6px!important}
   .sa-topbar{padding:0 10px!important}
   /* dash-grid kartları fixed height-i sıfırla */
-  .dash-grid .card{height:auto!important;overflow:visible!important;min-height:0!important}
-  .dash-grid .card>div:nth-child(2){max-height:260px!important;overflow-y:auto!important;overflow-x:auto!important}
-  /* Bütün cədvəl wrapper-lar horizontal scroll */
-  [style*="overflow-y:auto"] table{min-width:420px}
+  .dash-grid .card{height:auto!important;overflow:hidden!important;min-height:0!important}
   /* Stat card fixed heights sıfırla */
   #pane-dashboard>div:nth-child(4),
   #pane-dashboard>div:nth-child(5),
   #pane-dashboard>div:nth-child(6){height:auto!important;min-height:0!important}
+  /* Mobil üçün gizlədilən sütunlar */
+  .col-hide{display:none!important}
+  #dash-log-tbody td:nth-child(4),#dash-log-tbody td:nth-child(5){display:none!important}
+  #dash-clinic-tbody td:nth-child(3),#dash-clinic-tbody td:nth-child(5){display:none!important}
 }
 @media(max-width:480px){
   .stat-row,.stats,[style*="grid-template-columns"]{grid-template-columns:1fr!important}
@@ -398,9 +399,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
         <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="activity" style="width:16px;height:16px;color:#8b5cf6"></i>Son Aktivliklər</h3>
           <button class="btn btn-secondary btn-sm" onclick="showPane('logs',document.querySelector('.nav-item[onclick*=logs]'))">Hamısına bax</button>
         </div>
-        <div style="overflow-y:auto;max-height:300px">
-          <table>
-            <thead><tr><th>Tarix</th><th>İstifadəçi</th><th>Əməliyyat</th><th>Klinika</th><th>IP</th></tr></thead>
+        <div style="overflow-x:auto;overflow-y:auto;max-height:300px">
+          <table id="dash-log-tbl">
+            <thead><tr><th>Tarix</th><th>İstifadəçi</th><th>Əməliyyat</th><th class="col-hide">Klinika</th><th class="col-hide">IP</th></tr></thead>
             <tbody id="dash-log-tbody"></tbody>
           </table>
         </div>
@@ -409,9 +410,9 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
         <div class="card-hd"><h3 style="display:flex;align-items:center;gap:8px"><i data-lucide="building-2" style="width:16px;height:16px;color:#3b82f6"></i>Klinika siyahısı</h3>
           <button class="btn btn-secondary btn-sm" onclick="showPane('clinics',document.querySelector('.nav-item[onclick*=clinics]'))">Hamısı</button>
         </div>
-        <div style="overflow-y:auto;max-height:300px">
-          <table>
-            <thead><tr><th>Klinika</th><th>Plan</th><th>Həkim</th><th>Status</th><th>Tarix</th></tr></thead>
+        <div style="overflow-x:auto;overflow-y:auto;max-height:300px">
+          <table id="dash-clinic-tbl">
+            <thead><tr><th>Klinika</th><th>Plan</th><th class="col-hide">Həkim</th><th>Status</th><th class="col-hide">Tarix</th></tr></thead>
             <tbody id="dash-clinic-tbody"></tbody>
           </table>
         </div>
