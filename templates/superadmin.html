@@ -232,8 +232,11 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 .sa-welcome-text{display:flex!important;flex-direction:column!important;justify-content:center!important}
 .sa-welcome-text h1,.sa-welcome-text p{display:block!important;width:100%!important}
 [style*="grid-template-columns:1fr 1fr 1fr"]{gap:5px!important}[style*="grid-template-columns:1fr 1fr 1fr auto"]{gap:5px!important;background:transparent!important;border:none!important;overflow:visible!important}
-[style*="grid-template-columns:1fr 1fr 1fr auto"]{display:none!important}
-</style>
+.stat-card{display:flex!important;flex-direction:column!important;justify-content:center!important;padding:16px 18px!important}
+.stat-icon{margin-bottom:10px!important;flex-shrink:0!important}
+.stat-lbl{margin-top:0!important;margin-bottom:3px!important;line-height:1.3!important}
+.stat-val{margin-top:2px!important;margin-bottom:0!important;line-height:1.15!important}
+.stat-card>div:last-child{margin-top:10px!important}</style>
 </head>
 <body>
 <div class="sa-overlay" id="sa-overlay" onclick="saCloseSidebar()"></div>
