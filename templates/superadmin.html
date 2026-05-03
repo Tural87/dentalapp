@@ -256,7 +256,8 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 .sidebar-logo>div:last-child{display:block!important;line-height:1.4!important}
 .sa-topbar>div{display:flex!important;align-items:center!important}
 .top-icon{display:flex!important;align-items:center!important;justify-content:center!important}
-.avatar{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important}</style>
+.avatar{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important}.sa-welcome-text{flex:1;display:flex;flex-direction:column;justify-content:center;margin:0 8px}.sa-welcome-text h1{font-size:.88rem;font-weight:700;margin:0;line-height:1.2;color:#fff}.sa-welcome-text p{font-size:.72rem;color:var(--muted);margin:0;line-height:1}
+</style>
 </head>
 <body>
 <div class="sa-overlay" id="sa-overlay" onclick="saCloseSidebar()"></div>
@@ -1681,8 +1682,21 @@ function saCloseSidebar(){
   s.setAttribute('data-open','0');
 }
 </script>
-</body>
+<script>
+(function(){
+  var topbar=document.querySelector('.sa-topbar');
+  var menuDiv=topbar&&topbar.querySelector(':scope>div:first-child');
+  var welcomeText=document.querySelector('.welcome>div:first-child');
+  var dateChip=document.querySelector('.date-chip');
+  var welcome=document.querySelector('.welcome');
+  if(!topbar||!menuDiv)return;
+  if(welcomeText){welcomeText.classList.add('sa-welcome-text');menuDiv.after(welcomeText);}
+  if(dateChip){(welcomeText||menuDiv).after(dateChip);}
+  if(welcome)welcome.remove();
+})();
+</script></body>
 </html>
+
 
 
 
