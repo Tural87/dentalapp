@@ -243,8 +243,13 @@ th{text-transform:none!important;letter-spacing:0!important;font-size:.75rem!imp
 }
 #pane-dashboard>.welcome,#pane-dashboard>.stat-row,#pane-dashboard>div:nth-child(3),#pane-dashboard>div:nth-child(4),#pane-dashboard>.dash-grid{margin-bottom:1cm!important}
 .sidebar-logo,.sa-topbar{height:64px!important;display:flex!important;align-items:center!important;box-sizing:border-box!important}
-.sidebar-logo{height:64px!important;display:flex!important;align-items:center!important;gap:12px!important;box-sizing:border-box!important;padding:0 16px!important;margin:0 -16px!important;border-bottom:1px solid #21324c!important}.sa-topbar{height:64px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;box-sizing:border-box!important;padding:0 10px!important}
-</style>
+.sidebar-logo,.sa-topbar{height:64px!important;display:flex!important;align-items:center!important;box-sizing:border-box!important;line-height:1!important}
+.sidebar-logo{gap:12px!important;padding:0 16px!important;margin:0 -16px!important;border-bottom:1px solid #21324c!important}
+.sa-topbar{justify-content:space-between!important;padding:0 10px!important}
+.sidebar-logo>div,.sa-topbar>div{display:flex!important;align-items:center!important}
+.sidebar-logo>div>div{line-height:1.3!important}
+.top-icon{display:flex!important;align-items:center!important;justify-content:center!important}
+.avatar{display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important}</style>
 </head>
 <body>
 <div class="sa-overlay" id="sa-overlay" onclick="saCloseSidebar()"></div>
