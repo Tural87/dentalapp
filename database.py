@@ -1,9 +1,10 @@
+import os
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(
-    "sqlite:///dentalapp.db",
+    f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/dentalapp.db",
     connect_args={"check_same_thread": False, "timeout": 30}
 )
 
