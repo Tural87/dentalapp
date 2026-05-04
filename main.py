@@ -280,10 +280,11 @@ def sa_delete_clinic(cid):
         clinic = s.query(models.Clinic).get(cid)
         if not clinic:
             return err("Tapılmadı", 404)
+        from sqlalchemy import text
         s.execute(text("PRAGMA foreign_keys=OFF"))
-          s.delete(clinic)
-          s.commit()
-          return jsonify({"ok": True})
+        s.delete(clinic)
+        s.commit()
+        return jsonify({"ok": True})
     finally:
         s.close()
 
