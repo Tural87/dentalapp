@@ -9,8 +9,8 @@ models.Base.metadata.create_all(bind=engine)
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 @app.route("/favicon.ico")
-  def favicon():
-      return "", 204
+def favicon():
+    return "", 204
 app.secret_key = os.environ.get('SECRET_KEY', 'dental-secret-xK9mP-2024')
 
 from security import init_security, record_login_attempt, client_ip
