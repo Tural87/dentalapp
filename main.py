@@ -950,7 +950,7 @@ def list_expenses():
     s = db()
     try:
         if is_superadmin():
-            q = s.query(models.Expense).filter(models.Expense.clinic_id.in_([None, SUPERADMIN_EXPENSES_CLINIC_ID]))
+            q = s.query(models.Expense).filter(models.Expense.clinic_id == None)
         else:
             q = s.query(models.Expense).filter_by(clinic_id=clinic_id())
             if session.get("role") == "doctor":
