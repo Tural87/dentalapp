@@ -44,7 +44,7 @@ def handle_exception(e):
     import traceback
     return jsonify({"error": str(e), "detail": traceback.format_exc()}), 500
 
-SUPERADMIN_EXPENSES_CLINIC_ID = 0
+SUPERADMIN_EXPENSES_CLINIC_ID = None
 
 ONLINE_WINDOW_MINUTES = 15
 
